@@ -1,0 +1,5 @@
+package compiler.Lexer;
+
+public enum TokenType {
+    COMMENT,IDENTIFIER,KEYWORD,NATURAL_NUMBER,FLOAT_NUMBER,STRINGS,BOOLEAN,OPERATOR
+}
