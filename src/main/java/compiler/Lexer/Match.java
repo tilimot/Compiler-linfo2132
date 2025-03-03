@@ -2,6 +2,8 @@ package compiler.Lexer;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.util.Arrays;
 
 
 public class Match {
@@ -12,7 +14,6 @@ public class Match {
     public Match(Reader input) {
         this.input = input;
         advance();
-        System.out.println("here ; " + (char) current_position);
     }
 
     private void advance() {
@@ -98,6 +99,53 @@ public class Match {
         return false;
     }
 
+    private boolean match_array(String[] pattern_array){
+
+        char current_char = (char) current_position;
+        buffer += current_char;
+        int buff_length = buffer.length();
+        for (String element:pattern_array){
+            int state=0;
+            int i = 0;
+            boolean still_element = true;
+            int element_length = element.length();
+            while(still_element){
+                if (state==0){
+                   if(buff_length <= element_length && element.substring(0, buff_length-1).equals(buffer)){
+                       System.out.println("here 1");
+                       state= 1;
+                       advance();
+                       current_char = (char) current_position;
+
+                   }
+                   else{
+                       still_element=false;
+                   }
+                }
+                else if (state ==1){
+                    System.out.println(element.charAt(buff_length-1));
+                    System.out.println(current_char);
+
+                    if(current_position == -1 && buff_length == element_length){
+                        return true;
+                    }
+                    else if((buff_length <= element_length) && (element.charAt(buff_length) == current_char)){
+                        System.out.println("here 2");
+                        buffer += current_char;
+                        buff_length += 1;
+                        advance();
+                        current_char = (char) current_position;
+                    }
+                    else{
+                        state=2;
+                        still_element = false;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
 
     private boolean match_natural(){
         int state = 0;
@@ -241,6 +289,12 @@ public class Match {
     }
 
 
-
+    public static void main(String[] args){
+        String s = "for";
+        Reader r = new StringReader(s);
+        Match match = new Match(r);
+        String[] arr = {"if","else","for","foreach"};
+        System.out.println(match.match_array(arr));
+    }
 
 }
