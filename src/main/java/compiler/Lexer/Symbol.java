@@ -19,6 +19,6 @@ public class Symbol {
 
     @Override
     public String toString() {
-        return "Symbol {" + this.token + ", '" + this.attribute +"'}";
+        return "<" + this.token + ", '" + this.attribute +"'>";
     }
 }

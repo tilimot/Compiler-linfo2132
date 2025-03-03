@@ -3,22 +3,21 @@
  */
 package compiler;
 
-import compiler.Lexer.TokenClassifier;
-import compiler.Lexer.Tokenizer;
+import compiler.Lexer.FileToReader;
+import compiler.Lexer.Lexer;
 
 import java.io.Reader;
-import java.io.StringReader;
-import java.util.List;
 
 public class Compiler {
     public static void main(String[] args) {
-        String test= "Point p = Point(a, a+value);\n" +
-                "writeInt(square(value));";
-        Reader test2 = new StringReader(test);
-        Tokenizer tokenizer = new Tokenizer(test2);
-        List<String> tokens = tokenizer.getTokens();
-        for (String token : tokens) {
-            System.out.println("Le token "+token+" est un "+ TokenClassifier.classifyToken(token));
-        }
+       if (args.length == 2 && args[0].equals("-lexer")) {
+
+            String filepath = args[1];
+            Reader readerFile = FileToReader.getReaderFromFile(filepath);
+            Lexer lexer = new Lexer(readerFile);
+            while (lexer.hasNextSymbol()){
+                System.out.println(lexer.getNextSymbol());
+            }
+       }
     }
 }
