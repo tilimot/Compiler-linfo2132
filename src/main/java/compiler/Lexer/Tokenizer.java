@@ -12,6 +12,7 @@ public class Tokenizer {
         this.reader = new BufferedReader(input);
         this.tokens = new ArrayList<>();
         tokenize();
+
     }
 
     private void tokenize() {
@@ -83,6 +84,10 @@ public class Tokenizer {
             return tokens.get(currentIndex++);
         }
         return null; // Fin du fichier
+    }
+
+    public  List<String> getTokens() {
+        return tokens;
     }
 
 
