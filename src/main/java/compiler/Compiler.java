@@ -3,8 +3,22 @@
  */
 package compiler;
 
+import compiler.Lexer.TokenClassifier;
+import compiler.Lexer.Tokenizer;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.List;
+
 public class Compiler {
     public static void main(String[] args) {
-        System.out.println("Hello from the compiler !");
+        String test= "Point p = Point(a, a+value);\n" +
+                "writeInt(square(value));";
+        Reader test2 = new StringReader(test);
+        Tokenizer tokenizer = new Tokenizer(test2);
+        List<String> tokens = tokenizer.getTokens();
+        for (String token : tokens) {
+            System.out.println("Le token "+token+" est un "+ TokenClassifier.classifyToken(token));
+        }
     }
 }
