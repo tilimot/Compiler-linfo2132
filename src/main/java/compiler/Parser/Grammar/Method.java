@@ -1,8 +1,15 @@
 package compiler.Parser.Grammar;
 
-public class Method {
+import compiler.Parser.Matcher;
+import compiler.Parser.Parser;
+
+public class Method extends Matcher {
+
+    public Method(Parser parser) {
+        super(parser);
+    }
 
     Method parseMethod() {
-        return new Method();
+        return new Method(parser);
     }
 }

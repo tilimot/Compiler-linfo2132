@@ -1,8 +1,16 @@
 package compiler.Parser.Grammar;
 
-public class Comment {
+import compiler.Parser.Matcher;
+import compiler.Parser.Parser;
+
+public class Comment extends Matcher {
+
+    public Comment(Parser parser) {
+        super(parser);
+    }
 
     public Comment parseComment() {
-        return new Comment();
+        // TODO logic for parsing comments
+        return new Comment(parser);
     }
 }

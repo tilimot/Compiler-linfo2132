@@ -5,18 +5,21 @@ package compiler;
 
 import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
+import compiler.Parser.Parser;
 
 import java.io.Reader;
 
 public class Compiler {
-    public static void main(String[] args) {
-       if (args.length == 2 && args[0].equals("-lexer")) {
+    public static void main(String[] args) throws Exception {
+       if (args.length == 2 && args[0].equals("-lexer") | args[0].equals("-parser")) {
 
             String filepath = args[1];
             Reader readerFile = FileToReader.getReaderFromFile(filepath);
             Lexer lexer = new Lexer(readerFile);
-            while (lexer.hasNextSymbol()){
-                System.out.println(lexer.getNextSymbol());
+
+            if (args[0].equals("-parser")){
+                Parser parser = new Parser(lexer);
+                parser.match();
             }
        }
     }
