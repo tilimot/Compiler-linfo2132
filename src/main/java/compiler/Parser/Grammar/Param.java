@@ -1,16 +1,12 @@
 package compiler.Parser.Grammar;
 
-import compiler.Parser.Matcher;
-import compiler.Parser.Parser;
+public class Param {
+    Type type;
+    String identifier;
 
-public class Param extends Matcher {
-
-    public Param(Parser parser) {
-        super(parser);
+    public Param(Type type, String identifier) {
+        this.type = type;
+        this.identifier = identifier;
     }
 
-    public Param parseParam(){
-        // TODO logic for parsing parameters
-        return new Param(parser);
-    }
 }

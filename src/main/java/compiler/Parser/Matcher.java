@@ -13,10 +13,10 @@ public class Matcher {
     }
 
     public Symbol match(TokenType token) throws Exception {
-        if(this.parser.currentSymbol().getTokenType()!=token) {
+        if(this.parser.currentSymbol.getTokenType()!=token) {
             throw new Exception("No match found");
         } else {
-            Symbol matchingSymbol = parser.currentSymbol();
+            Symbol matchingSymbol = parser.currentSymbol;
             parser.advance();
             return matchingSymbol;
         }

@@ -19,7 +19,7 @@ public class Compiler {
 
             if (args[0].equals("-parser")){
                 Parser parser = new Parser(lexer);
-                parser.match();
+                //parser.match();
             }
        }
     }
