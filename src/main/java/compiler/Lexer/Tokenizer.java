@@ -22,8 +22,9 @@ public class Tokenizer {
                 int commentIndex = line.indexOf('$');
 
                 if (commentIndex != -1) {
-                    String comment = line.substring(commentIndex);
-                    tokens.add(comment.trim());
+                    // Pass the comments
+                    //String comment = line.substring(commentIndex);
+                    //tokens.add(comment.trim());
 
                     line = line.substring(0, commentIndex);
                 }

@@ -119,8 +119,7 @@ public class TokenClassifier {
 
     // Détermine le type d’un token
     public static TokenType classifyToken(String token) {
-        //if (isComment(token)) return TokenType.COMMENT;
-        if (isComment(token)) {}; //no need to return comment
+        if (isComment(token)) return TokenType.COMMENT;
         if (isKeyword(token)) return TokenType.KEYWORD;
         if (isBoolean(token)) return TokenType.BOOLEAN;
         if(isBaseType(token)) return TokenType.BASE_TYPE;
