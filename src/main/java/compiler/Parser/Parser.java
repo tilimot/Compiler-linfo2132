@@ -39,6 +39,7 @@ public class Parser {
         while (this.currentSymbol != null) {
             switch (this.currentSymbol.getTokenType()){
                 case BASE_TYPE:
+                    //exemple bidon de comment cela pourrait être utilisé
                     Assignement assignement = new Assignement(this);
                     return assignement.parseAssignement();
                 case BOOLEAN:
