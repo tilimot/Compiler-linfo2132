@@ -31,6 +31,7 @@ public class Tokenizer {
 
                 tokens.addAll(splitIntoTokens(line));
             }
+            tokens.add("@eof");
         } catch (IOException e) {
             e.printStackTrace();
         }

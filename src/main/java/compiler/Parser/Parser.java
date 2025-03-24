@@ -333,6 +333,20 @@ public class Parser {
         return new DeallocationStatement(free_, identifier, eol);
     }
 
+    public FunctionStatement parseFunctionStatement() throws Exception {
+        //TODO returnType dont manage constant Type
+        String fun_ = match(TokenType.KEYWORD).getAttribute();
+        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        String openParenthesis = match(TokenType.OPERATOR).getAttribute();
+        Type type = parseType();
+        ArrayList<Param> params = parseParams();
+        String closingParenthesis = match(TokenType.OPERATOR).getAttribute();
+        Type return_type = parseType();
+        Block block = parseBlock();
+
+        return new FunctionStatement(fun_, identifier, openParenthesis, type, params, closingParenthesis, return_type, block);
+    }
+
 
     public AssignementStatement parseAssignementStatement() throws Exception{
         /*
@@ -407,13 +421,15 @@ public class Parser {
         else if (currentSymbol.getAttribute() == "free") {
             statement = parseDeallocationStatement();
         }
+        else if (currentSymbol.getAttribute() == "fun") {
+            statement = parseFunctionStatement();
+        }
         else{
             String identifier = match(TokenType.IDENTIFIER).getAttribute();
             statement = parseCallOrDeclarationOrAssignement(identifier);
         }
         return statement;
     }
-
 
     public ArrayList<Statement> parseStatements() throws Exception {
         ArrayList<Statement> statements = new ArrayList<Statement>();
@@ -429,6 +445,15 @@ public class Parser {
         String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
         return new Block(leftBracket, statements, rightBracket);
+    }
+
+    public File parseFile () throws Exception {
+        //TODO : loop on each statement of the file
+        ArrayList<Statement> statements = new ArrayList<Statement>();
+        while (currentSymbol.getTokenType() != TokenType.EOF){
+            statements.addAll(parseStatements());
+        }
+        return new File(statements);
     }
 
 

@@ -121,6 +121,10 @@ public class TokenClassifier {
         return token.equals(";");
     }
 
+    public static boolean isEOF(String token) {
+        return token.equals("@eof");
+    }
+
     // Détermine le type d’un token
     public static TokenType classifyToken(String token) {
         if (isComment(token)) return TokenType.COMMENT;
@@ -133,6 +137,7 @@ public class TokenClassifier {
         if (isString(token)) return TokenType.STRINGS;
         if (isEOL(token)) return TokenType.EOL;
         if (isOperator(token)) return TokenType.OPERATOR;
+        if (isEOF(token)) return TokenType.EOF;
         return null; // Si aucun type ne correspond
     }
 }

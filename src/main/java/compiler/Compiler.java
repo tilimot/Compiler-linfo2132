@@ -5,6 +5,7 @@ package compiler;
 
 import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
+import compiler.Parser.Grammar.File;
 import compiler.Parser.Parser;
 
 import java.io.Reader;
@@ -28,7 +29,8 @@ public class Compiler {
                 Lexer lexer = new Lexer(readerFile);
 
                 Parser parser = new Parser(lexer);
-                //parser.match();
+                File file = parser.parseFile();
+                //System.out.println(file)
        }
     }
 }
