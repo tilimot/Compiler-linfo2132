@@ -8,14 +8,17 @@ public class IfStatement extends Statement {
     ArrayList<Expression> expressions;
     String closingParenthesis;
     Block block;
+
     //TODO implement Blocks block;
 
-    public IfStatement(String if_, String openingParenthesis, ArrayList<Expression> expressions, String closingParenthesis, Block block){
+    public IfStatement(String if_, String openingParenthesis, ArrayList<Expression> expressions, String closingParenthesis, Block block, int tabIndex){
+        super(tabIndex);
         this.if_ = if_;
         this.openingParenthesis = openingParenthesis;
         this.expressions = expressions;
         this.closingParenthesis = closingParenthesis;
         this.block = block;
+
     }
 
     @Override
@@ -24,6 +27,6 @@ public class IfStatement extends Statement {
         for (Expression expression : expressions) {
             sb.append(expression.toString()).append("\t");
         }
-        return if_ + "\n" + openingParenthesis + "\n" + sb.toString() + "\n" + closingParenthesis + "\n" + block.toString() + "\t";
+        return "\n".repeat(tabIndex) +if_ + "\n" + openingParenthesis + "\n" + sb.toString() + "\n" + closingParenthesis + "\n" + block.toString() + "\t";
     }
 }

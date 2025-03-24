@@ -1,16 +1,20 @@
 package compiler.Parser.Grammar;
 
-import java.util.ArrayList;
-
 public class Expression {
     String value;
+    int tabIndex;
 
-    public Expression(String value){
+
+
+    public Expression(String value, int tabIndex){
         this.value = value;
+        this.tabIndex = tabIndex;
+
     }
 
     @Override
     public String toString() {
-        return value + "\n";
+        String t = "\t".repeat(tabIndex);
+        return t+"EXPR:"+ "\n"+t+value + "\n";
     }
 }

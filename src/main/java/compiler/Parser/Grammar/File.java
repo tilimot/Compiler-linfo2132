@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 public class File {
     ArrayList<Statement> statements;
+    int tabIndex;
 
-    public File (ArrayList<Statement> statements) {
+    public File (ArrayList<Statement> statements, int tabIndex) {
         this.statements = statements;
+        this.tabIndex = tabIndex;
+
     }
 
     @Override
@@ -15,7 +18,7 @@ public class File {
         for (Statement statement : statements) {
             sb.append(statement.toString()).append("\n");
         }
-        return sb + "\n";
+        return "\n".repeat(tabIndex) +sb + "\n";
     }
 
 

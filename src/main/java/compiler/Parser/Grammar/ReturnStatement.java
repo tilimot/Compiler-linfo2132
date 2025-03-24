@@ -7,10 +7,13 @@ public class ReturnStatement extends Statement{
     ArrayList<Expression> expressions;
     String eol;
 
-    public ReturnStatement(String return_, ArrayList<Expression> expressions, String eol){
+
+    public ReturnStatement(String return_, ArrayList<Expression> expressions, String eol, int tabIndex){
+        super(tabIndex);
         this.return_ = return_;
         this.expressions = expressions;
         this.eol = eol;
+
     }
 
     @Override
@@ -19,6 +22,6 @@ public class ReturnStatement extends Statement{
         for (Expression expression : expressions) {
             sb.append(expression.toString()).append("\t");
         }
-        return return_ + "\n" + sb + "\n" + eol + "\n";
+        return "\n".repeat(tabIndex) +return_ + "\n" + sb + "\n" + eol + "\n";
     }
 }

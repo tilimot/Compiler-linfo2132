@@ -5,7 +5,6 @@ import compiler.Lexer.Symbol;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 
 public class Parser {
@@ -13,6 +12,7 @@ public class Parser {
     ArrayList<Symbol> allSymbols = new ArrayList<>();
     public Symbol currentSymbol;
     public Symbol root;
+    public int tabIndex = 1;
 
     public Parser(Lexer lexer) {
         while (lexer.hasNextSymbol()) {
@@ -61,7 +61,7 @@ public class Parser {
         } else {
             value = match(TokenType.IDENTIFIER);
         }
-        return new SimpleType((String) value.getAttribute());
+        return new SimpleType((String) value.getAttribute(),tabIndex );
     }
 
     public ArrayPart parseArrayPart() throws Exception {
@@ -69,7 +69,7 @@ public class Parser {
 
         Symbol left_bracket = match(TokenType.OPERATOR);
         Symbol right_bracket = match(TokenType.OPERATOR);
-        return new ArrayPart((String) left_bracket.getAttribute(), (String) right_bracket.getAttribute());
+        return new ArrayPart((String) left_bracket.getAttribute(), (String) right_bracket.getAttribute(), tabIndex);
     }
 
     public Type parseType() throws Exception {
@@ -77,13 +77,13 @@ public class Parser {
         SimpleType simpleType = parseSimpleType();
         ArrayPart arrayPart = parseArrayPart();
 
-        return new Type(simpleType, arrayPart);
+        return new Type(simpleType, arrayPart,tabIndex );
     }
 
     public Param parseParam() throws Exception {
         Type type = parseType();
         Symbol identifier = match(TokenType.IDENTIFIER);
-        return new Param(type, (String) identifier.getAttribute());
+        return new Param(type, (String) identifier.getAttribute(),tabIndex );
     }
 
     public ArrayList<Param> parseParams() throws Exception {
@@ -111,7 +111,7 @@ public class Parser {
         else {
             value = match(TokenType.BOOLEAN);
         }
-        return new Expression((String) value.getAttribute());
+        return new Expression((String) value.getAttribute(),tabIndex );
     }
 
     public ArrayList<Expression> parseFactor() throws Exception {
@@ -122,9 +122,9 @@ public class Parser {
 
         // Grammar rule:  Factor -> (Expressions) | Expression
         if (currentSymbol.getAttribute().equals("(")){
-            openingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute());
+            openingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute(), tabIndex);
             expression = parseExpression();
-            closingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute());
+            closingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute(), tabIndex);
 
             // Add to list
             expressions.add(openingParenthesis);
@@ -146,7 +146,7 @@ public class Parser {
 
         // Grammar rule: Term' -> * Factor Term’ | /  Factor Term’ | epsilon
         if(currentSymbol.getAttribute().equals("*")) {
-            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute());
+            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(), tabIndex);
             factor = parseFactor();
 
             expressions.add(operatorSign);
@@ -154,7 +154,7 @@ public class Parser {
             expressions.addAll(parseTermPrime());
         }
         else if (currentSymbol.getAttribute().equals("/")) {
-            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute());
+            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(), tabIndex);
             factor = parseFactor();
 
             expressions.add(operatorSign);
@@ -183,7 +183,7 @@ public class Parser {
 
         //Grammar rule : MoreExpressions  -> +Term MoreExpression | - Term MoreExpression | epsilon
         if (currentSymbol.getAttribute().equals("+")) {
-            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute());
+            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(),tabIndex );
             term = parseTerm();
 
             expressions.add(operatorSign);
@@ -191,7 +191,7 @@ public class Parser {
             expressions.addAll(parseMoreExpressions());
         }
         else if (currentSymbol.getAttribute().equals("-")) {
-            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute());
+            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(), tabIndex);
             term = parseTerm();
 
             expressions.add(operatorSign);
@@ -223,7 +223,7 @@ public class Parser {
         Symbol closing_parenthesis = match(TokenType.OPERATOR);
         Symbol eol = match(TokenType.EOL);
 
-        return new MethodCall((String) identifier.getAttribute(), (String) opening_parenthesis.getAttribute(), params, (String) closing_parenthesis.getAttribute(), (String) eol.getAttribute());
+        return new MethodCall((String) identifier.getAttribute(), (String) opening_parenthesis.getAttribute(), params, (String) closing_parenthesis.getAttribute(), (String) eol.getAttribute(),tabIndex );
     }
 
     public VariableDeclaration parseVariableDeclaration() throws Exception {
@@ -235,7 +235,7 @@ public class Parser {
         Type type = parseType();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new VariableDeclaration(identifier,type,eol);
+        return new VariableDeclaration(identifier,type,eol,tabIndex );
     }
 
     public ReturnStatement parseReturnStatement() throws Exception {
@@ -247,7 +247,7 @@ public class Parser {
         ArrayList<Expression> expressions = parseExpressions();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new ReturnStatement(return_,expressions,eol);
+        return new ReturnStatement(return_,expressions,eol, tabIndex);
     }
 
 
@@ -269,7 +269,7 @@ public class Parser {
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
-        return new ForStatement(for_, opening_parenthesis, identifier, coma1, beginValue, coma2, endValue, coma3, stepValue, closing_parenthesis, block);
+        return new ForStatement(for_, opening_parenthesis, identifier, coma1, beginValue, coma2, endValue, coma3, stepValue, closing_parenthesis, block,tabIndex );
     }
 
 
@@ -286,7 +286,7 @@ public class Parser {
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
-        return new WhileStatement(while_,opening_parenthesis,expressions,closing_parenthesis, block);
+        return new WhileStatement(while_,opening_parenthesis,expressions,closing_parenthesis, block, tabIndex);
     }
 
 
@@ -303,7 +303,7 @@ public class Parser {
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
-        return new IfStatement(if_,opening_parenthesis,expressions,closing_parenthesis, block);
+        return new IfStatement(if_,opening_parenthesis,expressions,closing_parenthesis, block,tabIndex );
     }
 
 
@@ -316,7 +316,7 @@ public class Parser {
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new DeallocationStatement(free_, identifier, eol);
+        return new DeallocationStatement(free_, identifier, eol,tabIndex );
     }
 
     public FunctionStatement parseFunctionStatement() throws Exception {
@@ -330,7 +330,7 @@ public class Parser {
         Type return_type = parseType();
         Block block = parseBlock();
 
-        return new FunctionStatement(fun_, identifier, openParenthesis, type, params, closingParenthesis, return_type, block);
+        return new FunctionStatement(fun_, identifier, openParenthesis, type, params, closingParenthesis, return_type, block,tabIndex );
     }
 
 
@@ -349,7 +349,7 @@ public class Parser {
         ArrayList<Expression> expressions = parseExpressions();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new AssignementStatement(identifier, type, equalOperator, expressions, eol);
+        return new AssignementStatement(identifier, type, equalOperator, expressions, eol,tabIndex );
 
     }
 
@@ -364,7 +364,7 @@ public class Parser {
             ArrayList<Param> params = parseParams();
             String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
             String eol = (String) match(TokenType.EOL).getAttribute();
-            statement = new MethodCall(identifier,opening_parenthesis, params, closing_parenthesis, eol);
+            statement = new MethodCall(identifier,opening_parenthesis, params, closing_parenthesis, eol, tabIndex);
         }
         else {
             Type type = parseType();
@@ -372,7 +372,7 @@ public class Parser {
             // Declaration
             if (currentSymbol.getTokenType() == TokenType.EOL) {
                 String eol = (String) match(TokenType.EOL).getAttribute();
-                statement = new VariableDeclaration(identifier, type, eol);
+                statement = new VariableDeclaration(identifier, type, eol,tabIndex );
             }
 
             // Assignement
@@ -380,7 +380,7 @@ public class Parser {
                 String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
                 ArrayList<Expression> expressions = parseExpressions();
                 String eol = (String) match(TokenType.EOL).getAttribute();
-                statement = new AssignementStatement(identifier, type, equalOperator, expressions, eol);
+                statement = new AssignementStatement(identifier, type, equalOperator, expressions, eol,tabIndex );
             }
         }
 
@@ -436,7 +436,7 @@ public class Parser {
         ArrayList<Statement> statements = parseStatements();
         String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
-        return new Block(leftBracket, statements, rightBracket);
+        return new Block(leftBracket, statements, rightBracket,tabIndex );
     }
 
     public File parseFile () throws Exception {
@@ -445,7 +445,7 @@ public class Parser {
         while (currentSymbol.getTokenType() != TokenType.EOF){
             statements.addAll(parseStatements());
         }
-        return new File(statements);
+        return new File(statements, tabIndex);
     }
 
 

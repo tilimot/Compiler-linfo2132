@@ -5,15 +5,20 @@ public class Type {
 
     SimpleType simpleType;
     ArrayPart arrayPart;
+    int tabIndex;
 
-    public Type(SimpleType simpleType, ArrayPart arrayPart ) {
+
+    public Type(SimpleType simpleType, ArrayPart arrayPart, int tabIndex) {
         this.simpleType = simpleType;
         this.arrayPart = arrayPart;
+        this.tabIndex = tabIndex;
+
     }
 
     @Override
     public String toString() {
-        return simpleType.toString() + "\t" + arrayPart.toString() + "\t";
+        String t = "\t".repeat(tabIndex);
+        return t+simpleType.toString()  + arrayPart.toString();
     }
 }
 
