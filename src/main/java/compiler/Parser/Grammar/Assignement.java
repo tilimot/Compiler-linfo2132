@@ -16,4 +16,9 @@ public class Assignement extends Matcher {
     public Assignement parseAssignement() throws Exception {
         return new Assignement(parser);
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }
