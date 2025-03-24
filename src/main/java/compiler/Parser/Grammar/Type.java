@@ -16,9 +16,12 @@ public class Type {
     }
 
     @Override
-    public String toString() {
+    public String  toString() {
         String t = "\t".repeat(tabIndex);
-        return t+simpleType.toString()  + arrayPart.toString();
+        arrayPart.tabIndex = tabIndex;
+        simpleType.tabIndex = tabIndex;
+
+        return simpleType.toString()+ "\n" +  arrayPart.toString();
     }
 }
 

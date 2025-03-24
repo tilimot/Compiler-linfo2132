@@ -24,13 +24,15 @@ public class AssignementStatement extends Statement {
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
+        String tNext = t + "\t";
+        type.tabIndex = tabIndex + 1;
         StringBuilder expressionsStr = new StringBuilder();
         for (Expression expression : expressions) {
             expression.tabIndex = tabIndex + 1;
-            expressionsStr.append(expression.toString()).append("\n").append(expression.tabIndex);;
+            expressionsStr.append(expression.toString());
         }
 
-        return t +"ASSIGN : " + "\n" +t +identifier +  "\n" +t  + type.toString() + "\n"+t + equalOperator + "\n"+t + expressionsStr +t + eol;
+        return t +"ASSIGN : " + "\n" +tNext + identifier +  "\n" + type.toString() +tNext+ equalOperator + "\n"+ expressionsStr +tNext + eol+ "\n";
     }
 }
 

@@ -19,10 +19,12 @@ public class Block {
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
+        String tNext = "\t".repeat(tabIndex+1);
         StringBuilder sb = new StringBuilder();
         for (Statement statement : statements) {
-            sb.append(statement.toString()).append("\n").append(statement.tabIndex);
+            statement.tabIndex = tabIndex+1;
+            sb.append(statement.toString());
         }
-        return t+"BLOCK : "+"\n"+t+leftBracket + "\n"+t + sb + rightBracket+ "\n";
+        return t+"BLOCK : "+"\n"+tNext +leftBracket + "\n"+tNext+ sb + "\n"+ tNext+ rightBracket+ "\n";
     }
 }

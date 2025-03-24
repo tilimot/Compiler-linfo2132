@@ -32,6 +32,9 @@ public class ForStatement extends Statement {
 
     @Override
     public String toString() {
-        return "\n".repeat(tabIndex) +for_ + "\n" + opening_parenthesis + "\n" + identifier + "\n" + coma1 + "\n" + beginValue + "\n" + coma2 + "\n" + endValue + "\n" + coma3 + "\n" + stepValue + "\n" + closing_parenthesis + "\n" + block.toString() + "\t";
+        String t = "\t".repeat(tabIndex);
+        String tNext = "\t".repeat(tabIndex+1);
+        block.tabIndex = tabIndex+1;
+        return t+"FOR : "+ "\n"+tNext +for_ + "\n" + tNext + opening_parenthesis + "\n" +tNext+ identifier + "\n"+tNext + coma1 + "\n" +tNext+ beginValue + "\n"+tNext + coma2 + "\n"+tNext + endValue + "\n"+tNext + coma3 + "\n"+tNext  + stepValue + "\n" +tNext+ closing_parenthesis + "\n" + block.toString();
     }
 }

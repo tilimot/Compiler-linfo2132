@@ -15,6 +15,8 @@ public class VariableDeclaration extends Statement {
     }
 
     public String toString() {
-        return "\n".repeat(tabIndex) +identifier + "\n" + type.toString() + "\t" + eol + "\n";
+        String t = "\t".repeat(tabIndex);
+        type.tabIndex = tabIndex;
+        return t+identifier + "\n" + type.toString() + "\n" + t + eol + "\n";
     }
 }

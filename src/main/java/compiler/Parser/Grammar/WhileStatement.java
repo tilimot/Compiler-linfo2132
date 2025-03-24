@@ -24,9 +24,12 @@ public class WhileStatement extends Statement {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        String t = "\t".repeat(tabIndex);
+        String tNext = "\t".repeat(tabIndex+1);
         for (Expression expression : expressions) {
+            expression.tabIndex = tabIndex+1;
             sb.append(expression.toString()).append("\t");
         }
-        return "\n".repeat(tabIndex) +while_ + "\n" + openingParenthesis + "\n" + sb + "\n" + closingParenthesis + "\n" + block.toString() + "\t";
+        return t + "WHILE : " + "\n" + tNext + while_ + "\n" + tNext + openingParenthesis + "\n" + sb  + closingParenthesis + "\n" + block.toString();
     }
 }

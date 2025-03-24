@@ -15,6 +15,7 @@ public class Expression {
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
-        return t+"EXPR:"+ "\n"+t+value + "\n";
+        String tNext = "\t".repeat(tabIndex+1);
+        return t+"EXPR:"+ "\n"+tNext+value + "\n";
     }
 }

@@ -25,4 +25,11 @@ public class FunctionStatement extends Statement {
         this.block = block;
     }
 
+    @Override
+    public String toString() {
+        String t = "\t".repeat(tabIndex);
+        String tNext = "\t".repeat(tabIndex+1);
+        block.tabIndex = tabIndex+1;
+        return t + "FUNC : "+ "\n" + tNext + fun_ + "\n" + tNext + identifier + "\n" + tNext + openParenthesis + "\n" + tNext + type.toString() + "\n" + tNext + params.toString() + "\n" + tNext + closingParenthesis + "\n" + tNext + return_type.toString() + "\n" + block.toString();
+    }
 }

@@ -19,9 +19,12 @@ public class ReturnStatement extends Statement{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        String t = "\t".repeat(tabIndex);
+        String tNext = t + "\t";
         for (Expression expression : expressions) {
-            sb.append(expression.toString()).append("\t");
+            expression.tabIndex = tabIndex + 1;
+            sb.append(expression.toString());
         }
-        return "\n".repeat(tabIndex) +return_ + "\n" + sb + "\n" + eol + "\n";
+        return t +"RETURN : " + "\n" +tNext + return_ + "\n" + sb  + tNext + eol + "\n";
     }
 }

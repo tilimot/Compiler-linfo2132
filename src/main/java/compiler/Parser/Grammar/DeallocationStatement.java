@@ -16,6 +16,7 @@ public class DeallocationStatement extends Statement {
 
     @Override
     public String toString() {
-        return "\n".repeat(tabIndex) +free_ + "\n" + identifier + "\n" + eol + "\n";
+        String t = "\t".repeat(tabIndex);
+        return t +free_ + "\n" + t + identifier + "\n" +t + eol + "\n";
     }
 }

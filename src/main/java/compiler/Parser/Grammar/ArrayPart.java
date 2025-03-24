@@ -14,6 +14,6 @@ public class ArrayPart {
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
-        return t+leftBracket + "\n"+t + rigthBracket;
+        return t+leftBracket + "\n"+t + rigthBracket+"\n";
     }
 }
