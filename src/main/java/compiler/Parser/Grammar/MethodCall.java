@@ -16,4 +16,13 @@ public class MethodCall extends Statement {
         this.closing_parenthesis = closing_parenthesis;
         this.eol= eol;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Param param : parameters) {
+            sb.append(param.toString()).append("\t");
+        }
+        return identifier + "\n" + opening_parenthesis + "\n" + sb.toString() + "\n" + closing_parenthesis + "\n" + eol + "\n";
+    }
 }

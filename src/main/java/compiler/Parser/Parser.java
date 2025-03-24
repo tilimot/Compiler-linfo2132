@@ -12,6 +12,7 @@ public class Parser {
     private int currentIndex = 0;
     ArrayList<Symbol> allSymbols = new ArrayList<>();
     public Symbol currentSymbol;
+    public Symbol root;
 
     public Parser(Lexer lexer) {
         while (lexer.hasNextSymbol()) {
@@ -33,29 +34,7 @@ public class Parser {
         this.currentSymbol = getCurrentSymbol();
     }
 
-    /*
-    public Matcher match() throws Exception {
 
-        while (this.currentSymbol != null) {
-            switch (this.currentSymbol.getTokenType()){
-                case BASE_TYPE:
-                    Assignement assignement = new Assignement(this);
-                    return assignement.parseAssignement();
-                case BOOLEAN:
-                case COMMENT:
-                case EOL:
-                case KEYWORD:
-                case IDENTIFIER:
-                case NATURAL_NUMBER:
-                case FLOAT_NUMBER:
-                case STRINGS:
-                case OPERATOR:
-            }
-
-    }
-        return null;
-    }
-     */
 
     public Symbol match(TokenType token) throws Exception {
         if (this.currentSymbol.getTokenType() != token) {
@@ -65,6 +44,10 @@ public class Parser {
             this.advance();
             return matchingSymbol;
         }
+    }
+
+    public Symbol getAST(){
+        return root;
     }
 
 
@@ -107,7 +90,7 @@ public class Parser {
         ArrayList<Param> parameters = new ArrayList<>();
         if (currentSymbol.getAttribute() != ")") {
             parameters.add(parseParam());
-            while (currentSymbol.getAttribute() == ",") {
+            while (currentSymbol.getAttribute().equals(",")) {
                 match(TokenType.OPERATOR);
                 parameters.add(parseParam());
             }
@@ -137,7 +120,7 @@ public class Parser {
         Expression closingParenthesis;
 
         // Grammar rule:  Factor -> (Expressions) | Expression
-        if (currentSymbol.getAttribute() == "("){
+        if (currentSymbol.getAttribute().equals("(")){
             openingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute());
             expression = parseExpression();
             closingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute());
@@ -161,7 +144,7 @@ public class Parser {
         ArrayList<Expression> factor;
 
         // Grammar rule: Term' -> * Factor Term’ | /  Factor Term’ | epsilon
-        if(currentSymbol.getAttribute() ==  "*") {
+        if(currentSymbol.getAttribute().equals("*")) {
             operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute());
             factor = parseFactor();
 
@@ -169,7 +152,7 @@ public class Parser {
             expressions.addAll(factor);
             expressions.addAll(parseTermPrime());
         }
-        else if (currentSymbol.getAttribute() ==  "/") {
+        else if (currentSymbol.getAttribute().equals("/")) {
             operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute());
             factor = parseFactor();
 
@@ -198,7 +181,7 @@ public class Parser {
 
 
         //Grammar rule : MoreExpressions  -> +Term MoreExpression | - Term MoreExpression | epsilon
-        if (currentSymbol.getAttribute() == "+") {
+        if (currentSymbol.getAttribute().equals("+")) {
             operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute());
             term = parseTerm();
 
@@ -206,7 +189,7 @@ public class Parser {
             expressions.addAll(term);
             expressions.addAll(parseMoreExpressions());
         }
-        else if (currentSymbol.getAttribute() == "-") {
+        else if (currentSymbol.getAttribute().equals("-")) {
             operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute());
             term = parseTerm();
 
@@ -300,8 +283,9 @@ public class Parser {
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions =  parseMoreExpressions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        Block block = parseBlock();
 
-        return new WhileStatement(while_,opening_parenthesis,expressions,closing_parenthesis);
+        return new WhileStatement(while_,opening_parenthesis,expressions,closing_parenthesis, block);
     }
 
 
@@ -316,8 +300,9 @@ public class Parser {
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions =  parseMoreExpressions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        Block block = parseBlock();
 
-        return new IfStatement(if_,opening_parenthesis,expressions,closing_parenthesis);
+        return new IfStatement(if_,opening_parenthesis,expressions,closing_parenthesis, block);
     }
 
 
@@ -354,7 +339,7 @@ public class Parser {
          */
         //TODO manage when variable is assigned a method
 
-        if(currentSymbol.getAttribute() == "final"){
+        if(currentSymbol.getAttribute().equals("final")){
             match(TokenType.KEYWORD); // Currently not appearinf in the AST
         }
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
@@ -373,7 +358,7 @@ public class Parser {
         Statement statement;
 
         //MethodCall
-        if (currentSymbol.getAttribute() == "("){
+        if (currentSymbol.getAttribute().equals("(")){
             String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
             ArrayList<Param> params = parseParams();
             String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
@@ -406,19 +391,19 @@ public class Parser {
     public Statement parseStatement() throws Exception{
         Statement statement;
 
-        if(currentSymbol.getAttribute() == "if"){
+        if(currentSymbol.getAttribute().equals("if")){
             statement = parseIfStatement();
         }
-        else if (currentSymbol.getAttribute() == "while") {
+        else if (currentSymbol.getAttribute().equals("while")) {
             statement = parseWhileStatement();
         }
-        else if (currentSymbol.getAttribute() == "for") {
+        else if (currentSymbol.getAttribute().equals("for")) {
             statement = parseForStatement();
         }
-        else if (currentSymbol.getAttribute() == "return") {
+        else if (currentSymbol.getAttribute().equals("return")){
             statement = parseReturnStatement();
         }
-        else if (currentSymbol.getAttribute() == "free") {
+        else if (currentSymbol.getAttribute().equals("free")){
             statement = parseDeallocationStatement();
         }
         else if (currentSymbol.getAttribute() == "fun") {

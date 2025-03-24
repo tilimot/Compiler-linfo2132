@@ -16,5 +16,18 @@ public class AssignementStatement extends Statement {
         this.equalOperator = equalOperator;
         this.expressions = expressions;
         this.eol = eol;
+
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder expressionsStr = new StringBuilder();
+        for (Expression expression : expressions) {
+            expressionsStr.append(expression.toString()).append(" ");
+        }
+
+        return identifier +  "\n" + type.toString() + "\t" + equalOperator + "\n" + "(" + "\n" + "\t" + expressionsStr.toString().trim() + "\n" + ")" + "\n" + eol + "\n";
     }
 }
+

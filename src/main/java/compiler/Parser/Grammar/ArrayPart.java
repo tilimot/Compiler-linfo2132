@@ -7,4 +7,9 @@ public class ArrayPart {
         this.leftBracket = leftbracket;
         this.rigthBracket = rigthBracket;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

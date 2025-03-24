@@ -10,4 +10,9 @@ public class DeallocationStatement extends Statement {
         this.identifier = identifier;
         this.eol = eol;
     }
+
+    @Override
+    public String toString() {
+        return free_ + "\n" + identifier + "\n" + eol + "\n";
+    }
 }

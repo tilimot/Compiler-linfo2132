@@ -9,4 +9,8 @@ public class Param {
         this.identifier = identifier;
     }
 
+    @Override
+    public String toString() {
+        return type.toString() + "\t" +identifier + "\n";
+    }
 }
