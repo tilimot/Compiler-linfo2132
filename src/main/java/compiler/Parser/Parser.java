@@ -4,6 +4,7 @@ import compiler.Lexer.Lexer;
 import compiler.Lexer.Symbol;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
+import compiler.Parser.Grammar.Record;
 
 import java.util.ArrayList;
 
@@ -75,9 +76,8 @@ public class Parser {
     public Type parseType() throws Exception {
         //TODO ArrayPart is currently mandatory and should be optional
         SimpleType simpleType = parseSimpleType();
-        ArrayPart arrayPart = parseArrayPart();
 
-        return new Type(simpleType, arrayPart,tabIndex );
+        return new Type(simpleType,tabIndex );
     }
 
     public Param parseParam() throws Exception {
@@ -238,6 +238,16 @@ public class Parser {
         return new VariableDeclaration(identifier,type,eol,tabIndex );
     }
 
+    public ArrayList<VariableDeclaration> parseMoreVariableDeclaration() throws Exception{
+        //must only be used for Record init
+        ArrayList<VariableDeclaration> declarations = new ArrayList<VariableDeclaration> ();
+
+        while(currentSymbol.getTokenType() != TokenType.OPERATOR){
+            declarations.add(parseVariableDeclaration());
+        }
+        return declarations;
+    }
+
     public ReturnStatement parseReturnStatement() throws Exception {
         /*
          * GrammarRule: ReturnStatement -> return Expressions ;
@@ -336,13 +346,10 @@ public class Parser {
 
     public AssignementStatement parseAssignementStatement() throws Exception{
         /*
-         * GrammarRule: Assignement  final Assignement | identifier Type = Expression ;
+         * GrammarRule: Assignement  identifier Type = Expression ;
          */
         //TODO manage when variable is assigned a method
 
-        if(currentSymbol.getAttribute().equals("final")){
-            match(TokenType.KEYWORD); // Currently not appearinf in the AST
-        }
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
         Type type = parseType();
         String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
@@ -439,13 +446,70 @@ public class Parser {
         return new Block(leftBracket, statements, rightBracket,tabIndex );
     }
 
+    public Constant parseConstant() throws Exception {
+        String final_ = match(TokenType.KEYWORD).getAttribute();
+        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        SimpleType basetype = parseSimpleType();
+        String equalOperator = match(TokenType.OPERATOR).getAttribute();
+        ArrayList<Expression> expressions = parseExpressions();
+        String eol = match(TokenType.EOL).getAttribute();
+
+        return new Constant(final_,identifier,basetype,equalOperator,expressions,eol);
+    }
+
+    public ArrayList<Constant> parseMoreConstant() throws Exception {
+        ArrayList<Constant> constants = new ArrayList<>();
+        while (currentSymbol.getTokenType() == TokenType.KEYWORD){
+            constants.add(parseConstant());
+        }
+        return constants;
+    }
+
+
+    public Record parseRecord() throws Exception {
+        String recordsName = match(TokenType.RECORD_NAME).getAttribute();
+        String rec_ =  match(TokenType.KEYWORD).getAttribute();
+        String openingBracket = match(TokenType.OPERATOR).getAttribute();
+        ArrayList<VariableDeclaration> declarations = parseMoreVariableDeclaration();
+        String closingBracket = match(TokenType.OPERATOR).getAttribute();
+
+        return new Record(recordsName, rec_, openingBracket, declarations, closingBracket);
+    }
+
+    public ArrayList<Record> parseMoreRecord() throws Exception{
+        ArrayList<Record> records = new ArrayList<Record>();
+        while(currentSymbol.getTokenType() == TokenType.RECORD_NAME){
+            records.add(parseRecord());
+        }
+        return records;
+    }
+
+
+    public ArrayList<AssignementStatement> parseMoreGlobalVariables() throws Exception {
+        ArrayList<AssignementStatement> globalVariables = new ArrayList<AssignementStatement>();
+        while(currentSymbol.getTokenType() == TokenType.IDENTIFIER){
+            globalVariables.add(parseAssignementStatement());
+        }
+        return globalVariables;
+    }
+
+
     public File parseFile () throws Exception {
-        //TODO : loop on each statement of the file
+
         ArrayList<Statement> statements = new ArrayList<Statement>();
         while (currentSymbol.getTokenType() != TokenType.EOF){
             statements.addAll(parseStatements());
         }
         return new File(statements, tabIndex);
+    }
+
+
+    public Ast parseAst() throws Exception {
+        ArrayList<Constant> constants = parseMoreConstant();
+        ArrayList<Record> records = parseMoreRecord();
+        ArrayList<AssignementStatement> globalVariables = parseMoreGlobalVariables();
+
+        return new Ast(constants, records, globalVariables);
     }
 
 

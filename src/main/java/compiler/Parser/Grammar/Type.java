@@ -4,13 +4,11 @@ package compiler.Parser.Grammar;
 public class Type {
 
     SimpleType simpleType;
-    ArrayPart arrayPart;
     int tabIndex;
 
 
-    public Type(SimpleType simpleType, ArrayPart arrayPart, int tabIndex) {
+    public Type(SimpleType simpleType, int tabIndex) {
         this.simpleType = simpleType;
-        this.arrayPart = arrayPart;
         this.tabIndex = tabIndex;
 
     }
@@ -18,7 +16,7 @@ public class Type {
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
-        return t+simpleType.toString()  + arrayPart.toString();
+        return t+simpleType.toString();
     }
 }
 

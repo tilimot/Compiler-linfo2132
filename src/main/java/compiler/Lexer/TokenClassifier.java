@@ -75,6 +75,34 @@ public class TokenClassifier {
         return true;
     }
 
+    public static boolean isRecordName(String token) {
+        Reader input = new StringReader(token);
+        int token_length = token.length();
+        int current_position = advance(input);
+        char current_char = (char) current_position;
+        int state = 0;
+
+        for(int i = 0; i<token_length;i++){
+            if(state ==0) {
+                if (Character.isUpperCase(current_char)) {
+                    current_position = advance(input);
+                    state =1;
+                } else {
+                    return false;
+                }
+            }
+            else{
+                if (Character.isLetterOrDigit(current_char) || current_char == '_') {
+                    current_position = advance(input);
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public static boolean isNaturalNumber(String token) {
         Reader input = new StringReader(token);
         int token_length = token.length();
@@ -132,6 +160,7 @@ public class TokenClassifier {
         if (isKeyword(token)) return TokenType.KEYWORD;
         if (isBoolean(token)) return TokenType.BOOLEAN;
         if(isBaseType(token)) return TokenType.BASE_TYPE;
+        if(isRecordName(token)) return TokenType.RECORD_NAME;
         if (isIdentifier(token)) return TokenType.IDENTIFIER;
         if (isNaturalNumber(token)) return TokenType.NATURAL_NUMBER;
         if (isFloatNumber(token)) return TokenType.FLOAT_NUMBER;

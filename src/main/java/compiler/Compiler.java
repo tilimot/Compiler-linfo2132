@@ -5,6 +5,7 @@ package compiler;
 
 import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
+import compiler.Parser.Grammar.Ast;
 import compiler.Parser.Grammar.File;
 import compiler.Parser.Parser;
 
@@ -29,8 +30,8 @@ public class Compiler {
                 Lexer lexer = new Lexer(readerFile);
 
                 Parser parser = new Parser(lexer);
-                File file = parser.parseFile();
-                System.out.println(file);
+                Ast ast = parser.parseAst();
+                System.out.println(ast);
        }
     }
 }
