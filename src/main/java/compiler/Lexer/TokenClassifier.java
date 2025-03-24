@@ -25,7 +25,7 @@ public class TokenClassifier {
 
     private static final Set<String> OPERATORS = Set.of(
             "=", "+", "-", "*", "/", "%", "==", "!=", "<", ">", "<=", ">=", "&&", "||",
-            "(", ")", "{", "}", "[", "]", ".", ",",";"
+            "(", ")", "{", "}", "[", "]", ".", ","
     );
     private static final Set<String> BASE_TYPE = Set.of(
             "int","float","bool","string"
@@ -117,6 +117,10 @@ public class TokenClassifier {
         return OPERATORS.contains(token);
     }
 
+    public static boolean isEOL(String token) {
+        return token.equals(";");
+    }
+
     // Détermine le type d’un token
     public static TokenType classifyToken(String token) {
         if (isComment(token)) return TokenType.COMMENT;
@@ -127,6 +131,7 @@ public class TokenClassifier {
         if (isNaturalNumber(token)) return TokenType.NATURAL_NUMBER;
         if (isFloatNumber(token)) return TokenType.FLOAT_NUMBER;
         if (isString(token)) return TokenType.STRINGS;
+        if (isEOL(token)) return TokenType.EOL;
         if (isOperator(token)) return TokenType.OPERATOR;
         return null; // Si aucun type ne correspond
     }

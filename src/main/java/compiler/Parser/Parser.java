@@ -115,15 +115,6 @@ public class Parser {
         return parameters;
     }
 
-    public MethodCall parseMethodCall() throws Exception {
-        Symbol identifier = match(TokenType.IDENTIFIER);
-        Symbol opening_parenthesis = match(TokenType.OPERATOR);
-        ArrayList<Param> params = parseParams();
-        Symbol closing_parenthesis = match(TokenType.OPERATOR);
-
-        return new MethodCall((String) identifier.getAttribute(), (String) opening_parenthesis.getAttribute(), params, (String) closing_parenthesis.getAttribute());
-    }
-
     public Expression parseExpression() throws Exception {
         Symbol value;
         if (currentSymbol.getTokenType() == TokenType.NATURAL_NUMBER) {
@@ -236,6 +227,209 @@ public class Parser {
 
         return expressions;
     }
+
+    public MethodCall parseMethodCall() throws Exception {
+        /*
+        * GrammarRule: MethodCall -> identifier(Params) ;
+        */
+
+        Symbol identifier = match(TokenType.IDENTIFIER);
+        Symbol opening_parenthesis = match(TokenType.OPERATOR);
+        ArrayList<Param> params = parseParams();
+        Symbol closing_parenthesis = match(TokenType.OPERATOR);
+        Symbol eol = match(TokenType.EOL);
+
+        return new MethodCall((String) identifier.getAttribute(), (String) opening_parenthesis.getAttribute(), params, (String) closing_parenthesis.getAttribute(), (String) eol.getAttribute());
+    }
+
+    public VariableDeclaration parseVariableDeclaration() throws Exception {
+        /*
+         * GrammarRule: VariableDeclaration -> identifier  Type ;
+         */
+
+        String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
+        Type type = parseType();
+        String eol = (String) match(TokenType.EOL).getAttribute();
+
+        return new VariableDeclaration(identifier,type,eol);
+    }
+
+    public ReturnStatement parseReturnStatement() throws Exception {
+        /*
+         * GrammarRule: ReturnStatement -> return Expressions ;
+         */
+
+        String return_ = (String) match(TokenType.OPERATOR).getAttribute();
+        ArrayList<Expression> expressions = parseExpressions();
+        String eol = (String) match(TokenType.EOL).getAttribute();
+
+        return new ReturnStatement(return_,expressions,eol);
+    }
+
+
+    public ForStatement parseForStatement() throws Exception {
+        /*
+         * GrammarRule: ForStatement -> for (identifier, natural_Number, natural_Number, natural_Number ) Block
+         */
+
+        //TODO Deeply need to implem BLOCK block; !!!!
+        String for_ = (String) match(TokenType.KEYWORD).getAttribute();
+        String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
+        String coma1 = (String) match(TokenType.OPERATOR).getAttribute();
+        String beginValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String coma2 = (String) match(TokenType.OPERATOR).getAttribute();
+        String endValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String coma3 = (String) match(TokenType.OPERATOR).getAttribute();
+        String stepValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+
+        return new ForStatement(for_, opening_parenthesis, identifier, coma1, beginValue, coma2, endValue, coma3, stepValue, closing_parenthesis);
+    }
+
+
+    public WhileStatement parseWhileStatement() throws Exception {
+        /*
+         * GrammarRule: WhileStatement -> while ( Expressions) Block
+         */
+
+        //TODO Deeply need to implem BLOCK block; !!!!
+        //TODO develop more specific operator in Lexer !!
+        String while_ = (String) match(TokenType.KEYWORD).getAttribute();
+        String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        ArrayList<Expression> expressions =  parseMoreExpressions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
+        String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+
+        return new WhileStatement(while_,opening_parenthesis,expressions,closing_parenthesis);
+    }
+
+
+    public IfStatement parseIfStatement() throws Exception {
+        /*
+         * GrammarRule: IfStatement -> if ( Expressions) Block
+         */
+
+        //TODO Deeply need to implem BLOCK block; !!!!
+        //TODO develop more specific operator in Lexer !!
+        String if_ = (String) match(TokenType.KEYWORD).getAttribute();
+        String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        ArrayList<Expression> expressions =  parseMoreExpressions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
+        String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+
+        return new IfStatement(if_,opening_parenthesis,expressions,closing_parenthesis);
+    }
+
+
+    public DeallocationStatement parseDeallocationStatement() throws Exception {
+        /*
+         * GrammarRule: Deallocation -> free identifier ;
+         */
+
+        String free_ = (String) match(TokenType.KEYWORD).getAttribute();;
+        String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
+        String eol = (String) match(TokenType.EOL).getAttribute();
+
+        return new DeallocationStatement(free_, identifier, eol);
+    }
+
+
+    public AssignementStatement parseAssignementStatement() throws Exception{
+        /*
+         * GrammarRule: Assignement  final Assignement | identifier Type = Expression ;
+         */
+        //TODO manage when variable is assigned a method
+
+        if(currentSymbol.getAttribute() == "final"){
+            match(TokenType.KEYWORD); // Currently not appearinf in the AST
+        }
+        String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
+        Type type = parseType();
+        String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
+        ArrayList<Expression> expressions = parseExpressions();
+        String eol = (String) match(TokenType.EOL).getAttribute();
+
+        return new AssignementStatement(identifier, type, equalOperator, expressions, eol);
+
+    }
+
+
+    public Statement parseCallOrDeclarationOrAssignement (String identifier) throws Exception{
+       //TODO implem le cas ou c'est la définition d'un fonciton
+        Statement statement;
+
+        //MethodCall
+        if (currentSymbol.getAttribute() == "("){
+            String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+            ArrayList<Param> params = parseParams();
+            String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+            String eol = (String) match(TokenType.EOL).getAttribute();
+            statement = new MethodCall(identifier,opening_parenthesis, params, closing_parenthesis, eol);
+        }
+        else {
+            Type type = parseType();
+
+            // Declaration
+            if (currentSymbol.getTokenType() == TokenType.EOL) {
+                String eol = (String) match(TokenType.EOL).getAttribute();
+                statement = new VariableDeclaration(identifier, type, eol);
+            }
+
+            // Assignement
+            else {
+                String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
+                ArrayList<Expression> expressions = parseExpressions();
+                String eol = (String) match(TokenType.EOL).getAttribute();
+                statement = new AssignementStatement(identifier, type, equalOperator, expressions, eol);
+            }
+        }
+
+
+        return statement;
+    }
+
+
+    public Statement parseStatement() throws Exception{
+        Statement statement;
+
+        if(currentSymbol.getAttribute() == "if"){
+            statement = parseIfStatement();
+        }
+        else if (currentSymbol.getAttribute() == "while") {
+            statement = parseWhileStatement();
+        }
+        else if (currentSymbol.getAttribute() == "for") {
+            statement = parseForStatement();
+        }
+        else if (currentSymbol.getAttribute() == "return") {
+            statement = parseReturnStatement();
+        }
+        else if (currentSymbol.getAttribute() == "free") {
+            statement = parseDeallocationStatement();
+        }
+        else{
+            String identifier = match(TokenType.IDENTIFIER).getAttribute();
+            statement = parseCallOrDeclarationOrAssignement(identifier);
+        }
+        return statement;
+    }
+
+
+    public ArrayList<Statement> parseStatements() throws Exception {
+        ArrayList<Statement> statements = new ArrayList<Statement>();
+        while (currentSymbol.getAttribute() != "}"){
+            statements.add(parseStatement());
+        }
+        return statements;
+    }
+
+    public Block parseBlock() throws Exception {
+        String leftBracket = match(TokenType.OPERATOR).getAttribute();
+        ArrayList<Statement> statements = parseStatements();
+        String rightBracket = match(TokenType.OPERATOR).getAttribute();
+
+        return new Block(leftBracket, statements, rightBracket);
+    }
+
 
 }
 
