@@ -56,7 +56,7 @@ public class TokenClassifier {
 
         for(int i = 0; i<token_length;i++){
             if(state ==0) {
-                if (Character.isLetter(current_char) || current_char == '_') {
+                if ((Character.isLetter(current_char) && current_char != '@'  )|| current_char == '_') {
                     current_position = advance(input);
                     state =1;
                 } else {
@@ -127,6 +127,7 @@ public class TokenClassifier {
 
     // Détermine le type d’un token
     public static TokenType classifyToken(String token) {
+        if (isEOF(token)) return TokenType.EOF;
         if (isComment(token)) return TokenType.COMMENT;
         if (isKeyword(token)) return TokenType.KEYWORD;
         if (isBoolean(token)) return TokenType.BOOLEAN;
@@ -137,7 +138,7 @@ public class TokenClassifier {
         if (isString(token)) return TokenType.STRINGS;
         if (isEOL(token)) return TokenType.EOL;
         if (isOperator(token)) return TokenType.OPERATOR;
-        if (isEOF(token)) return TokenType.EOF;
+
         return null; // Si aucun type ne correspond
     }
 }

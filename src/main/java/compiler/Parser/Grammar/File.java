@@ -8,4 +8,15 @@ public class File {
     public File (ArrayList<Statement> statements) {
         this.statements = statements;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Statement statement : statements) {
+            sb.append(statement.toString()).append("\n");
+        }
+        return sb + "\n";
+    }
+
+
 }

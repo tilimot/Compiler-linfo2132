@@ -10,6 +10,6 @@ public class ArrayPart {
 
     @Override
     public String toString() {
-        return super.toString();
+        return leftBracket + "\n" + rigthBracket + "\n";
     }
 }

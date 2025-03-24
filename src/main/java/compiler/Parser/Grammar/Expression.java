@@ -8,4 +8,9 @@ public class Expression {
     public Expression(String value){
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return value + "\n";
+    }
 }

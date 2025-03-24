@@ -37,6 +37,7 @@ public class Parser {
 
 
     public Symbol match(TokenType token) throws Exception {
+        System.out.println("Match: " + token  + " " + this.currentSymbol.getTokenType());
         if (this.currentSymbol.getTokenType() != token) {
             throw new Exception("No match found");
         } else {
@@ -391,6 +392,8 @@ public class Parser {
     public Statement parseStatement() throws Exception{
         Statement statement;
 
+        System.out.println("CurrentSymbol: " + currentSymbol.getAttribute());
+
         if(currentSymbol.getAttribute().equals("if")){
             statement = parseIfStatement();
         }
@@ -406,9 +409,11 @@ public class Parser {
         else if (currentSymbol.getAttribute().equals("free")){
             statement = parseDeallocationStatement();
         }
-        else if (currentSymbol.getAttribute() == "fun") {
+        else if (currentSymbol.getAttribute().equals("fun")) {
             statement = parseFunctionStatement();
         }
+
+
         else{
             String identifier = match(TokenType.IDENTIFIER).getAttribute();
             statement = parseCallOrDeclarationOrAssignement(identifier);
@@ -418,7 +423,9 @@ public class Parser {
 
     public ArrayList<Statement> parseStatements() throws Exception {
         ArrayList<Statement> statements = new ArrayList<Statement>();
-        while (currentSymbol.getAttribute() != "}"){
+        while (!currentSymbol.getAttribute().equals(";")){
+            if (currentSymbol.getAttribute().equals("@eof"))
+                return statements;
             statements.add(parseStatement());
         }
         return statements;

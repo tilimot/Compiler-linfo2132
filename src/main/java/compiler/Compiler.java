@@ -30,7 +30,7 @@ public class Compiler {
 
                 Parser parser = new Parser(lexer);
                 File file = parser.parseFile();
-                //System.out.println(file)
+                System.out.println(file);
        }
     }
 }
