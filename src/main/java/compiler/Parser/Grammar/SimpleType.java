@@ -14,6 +14,6 @@ public class SimpleType {
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
-        return t +value + "\n";
+        return t +value;
     }
 }

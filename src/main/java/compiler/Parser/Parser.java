@@ -13,7 +13,7 @@ public class Parser {
     ArrayList<Symbol> allSymbols = new ArrayList<>();
     public Symbol currentSymbol;
     public Symbol root;
-    public int tabIndex = 1;
+    public int tabIndex = 2;
 
     public Parser(Lexer lexer) {
         while (lexer.hasNextSymbol()) {
@@ -48,8 +48,8 @@ public class Parser {
         }
     }
 
-    public Symbol getAST(){
-        return root;
+    public File getAST() throws Exception {
+        return parseFile();
     }
 
 

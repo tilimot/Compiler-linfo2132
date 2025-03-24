@@ -22,10 +22,13 @@ public class MethodCall extends Statement {
 
     @Override
     public String toString() {
+        String t = "\t".repeat(tabIndex);
+        String tNext = "\t".repeat(tabIndex+1);
         StringBuilder sb = new StringBuilder();
         for (Param param : parameters) {
-            sb.append(param.toString()).append("\t");
+            param.tabIndex = tabIndex+1;
+            sb.append(param.toString());
         }
-        return "\n".repeat(tabIndex) +identifier + "\n" + opening_parenthesis + "\n" + sb.toString() + "\n" + closing_parenthesis + "\n" + eol + "\n";
+        return t+"METD_CALL : " + "\n" + tNext + identifier + "\n" + tNext + opening_parenthesis + "\n" + tNext + sb + "\n" + tNext + closing_parenthesis + "\n" + tNext + eol + "\n";
     }
 }

@@ -15,6 +15,9 @@ public class Param {
 
     @Override
     public String toString() {
-        return "\n".repeat(tabIndex) +type.toString() + "\t" +identifier + "\n";
+        String t = "\t".repeat(tabIndex);
+        String tNext = "\t".repeat(tabIndex+1);
+        type.tabIndex = tabIndex+1;
+        return t + "PARAM" + "\n" + type.toString() + "\n"+ tNext+ identifier + "\n";
     }
 }

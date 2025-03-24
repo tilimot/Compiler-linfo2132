@@ -15,10 +15,13 @@ public class File {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        String t = "\t".repeat(tabIndex);
+        String tNext = "\t".repeat(tabIndex+1);
         for (Statement statement : statements) {
-            sb.append(statement.toString()).append("\n");
+            statement.tabIndex = tabIndex+1;
+            sb.append(statement.toString());
         }
-        return "\n".repeat(tabIndex) +sb + "\n";
+        return t+"Root :"+ "\n" +sb + "\n";
     }
 
 
