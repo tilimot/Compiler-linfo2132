@@ -283,8 +283,9 @@ public class Parser {
         String coma3 = (String) match(TokenType.OPERATOR).getAttribute();
         String stepValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        Block block = parseBlock();
 
-        return new ForStatement(for_, opening_parenthesis, identifier, coma1, beginValue, coma2, endValue, coma3, stepValue, closing_parenthesis);
+        return new ForStatement(for_, opening_parenthesis, identifier, coma1, beginValue, coma2, endValue, coma3, stepValue, closing_parenthesis, block);
     }
 
 
