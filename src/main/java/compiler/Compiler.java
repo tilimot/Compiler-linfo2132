@@ -28,7 +28,7 @@ public class Compiler {
                 Lexer lexer = new Lexer(readerFile);
 
                 Parser parser = new Parser(lexer);
-                //parser.match();
+                parser.parseBlock();
        }
     }
 }

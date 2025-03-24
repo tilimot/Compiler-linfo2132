@@ -27,7 +27,7 @@ public class AssignementStatement extends Statement {
             expressionsStr.append(expression.toString()).append(" ");
         }
 
-        return identifier + type.toString() + equalOperator + "(" + expressionsStr.toString().trim() + ")" + eol;
+        return identifier +  "\n" + type.toString() + "\t" + equalOperator + "\n" + "(" + "\n" + "\t" + expressionsStr.toString().trim() + "\n" + ")" + "\n" + eol + "\n";
     }
 }
 

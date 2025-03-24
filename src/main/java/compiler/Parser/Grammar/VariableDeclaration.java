@@ -12,4 +12,8 @@ public class VariableDeclaration extends Statement {
         this.type = type;
         this.eol= eol;
     }
+
+    public String toString() {
+        return identifier + "\n" + type.toString() + "\t" + eol + "\n";
+    }
 }

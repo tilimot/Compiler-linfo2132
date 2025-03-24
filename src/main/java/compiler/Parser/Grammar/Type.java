@@ -11,5 +11,9 @@ public class Type {
         this.arrayPart = arrayPart;
     }
 
+    @Override
+    public String toString() {
+        return simpleType.toString() + "\t" + arrayPart.toString() + "\t";
+    }
 }
 

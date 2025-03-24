@@ -12,4 +12,13 @@ public class ReturnStatement extends Statement{
         this.expressions = expressions;
         this.eol = eol;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Expression expression : expressions) {
+            sb.append(expression.toString()).append("\t");
+        }
+        return return_ + "\n" + sb + "\n" + eol + "\n";
+    }
 }

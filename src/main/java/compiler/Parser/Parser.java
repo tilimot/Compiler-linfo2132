@@ -283,8 +283,9 @@ public class Parser {
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions =  parseMoreExpressions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        Block block = parseBlock();
 
-        return new WhileStatement(while_,opening_parenthesis,expressions,closing_parenthesis);
+        return new WhileStatement(while_,opening_parenthesis,expressions,closing_parenthesis, block);
     }
 
 
@@ -299,8 +300,9 @@ public class Parser {
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions =  parseMoreExpressions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        Block block = parseBlock();
 
-        return new IfStatement(if_,opening_parenthesis,expressions,closing_parenthesis);
+        return new IfStatement(if_,opening_parenthesis,expressions,closing_parenthesis, block);
     }
 
 
