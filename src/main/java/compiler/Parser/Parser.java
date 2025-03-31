@@ -503,13 +503,24 @@ public class Parser {
         return new File(statements, tabIndex);
     }
 
+    public ArrayList<FunctionStatement> parseFunctionInit() throws Exception {
+        ArrayList<FunctionStatement> functions = new ArrayList<FunctionStatement>();
+
+        while(currentSymbol.getTokenType() != TokenType.EOF){
+            functions.add(parseFunctionStatement());
+        }
+
+        return functions;
+    }
+
 
     public Ast parseAst() throws Exception {
         ArrayList<Constant> constants = parseMoreConstant();
         ArrayList<Record> records = parseMoreRecord();
         ArrayList<AssignementStatement> globalVariables = parseMoreGlobalVariables();
+        ArrayList<FunctionStatement>  functions = parseFunctionInit();
 
-        return new Ast(constants, records, globalVariables);
+        return new Ast(constants, records, globalVariables, functions);
     }
 
 
