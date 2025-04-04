@@ -4,16 +4,20 @@ import java.util.ArrayList;
 
 public class AssignementStatement extends Statement {
     String identifier;
-    Type type;
+    SimpleType type;
+    Boolean arrayAccesBracket;
+    Boolean recordAttribute;
     String equalOperator;
     ArrayList<Expression> expressions;
     String eol;
 
 
-    public AssignementStatement(String identifier, Type type, String  equalOperator, ArrayList<Expression> expressions, String eol, int tabIndex) {
+    public AssignementStatement(String identifier, SimpleType type, Boolean arrayAccesBracket, Boolean recordAttribute, String  equalOperator, ArrayList<Expression> expressions, String eol, int tabIndex) {
         super(tabIndex);
         this.identifier = identifier;
         this.type = type;
+        this.arrayAccesBracket=arrayAccesBracket;
+        this.recordAttribute=recordAttribute;
         this.equalOperator = equalOperator;
         this.expressions = expressions;
         this.eol = eol;

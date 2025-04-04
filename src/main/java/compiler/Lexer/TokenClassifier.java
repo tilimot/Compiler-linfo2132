@@ -31,6 +31,8 @@ public class TokenClassifier {
             "int","float","bool","string"
     );
 
+    public static boolean isVoidType(String token) { return token.equals("void");}
+
     public static boolean isComment(String token) {
         return token.startsWith("$");
     }
@@ -161,6 +163,7 @@ public class TokenClassifier {
         if (isBoolean(token)) return TokenType.BOOLEAN;
         if(isBaseType(token)) return TokenType.BASE_TYPE;
         if(isRecordName(token)) return TokenType.RECORD_NAME;
+        if(isVoidType(token)) return TokenType.VOID_TYPE;
         if (isIdentifier(token)) return TokenType.IDENTIFIER;
         if (isNaturalNumber(token)) return TokenType.NATURAL_NUMBER;
         if (isFloatNumber(token)) return TokenType.FLOAT_NUMBER;

@@ -1,11 +1,11 @@
 package compiler.Parser.Grammar;
 
-public class ArrayPart {
+public class ArrayDeclarationBracket {
     String leftBracket;
     String rigthBracket;
     int tabIndex;
 
-    public ArrayPart(String leftbracket, String rigthBracket, int tabIndex){
+    public ArrayDeclarationBracket(String leftbracket, String rigthBracket, int tabIndex){
         this.leftBracket = leftbracket;
         this.rigthBracket = rigthBracket;
         this.tabIndex = tabIndex;

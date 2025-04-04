@@ -5,8 +5,10 @@ package compiler;
 
 import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
+import compiler.Parser.Grammar.AssignementStatement;
 import compiler.Parser.Grammar.Ast;
 import compiler.Parser.Grammar.File;
+import compiler.Parser.Grammar.VariableDeclaration;
 import compiler.Parser.Parser;
 
 import java.io.Reader;
@@ -25,13 +27,14 @@ public class Compiler {
        }
 
        if (args.length == 2 && args[0].equals("-parser")){
-                String filepath = args[1];
-                Reader readerFile = FileToReader.getReaderFromFile(filepath);
-                Lexer lexer = new Lexer(readerFile);
+            String filepath = args[1];
+            Reader readerFile = FileToReader.getReaderFromFile(filepath);
+            Lexer lexer = new Lexer(readerFile);
 
-                Parser parser = new Parser(lexer);
-                Ast ast = parser.parseAst();
-                System.out.println(ast);
+            Parser parser = new Parser(lexer);
+            AssignementStatement vardec = parser.parseAssignementStatement();
+            //Ast ast = parser.parseAst();
+            System.out.println(vardec);
        }
     }
 }

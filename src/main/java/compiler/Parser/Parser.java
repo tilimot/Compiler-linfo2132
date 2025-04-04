@@ -59,25 +59,49 @@ public class Parser {
 
         if (currentSymbol.getTokenType() == TokenType.BASE_TYPE) {
             value = match(TokenType.BASE_TYPE);
-        } else {
+        }
+        else if (currentSymbol.getTokenType() == TokenType.VOID_TYPE){
+            value = match(TokenType.VOID_TYPE);
+        }
+        else if (currentSymbol.getTokenType() == TokenType.RECORD_NAME) {
+            value = match(TokenType.RECORD_NAME);
+        }
+        else{
             value = match(TokenType.IDENTIFIER);
         }
         return new SimpleType((String) value.getAttribute(),tabIndex );
     }
 
-    public ArrayPart parseArrayPart() throws Exception {
+    public RecordAttribute parseRecordAttribute() throws Exception {
+        Symbol dot = match(TokenType.OPERATOR);
+        Symbol attribute = match(TokenType.IDENTIFIER);
+        return  new RecordAttribute(dot.getAttribute(), attribute.getAttribute());
+    }
+
+    public ArrayAccesBracket parseArrayAccessBracket() throws  Exception {
+        Symbol left_bracket = match(TokenType.OPERATOR);
+        Symbol integerValue = match(TokenType.NATURAL_NUMBER);
+        Symbol right_bracket = match(TokenType.OPERATOR);
+        return new ArrayAccesBracket(left_bracket.getAttribute(), integerValue.getAttribute(), right_bracket.getAttribute());
+    }
+
+    public ArrayDeclarationBracket parseArrayDeclarationBracket() throws Exception {
         //TODO need to implement TokenType.OpenParenthesis / .ClosingParenthesis / .OpenBracket / Closing.Bracket
 
         Symbol left_bracket = match(TokenType.OPERATOR);
         Symbol right_bracket = match(TokenType.OPERATOR);
-        return new ArrayPart((String) left_bracket.getAttribute(), (String) right_bracket.getAttribute(), tabIndex);
+        return new ArrayDeclarationBracket((String) left_bracket.getAttribute(), (String) right_bracket.getAttribute(), tabIndex);
     }
 
     public Type parseType() throws Exception {
-        //TODO ArrayPart is currently mandatory and should be optional
+        boolean isArray=false;
         SimpleType simpleType = parseSimpleType();
+        if(currentSymbol.getAttribute() == "["){
+            isArray = true;
+            parseArrayDeclarationBracket();
+        }
 
-        return new Type(simpleType,tabIndex );
+        return new Type(simpleType,isArray,tabIndex );
     }
 
     public Param parseParam() throws Exception {
@@ -108,8 +132,11 @@ public class Parser {
         } else if(currentSymbol.getTokenType() == TokenType.STRINGS){
             value = match(TokenType.STRINGS);
         }
-        else {
+        else if (currentSymbol.getTokenType() == TokenType.BOOLEAN){
             value = match(TokenType.BOOLEAN);
+        }
+        else{
+            value = match(TokenType.IDENTIFIER);
         }
         return new Expression((String) value.getAttribute(),tabIndex );
     }
@@ -349,20 +376,32 @@ public class Parser {
          * GrammarRule: Assignement  identifier Type = Expression ;
          */
         //TODO manage when variable is assigned a method
+        Boolean isArrayAccessBracket=false;
+        Boolean isRecordAttribute=false;
 
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
-        Type type = parseType();
+
+        // It is a reccords attribute access --> x.a= ...
+        if (currentSymbol.getAttribute().equals(".")){
+            isRecordAttribute = true;
+            parseRecordAttribute();
+        }
+        else if () {
+
+        }
+
+
         String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions = parseExpressions();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new AssignementStatement(identifier, type, equalOperator, expressions, eol,tabIndex );
-
+        return new AssignementStatement(identifier, type,isArrayAccessBracket, isRecordAttribute ,equalOperator, expressions, eol,tabIndex );
     }
 
 
     public Statement parseCallOrDeclarationOrAssignement (String identifier) throws Exception{
        //TODO implem le cas ou c'est la définition d'un fonciton
+        //revoir l'utilisation de Assignement et Declaration avec les types
         Statement statement;
 
         //MethodCall
@@ -387,10 +426,10 @@ public class Parser {
                 String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
                 ArrayList<Expression> expressions = parseExpressions();
                 String eol = (String) match(TokenType.EOL).getAttribute();
-                statement = new AssignementStatement(identifier, type, equalOperator, expressions, eol,tabIndex );
+                statement = null;
+                //statement = new AssignementStatement(identifier, type, equalOperator, expressions, eol,tabIndex );
             }
         }
-
 
         return statement;
     }
@@ -520,7 +559,7 @@ public class Parser {
         ArrayList<AssignementStatement> globalVariables = parseMoreGlobalVariables();
         ArrayList<FunctionStatement>  functions = parseFunctionInit();
 
-        return new Ast(constants, records, globalVariables, functions);
+        return new Ast(constants,records,globalVariables, functions, tabIndex);
     }
 
 
