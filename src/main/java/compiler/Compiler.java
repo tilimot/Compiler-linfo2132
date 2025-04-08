@@ -9,6 +9,7 @@ import compiler.Parser.Grammar.*;
 import compiler.Parser.Parser;
 
 import java.io.Reader;
+import java.util.ArrayList;
 
 public class Compiler {
     public static void main(String[] args) throws Exception {
@@ -29,7 +30,7 @@ public class Compiler {
             Lexer lexer = new Lexer(readerFile);
 
             Parser parser = new Parser(lexer);
-            Expression vardec = parser.parseExpression();
+            ArrayList<Expression> vardec = parser.parseExpressions();
             //Ast ast = parser.parseAst();
             System.out.println(vardec);
        }

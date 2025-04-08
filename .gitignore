@@ -1,0 +1,28 @@
+# Ignorer tout
+*
+
+# Sauf les fichiers Java
+!*.java
+
+# Sauf aussi les sous-répertoires (sinon !*.java ne suffira pas)
+!*/
+
+# (Optionnel) ignorer les fichiers compilés
+*.class
+
+
+# (Optionnel) ignorer les fichiers système
+.DS_Store
+Thumbs.db
+
+# Gradle
+.gradle/
+build/
+
+# IntelliJ
+.idea/
+
+# Tests / outputs temporaires
+*.log
+*.tmp
+
