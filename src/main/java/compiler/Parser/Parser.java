@@ -386,9 +386,10 @@ public class Parser {
             isRecordAttribute = true;
             parseRecordAttribute();
         }
-        else if () {
-
-        }
+//        else if () {
+//
+//        }
+        SimpleType type = parseSimpleType();
 
 
         String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();

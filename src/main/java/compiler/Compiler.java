@@ -5,10 +5,7 @@ package compiler;
 
 import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
-import compiler.Parser.Grammar.AssignementStatement;
-import compiler.Parser.Grammar.Ast;
-import compiler.Parser.Grammar.File;
-import compiler.Parser.Grammar.VariableDeclaration;
+import compiler.Parser.Grammar.*;
 import compiler.Parser.Parser;
 
 import java.io.Reader;
@@ -32,7 +29,7 @@ public class Compiler {
             Lexer lexer = new Lexer(readerFile);
 
             Parser parser = new Parser(lexer);
-            AssignementStatement vardec = parser.parseAssignementStatement();
+            Expression vardec = parser.parseExpression();
             //Ast ast = parser.parseAst();
             System.out.println(vardec);
        }
