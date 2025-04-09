@@ -30,9 +30,10 @@ public class Compiler {
             Lexer lexer = new Lexer(readerFile);
 
             Parser parser = new Parser(lexer);
-            ArrayList<Expression> vardec = parser.parseExpressions();
+            ArrayList<Expression>  expr = parser.parseExpressions();
             //Ast ast = parser.parseAst();
-            System.out.println(vardec);
+            System.out.println(expr);
+
        }
     }
 }

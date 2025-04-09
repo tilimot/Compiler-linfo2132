@@ -144,18 +144,19 @@ public class Parser {
     public ArrayList<Expression> parseFactor() throws Exception {
         ArrayList<Expression> expressions = new ArrayList<Expression>();
         Expression openingParenthesis;
-        Expression expression;
+        ArrayList<Expression> inside_expressions = new ArrayList<Expression>();
         Expression closingParenthesis;
+        Expression expression;
 
         // Grammar rule:  Factor -> (Expressions) | Expression
         if (currentSymbol.getAttribute().equals("(")){
             openingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute(), tabIndex);
-            expression = parseExpression();
+            inside_expressions = parseExpressions();
             closingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute(), tabIndex);
 
             // Add to list
             expressions.add(openingParenthesis);
-            expressions.add(expression);
+            expressions.addAll(inside_expressions);
             expressions.add(closingParenthesis);
         }
         else{
