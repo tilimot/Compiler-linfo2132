@@ -7,6 +7,7 @@ import compiler.Parser.Grammar.*;
 import compiler.Parser.Grammar.Record;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Parser {
     private int currentIndex = 0;
@@ -104,20 +105,38 @@ public class Parser {
         return new Type(simpleType,isArray,tabIndex );
     }
 
-    public Param parseParam() throws Exception {
-        Type type = parseType();
-        Symbol identifier = match(TokenType.IDENTIFIER);
-        return new Param(type, (String) identifier.getAttribute(),tabIndex );
+    public Param parseParam() throws Exception{
+        ArrayList<Expression> expressions = parseExpressions();
+        return new Param(expressions);
     }
 
-    public ArrayList<Param> parseParams() throws Exception {
-        //TODO need to change TokenType.Operator with .ClosingPArenthesis
-        ArrayList<Param> parameters = new ArrayList<>();
-        if (currentSymbol.getAttribute() != ")") {
-            parameters.add(parseParam());
+    public ArrayList<Param> parseParams() throws Exception{
+        ArrayList<Param> params= new ArrayList<>();
+        if (!Objects.equals(currentSymbol.getAttribute(), ")")) {
+            params.add(parseParam());
             while (currentSymbol.getAttribute().equals(",")) {
                 match(TokenType.OPERATOR);
-                parameters.add(parseParam());
+                params.add(parseParam());
+            }
+        }
+        return params;
+    }
+
+
+    public FuncParam parseFuncParam() throws Exception {
+        Type type = parseType();
+        Symbol identifier = match(TokenType.IDENTIFIER);
+        return new FuncParam(type, (String) identifier.getAttribute(),tabIndex );
+    }
+
+    public ArrayList<FuncParam> parseFuncParams() throws Exception {
+        //TODO need to change TokenType.Operator with .ClosingPArenthesis
+        ArrayList<FuncParam> parameters = new ArrayList<>();
+        if (currentSymbol.getAttribute().equals(")")) {
+            parameters.add(parseFuncParam());
+            while (currentSymbol.getAttribute().equals(",")) {
+                match(TokenType.OPERATOR);
+                parameters.add(parseFuncParam());
             }
         }
         return parameters;
@@ -363,12 +382,12 @@ public class Parser {
         String identifier = match(TokenType.IDENTIFIER).getAttribute();
         String openParenthesis = match(TokenType.OPERATOR).getAttribute();
         Type type = parseType();
-        ArrayList<Param> params = parseParams();
+        ArrayList<FuncParam> funcParams = parseFuncParams();
         String closingParenthesis = match(TokenType.OPERATOR).getAttribute();
         Type return_type = parseType();
         Block block = parseBlock();
 
-        return new FunctionStatement(fun_, identifier, openParenthesis, type, params, closingParenthesis, return_type, block,tabIndex );
+        return new FunctionStatement(fun_, identifier, openParenthesis, type, funcParams, closingParenthesis, return_type, block,tabIndex );
     }
 
 
@@ -390,21 +409,23 @@ public class Parser {
 //        else if () {
 //
 //        }
-        SimpleType type = parseSimpleType();
+        Type type = parseType();
 
 
         String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions = parseExpressions();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new AssignementStatement(identifier, type,isArrayAccessBracket, isRecordAttribute ,equalOperator, expressions, eol,tabIndex );
+        return new AssignementStatement(identifier, type,equalOperator, expressions, eol,tabIndex );
     }
 
 
-    public Statement parseCallOrDeclarationOrAssignement (String identifier) throws Exception{
-       //TODO implem le cas ou c'est la définition d'un fonciton
+    public Statement parseCallOrDeclarationOrAssignment() throws Exception{
+       //TODO implem le cas ou c'est la définition d'un fonction
         //revoir l'utilisation de Assignement et Declaration avec les types
         Statement statement;
+
+        String identifier = match(TokenType.IDENTIFIER).getAttribute();
 
         //MethodCall
         if (currentSymbol.getAttribute().equals("(")){
@@ -423,13 +444,12 @@ public class Parser {
                 statement = new VariableDeclaration(identifier, type, eol,tabIndex );
             }
 
-            // Assignement
+            // Assignment
             else {
                 String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
                 ArrayList<Expression> expressions = parseExpressions();
                 String eol = (String) match(TokenType.EOL).getAttribute();
-                statement = null;
-                //statement = new AssignementStatement(identifier, type, equalOperator, expressions, eol,tabIndex );
+                statement = new AssignementStatement(identifier,type,equalOperator,expressions,eol,tabIndex);
             }
         }
 
@@ -463,8 +483,7 @@ public class Parser {
 
 
         else{
-            String identifier = match(TokenType.IDENTIFIER).getAttribute();
-            statement = parseCallOrDeclarationOrAssignement(identifier);
+            statement = parseCallOrDeclarationOrAssignment();
         }
         return statement;
     }

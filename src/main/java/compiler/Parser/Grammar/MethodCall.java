@@ -25,10 +25,11 @@ public class MethodCall extends Statement {
         String t = "\t".repeat(tabIndex);
         String tNext = "\t".repeat(tabIndex+1);
         StringBuilder sb = new StringBuilder();
+        /*
         for (Param param : parameters) {
             param.tabIndex = tabIndex+1;
             sb.append(param.toString());
-        }
+        }*/
         return t+"METD_CALL : " + "\n" + tNext + identifier + "\n" + tNext + opening_parenthesis + "\n" + tNext + sb + "\n" + tNext + closing_parenthesis + "\n" + tNext + eol + "\n";
     }
 }
