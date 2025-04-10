@@ -12,7 +12,7 @@ public class ReturnStatement extends Statement{
         super(tabIndex);
         this.return_ = return_;
         this.expressions = expressions;
-        this.eol = eol;
+        this.eol= eol;
 
     }
 
@@ -23,8 +23,8 @@ public class ReturnStatement extends Statement{
         String tNext = t + "\t";
         for (Expression expression : expressions) {
             expression.tabIndex = tabIndex + 1;
-            sb.append(expression.toString());
+            sb.append(expression);
         }
-        return t +"RETURN : " + "\n" +tNext + return_ + "\n" + sb  + tNext + eol + "\n";
+        return t +"RETURN : " + "\n" +tNext + return_ + "\n" + tNext + "EXPR : " + "\n" +  sb  + tNext + eol + "\n";
     }
 }

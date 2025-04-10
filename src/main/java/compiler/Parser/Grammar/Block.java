@@ -7,6 +7,7 @@ public class Block {
     ArrayList<Statement> statements;
     String rightBracket;
     int tabIndex;
+    String eol;
 
 
     public Block(String leftBracket, ArrayList<Statement> statements, String rightBracket, int tabIndex){
@@ -25,6 +26,6 @@ public class Block {
             statement.tabIndex = tabIndex+1;
             sb.append(statement.toString());
         }
-        return t+"BLOCK : "+"\n"+tNext +leftBracket + "\n"+tNext+ sb + "\n"+ tNext+ rightBracket+ "\n";
+        return t+"BLOCK : "+"\n"+tNext +leftBracket + "\n"+ sb + tNext+ rightBracket+ "\n";
     }
 }

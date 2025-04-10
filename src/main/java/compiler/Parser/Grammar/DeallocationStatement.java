@@ -10,7 +10,8 @@ public class DeallocationStatement extends Statement {
         super(tabIndex);
         this.free_ = free_;
         this.identifier = identifier;
-        this.eol = eol;
+        this.eol=eol;
+
 
     }
 

@@ -14,7 +14,7 @@ public class Parser {
     ArrayList<Symbol> allSymbols = new ArrayList<>();
     public Symbol currentSymbol;
     public Symbol root;
-    public int tabIndex = 2;
+    public int tabIndex = 0;
 
     public Parser(Lexer lexer) {
         while (lexer.hasNextSymbol()) {
@@ -248,6 +248,11 @@ public class Parser {
         return expressions;
     }
 
+    public ArrayList<Expression> parseConditions() throws Exception{
+        //TODO
+        return null;
+    }
+
     public ArrayList<Expression> parseExpressions() throws Exception {
         ArrayList<Expression> expressions = new ArrayList<Expression>();
 
@@ -299,11 +304,10 @@ public class Parser {
          * GrammarRule: ReturnStatement -> return Expressions ;
          */
 
-        String return_ = (String) match(TokenType.OPERATOR).getAttribute();
+        String return_ = (String) match(TokenType.KEYWORD).getAttribute();
         ArrayList<Expression> expressions = parseExpressions();
         String eol = (String) match(TokenType.EOL).getAttribute();
-
-        return new ReturnStatement(return_,expressions,eol, tabIndex);
+        return new ReturnStatement(return_,expressions,eol,tabIndex);
     }
 
 
@@ -486,6 +490,7 @@ public class Parser {
         return new AssignementStatement(leftside,equalOperator,rightSide,eol,tabIndex);
     }
 
+
     public Statement parseStatement() throws Exception{
         Statement statement;
 
@@ -510,7 +515,6 @@ public class Parser {
             statement = parseFunctionStatement();
         }
 
-
         else{
             statement = parseCallOrDeclarationOrAssignment();
         }
@@ -519,9 +523,7 @@ public class Parser {
 
     public ArrayList<Statement> parseStatements() throws Exception {
         ArrayList<Statement> statements = new ArrayList<Statement>();
-        while (!currentSymbol.getAttribute().equals(";")){
-            if (currentSymbol.getAttribute().equals("@eof"))
-                return statements;
+        while (!currentSymbol.getAttribute().equals("}")) {
             statements.add(parseStatement());
         }
         return statements;
@@ -532,7 +534,7 @@ public class Parser {
         ArrayList<Statement> statements = parseStatements();
         String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
-        return new Block(leftBracket, statements, rightBracket,tabIndex );
+        return new Block(leftBracket, statements, rightBracket,tabIndex);
     }
 
     public Constant parseConstant() throws Exception {
@@ -543,12 +545,12 @@ public class Parser {
         ArrayList<Expression> expressions = parseExpressions();
         String eol = match(TokenType.EOL).getAttribute();
 
-        return new Constant(final_,identifier,basetype,equalOperator,expressions,eol);
+        return new Constant(final_,identifier,basetype,equalOperator,expressions,eol,tabIndex);
     }
 
     public ArrayList<Constant> parseMoreConstant() throws Exception {
         ArrayList<Constant> constants = new ArrayList<>();
-        while (currentSymbol.getTokenType() == TokenType.KEYWORD){
+        while (currentSymbol.getAttribute().equals("final")){
             constants.add(parseConstant());
         }
         return constants;
@@ -562,7 +564,7 @@ public class Parser {
         ArrayList<VariableDeclaration> declarations = parseMoreVariableDeclaration();
         String closingBracket = match(TokenType.OPERATOR).getAttribute();
 
-        return new Record(recordsName, rec_, openingBracket, declarations, closingBracket);
+        return new Record(recordsName, rec_, openingBracket, declarations, closingBracket, tabIndex);
     }
 
     public ArrayList<Record> parseMoreRecord() throws Exception{

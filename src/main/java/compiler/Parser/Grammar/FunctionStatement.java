@@ -1,5 +1,7 @@
 package compiler.Parser.Grammar;
 
+import compiler.Parser.Parser;
+
 import java.util.ArrayList;
 
 public class FunctionStatement extends Statement {
