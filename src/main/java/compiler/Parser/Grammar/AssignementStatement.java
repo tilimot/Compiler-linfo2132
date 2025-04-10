@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class AssignementStatement extends Statement {
     String identifier;
-    SimpleType type;
+    Type type;
     Boolean arrayAccesBracket;
     Boolean recordAttribute;
     String equalOperator;
@@ -12,7 +12,7 @@ public class AssignementStatement extends Statement {
     String eol;
 
 
-    public AssignementStatement(String identifier, SimpleType type, Boolean arrayAccesBracket, Boolean recordAttribute, String  equalOperator, ArrayList<Expression> expressions, String eol, int tabIndex) {
+    public AssignementStatement(String identifier, Type type, Boolean arrayAccesBracket, Boolean recordAttribute, String  equalOperator, ArrayList<Expression> expressions, String eol, int tabIndex) {
         super(tabIndex);
         this.identifier = identifier;
         this.type = type;
@@ -33,10 +33,10 @@ public class AssignementStatement extends Statement {
         StringBuilder expressionsStr = new StringBuilder();
         for (Expression expression : expressions) {
             expression.tabIndex = tabIndex + 1;
-            expressionsStr.append(expression.toString());
+            expressionsStr.append(expression);
         }
 
-        return t +"ASSIGN : " + "\n" +tNext + identifier +  "\n" + type.toString() +tNext+ equalOperator + "\n"+ expressionsStr +tNext + eol+ "\n";
+        return t +"ASSIGN : " + "\n" +tNext + identifier +  "\n" + type + "\n" +tNext+ equalOperator + "\n"+ tNext + "EXPR :" + "\n" +expressionsStr +tNext + eol+ "\n";
     }
 }
 

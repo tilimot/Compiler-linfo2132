@@ -1,16 +1,12 @@
 package compiler.Parser.Grammar;
 
-
 public class Type {
-
-    SimpleType simpleType;
-    boolean isArray;
+    public String value;
     int tabIndex;
 
 
-    public Type(SimpleType simpleType, boolean isArray, int tabIndex) {
-        this.simpleType = simpleType;
-        this.isArray=isArray;
+    public Type(String value, int tabIndex){
+        this.value = value;
         this.tabIndex = tabIndex;
 
     }
@@ -18,7 +14,6 @@ public class Type {
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
-        return t+simpleType.toString()+ (isArray ? "[]" : "");
+        return t +value;
     }
 }
-

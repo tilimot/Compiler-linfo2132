@@ -9,11 +9,12 @@ import compiler.Parser.Grammar.Record;
 import java.util.ArrayList;
 
 public class Parser {
+    public record TypeSymbolPair(Type type, Symbol symbol) {}
     private int currentIndex = 0;
     ArrayList<Symbol> allSymbols = new ArrayList<>();
     public Symbol currentSymbol;
     public Symbol root;
-    public int tabIndex = 2;
+    public int tabIndex = 0;
 
     public Parser(Lexer lexer) {
         while (lexer.hasNextSymbol()) {
@@ -40,7 +41,7 @@ public class Parser {
     public Symbol match(TokenType token) throws Exception {
         System.out.println("Match: " + token  + " " + this.currentSymbol.getTokenType());
         if (this.currentSymbol.getTokenType() != token) {
-            throw new Exception("No match found");
+            throw new Exception("No match found. Given Token: "+token+"   Current Symbol: "+this.currentSymbol.getTokenType()+ "  value: "+this.currentSymbol.getAttribute());
         } else {
             Symbol matchingSymbol = this.currentSymbol;
             this.advance();
@@ -53,7 +54,7 @@ public class Parser {
     }
 
 
-    public SimpleType parseSimpleType() throws Exception {
+    public TypeSymbolPair parseType() throws Exception {
         // TODO manage voidType
         Symbol value;
 
@@ -69,7 +70,7 @@ public class Parser {
         else{
             value = match(TokenType.IDENTIFIER);
         }
-        return new SimpleType((String) value.getAttribute(),tabIndex );
+        return new TypeSymbolPair(new Type((String) value.getAttribute(),tabIndex) , value);
     }
 
     public RecordAttribute parseRecordAttribute() throws Exception {
@@ -93,33 +94,31 @@ public class Parser {
         return new ArrayDeclarationBracket((String) left_bracket.getAttribute(), (String) right_bracket.getAttribute(), tabIndex);
     }
 
-    public Type parseType() throws Exception {
-        boolean isArray=false;
-        SimpleType simpleType = parseSimpleType();
-        if(currentSymbol.getAttribute() == "["){
-            isArray = true;
-            parseArrayDeclarationBracket();
-        }
 
-        return new Type(simpleType,isArray,tabIndex );
-    }
 
     public Param parseParam() throws Exception {
-        Type type = parseType();
-        Symbol identifier = match(TokenType.IDENTIFIER);
-        return new Param(type, (String) identifier.getAttribute(),tabIndex );
+
+        TypeSymbolPair typeSymbolPair = parseType();
+
+        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        System.out.println("Type : "+ typeSymbolPair.type.value);
+        System.out.println("Identifier : "+ identifier);
+
+        return new Param(new Type(typeSymbolPair.symbol.getAttribute(),tabIndex), identifier,tabIndex);
     }
 
     public ArrayList<Param> parseParams() throws Exception {
         //TODO need to change TokenType.Operator with .ClosingPArenthesis
         ArrayList<Param> parameters = new ArrayList<>();
-        if (currentSymbol.getAttribute() != ")") {
+        if (!currentSymbol.getAttribute().equals(")")) {
+            System.out.println("CurrentSymbol: " + currentSymbol.getAttribute());
             parameters.add(parseParam());
             while (currentSymbol.getAttribute().equals(",")) {
                 match(TokenType.OPERATOR);
                 parameters.add(parseParam());
             }
         }
+
         return parameters;
     }
 
@@ -229,6 +228,11 @@ public class Parser {
         return expressions;
     }
 
+    public ArrayList<Expression> parseConditions() throws Exception{
+        //TODO
+        return null;
+    }
+
     public ArrayList<Expression> parseExpressions() throws Exception {
         ArrayList<Expression> expressions = new ArrayList<Expression>();
 
@@ -259,10 +263,10 @@ public class Parser {
          */
 
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
-        Type type = parseType();
+        TypeSymbolPair type = parseType();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new VariableDeclaration(identifier,type,eol,tabIndex );
+        return new VariableDeclaration(identifier, type.type(),eol,tabIndex );
     }
 
     public ArrayList<VariableDeclaration> parseMoreVariableDeclaration() throws Exception{
@@ -280,11 +284,9 @@ public class Parser {
          * GrammarRule: ReturnStatement -> return Expressions ;
          */
 
-        String return_ = (String) match(TokenType.OPERATOR).getAttribute();
+        String return_ = (String) match(TokenType.KEYWORD).getAttribute();
         ArrayList<Expression> expressions = parseExpressions();
-        String eol = (String) match(TokenType.EOL).getAttribute();
-
-        return new ReturnStatement(return_,expressions,eol, tabIndex);
+        return new ReturnStatement(return_,expressions,tabIndex);
     }
 
 
@@ -351,9 +353,9 @@ public class Parser {
 
         String free_ = (String) match(TokenType.KEYWORD).getAttribute();;
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
-        String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new DeallocationStatement(free_, identifier, eol,tabIndex );
+
+        return new DeallocationStatement(free_, identifier, tabIndex );
     }
 
     public FunctionStatement parseFunctionStatement() throws Exception {
@@ -361,13 +363,12 @@ public class Parser {
         String fun_ = match(TokenType.KEYWORD).getAttribute();
         String identifier = match(TokenType.IDENTIFIER).getAttribute();
         String openParenthesis = match(TokenType.OPERATOR).getAttribute();
-        Type type = parseType();
         ArrayList<Param> params = parseParams();
         String closingParenthesis = match(TokenType.OPERATOR).getAttribute();
-        Type return_type = parseType();
+        TypeSymbolPair return_type = parseType();
         Block block = parseBlock();
 
-        return new FunctionStatement(fun_, identifier, openParenthesis, type, params, closingParenthesis, return_type, block,tabIndex );
+        return new FunctionStatement(fun_, identifier, openParenthesis, params, closingParenthesis, return_type.type(), block,tabIndex);
     }
 
 
@@ -375,6 +376,7 @@ public class Parser {
         /*
          * GrammarRule: Assignement  identifier Type = Expression ;
          */
+
         //TODO manage when variable is assigned a method
         Boolean isArrayAccessBracket=false;
         Boolean isRecordAttribute=false;
@@ -389,14 +391,12 @@ public class Parser {
 //        else if () {
 //
 //        }
-        SimpleType type = parseSimpleType();
-
-
+        TypeSymbolPair type = parseType();
         String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions = parseExpressions();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
-        return new AssignementStatement(identifier, type,isArrayAccessBracket, isRecordAttribute ,equalOperator, expressions, eol,tabIndex );
+        return new AssignementStatement(identifier, type.type(),isArrayAccessBracket, isRecordAttribute ,equalOperator, expressions, eol,tabIndex);
     }
 
 
@@ -414,12 +414,12 @@ public class Parser {
             statement = new MethodCall(identifier,opening_parenthesis, params, closing_parenthesis, eol, tabIndex);
         }
         else {
-            Type type = parseType();
+            TypeSymbolPair type = parseType();
 
             // Declaration
             if (currentSymbol.getTokenType() == TokenType.EOL) {
                 String eol = (String) match(TokenType.EOL).getAttribute();
-                statement = new VariableDeclaration(identifier, type, eol,tabIndex );
+                statement = new VariableDeclaration(identifier, type.type(), eol,tabIndex );
             }
 
             // Assignement
@@ -460,21 +460,21 @@ public class Parser {
             statement = parseFunctionStatement();
         }
 
-
         else{
             String identifier = match(TokenType.IDENTIFIER).getAttribute();
-            statement = parseCallOrDeclarationOrAssignement(identifier);
+            //statement = parseCallOrDeclarationOrAssignement(identifier);
+            statement = parseAssignementStatement();
         }
         return statement;
     }
 
     public ArrayList<Statement> parseStatements() throws Exception {
         ArrayList<Statement> statements = new ArrayList<Statement>();
-        while (!currentSymbol.getAttribute().equals(";")){
-            if (currentSymbol.getAttribute().equals("@eof"))
-                return statements;
+        while (!currentSymbol.getAttribute().equals("}")) {
             statements.add(parseStatement());
+            String eol = match(TokenType.EOL).getAttribute();
         }
+
         return statements;
     }
 
@@ -483,23 +483,23 @@ public class Parser {
         ArrayList<Statement> statements = parseStatements();
         String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
-        return new Block(leftBracket, statements, rightBracket,tabIndex );
+        return new Block(leftBracket, statements, rightBracket,tabIndex);
     }
 
     public Constant parseConstant() throws Exception {
         String final_ = match(TokenType.KEYWORD).getAttribute();
         String identifier = match(TokenType.IDENTIFIER).getAttribute();
-        SimpleType basetype = parseSimpleType();
+        Type basetype = parseType().type();
         String equalOperator = match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions = parseExpressions();
         String eol = match(TokenType.EOL).getAttribute();
 
-        return new Constant(final_,identifier,basetype,equalOperator,expressions,eol);
+        return new Constant(final_,identifier,basetype,equalOperator,expressions,eol,tabIndex);
     }
 
     public ArrayList<Constant> parseMoreConstant() throws Exception {
         ArrayList<Constant> constants = new ArrayList<>();
-        while (currentSymbol.getTokenType() == TokenType.KEYWORD){
+        while (currentSymbol.getAttribute().equals("final")){
             constants.add(parseConstant());
         }
         return constants;
@@ -513,7 +513,7 @@ public class Parser {
         ArrayList<VariableDeclaration> declarations = parseMoreVariableDeclaration();
         String closingBracket = match(TokenType.OPERATOR).getAttribute();
 
-        return new Record(recordsName, rec_, openingBracket, declarations, closingBracket);
+        return new Record(recordsName, rec_, openingBracket, declarations, closingBracket, tabIndex);
     }
 
     public ArrayList<Record> parseMoreRecord() throws Exception{

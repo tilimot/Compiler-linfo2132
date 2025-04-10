@@ -16,6 +16,6 @@ public class Expression {
     public String toString() {
         String t = "\t".repeat(tabIndex);
         String tNext = "\t".repeat(tabIndex+1);
-        return t+"EXPR:"+ "\n"+tNext+value + "\n";
+        return tNext+value + "\n";
     }
 }

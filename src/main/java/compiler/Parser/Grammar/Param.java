@@ -18,6 +18,6 @@ public class Param {
         String t = "\t".repeat(tabIndex);
         String tNext = "\t".repeat(tabIndex+1);
         type.tabIndex = tabIndex+1;
-        return t + "PARAM" + "\n" + type.toString() + "\n"+ tNext+ identifier + "\n";
+        return type + "\n"+ tNext+ identifier;
     }
 }

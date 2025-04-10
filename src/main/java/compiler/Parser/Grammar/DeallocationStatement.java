@@ -6,11 +6,11 @@ public class DeallocationStatement extends Statement {
     String eol;
 
 
-    public DeallocationStatement(String free_, String identifier, String eol, int tabIndex){
+    public DeallocationStatement(String free_, String identifier, int tabIndex){
         super(tabIndex);
         this.free_ = free_;
         this.identifier = identifier;
-        this.eol = eol;
+
 
     }
 
