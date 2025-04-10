@@ -9,6 +9,7 @@ import compiler.Parser.Grammar.*;
 import compiler.Parser.Parser;
 
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 public class Compiler {
@@ -28,7 +29,6 @@ public class Compiler {
             String filepath = args[1];
             Reader readerFile = FileToReader.getReaderFromFile(filepath);
             Lexer lexer = new Lexer(readerFile);
-
             Parser parser = new Parser(lexer);
             Statement  stmt = parser.parseCallOrDeclarationOrAssignment();
             System.out.println(stmt);

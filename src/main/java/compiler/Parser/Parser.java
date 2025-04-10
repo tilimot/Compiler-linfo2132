@@ -41,7 +41,7 @@ public class Parser {
     public Symbol match(TokenType token) throws Exception {
         System.out.println("Match: " + token  + " " + this.currentSymbol.getTokenType());
         if (this.currentSymbol.getTokenType() != token) {
-            throw new Exception("No match found");
+            throw new Exception("No match found. Given Token: "+token+"   Current Symbol: "+this.currentSymbol.getTokenType()+ "  value: "+this.currentSymbol.getAttribute());
         } else {
             Symbol matchingSymbol = this.currentSymbol;
             this.advance();

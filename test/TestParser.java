@@ -1,7 +1,6 @@
 import static org.junit.Assert.*;
 
 import compiler.Lexer.Lexer;
-import compiler.Lexer.TokenType;
 import org.junit.Test;
 
 import java.io.Reader;
@@ -16,14 +15,57 @@ public class TestParser {
     @Test
     public void testBasicInput() throws Exception {
         String input = "a+2*'hello'/true";
-        StringReader reader = new StringReader(input);
+        System.out.println(input);
+        Reader reader = new StringReader(input);
 
         Lexer lexer = new Lexer(reader);
+        System.out.println(lexer);
         Parser parser = new Parser(lexer);
 
         ArrayList<Expression> expressions = parser.parseExpressions();
         assertNotNull(expressions);
+    }
 
+    @Test
+    public void testExpressionsLength() throws Exception{
+        String input = "a+2*'hello'/true";
+        System.out.println(input);
+        Reader reader = new StringReader(input);
+
+        Lexer lexer = new Lexer(reader);
+        System.out.println(lexer);
+        Parser parser = new Parser(lexer);
+
+        ArrayList<Expression> expressions = parser.parseExpressions();
+        assertEquals(7,expressions.size());
+    }
+
+    @Test
+    public void test_ShouldReturn_MethodCall_Object() throws Exception{
+        String input = "a(b,'hello', true);";
+        System.out.println(input);
+        Reader reader = new StringReader(input);
+
+        Lexer lexer = new Lexer(reader);
+        System.out.println(lexer);
+        Parser parser = new Parser(lexer);
+
+        Statement stmt = parser.parseCallOrDeclarationOrAssignment();
+        assertTrue(stmt instanceof MethodCall);
+    }
+
+    @Test
+    public void test_ShouldReturn_AssignmentStatement_Object() throws Exception{
+        String input = "a int = 1+/3*'hello'-true;";
+        System.out.println(input);
+        Reader reader = new StringReader(input);
+
+        Lexer lexer = new Lexer(reader);
+        System.out.println(lexer);
+        Parser parser = new Parser(lexer);
+
+        Statement stmt = parser.parseCallOrDeclarationOrAssignment();
+        assertTrue(stmt instanceof AssignementStatement);
     }
 
 }

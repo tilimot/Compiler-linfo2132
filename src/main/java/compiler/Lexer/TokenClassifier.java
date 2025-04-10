@@ -140,7 +140,7 @@ public class TokenClassifier {
     }
 
     public static boolean isString(String token) {
-        return token.startsWith("\"") && token.endsWith("\"");
+        return (token.startsWith("\"") && token.endsWith("\"") )|| (token.startsWith("'") && token.endsWith("'")) ;
     }
 
     public static boolean isOperator(String token) {
