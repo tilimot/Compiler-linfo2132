@@ -3,22 +3,18 @@ package compiler.Parser.Grammar;
 import java.util.ArrayList;
 
 public class AssignementStatement extends Statement {
-    String identifier;
-    ArrayList<Type> type;
+    LeftSide leftSide;
     String equalOperator;
-    ArrayList<Expression> expressions;
+    RightSide rightSide;
     String eol;
 
 
-    public AssignementStatement(String identifier, ArrayList<Type> type, String  equalOperator, ArrayList<Expression> expressions, String eol, int tabIndex) {
+    public AssignementStatement(LeftSide leftSide, String  equalOperator, RightSide rightSide, String eol, int tabIndex) {
         super(tabIndex);
-        this.identifier = identifier;
-        this.type = type;
+        this.leftSide=leftSide;
         this.equalOperator = equalOperator;
-        this.expressions = expressions;
+        this.rightSide=rightSide;
         this.eol = eol;
-
-
     }
 
     @Override
@@ -28,12 +24,14 @@ public class AssignementStatement extends Statement {
         String tNext = t + "\t";
         //type.tabIndex = tabIndex + 1;
         StringBuilder expressionsStr = new StringBuilder();
+        /*
         for (Expression expression : expressions) {
             expression.tabIndex = tabIndex + 1;
             expressionsStr.append(expression.toString());
-        }
+        }*/
+        return t +"ASSIGN : " + "\n" +tNext /*+ identifier*/ +  "\n" /*+ type.toString()*/ +tNext+ equalOperator + "\n"+ expressionsStr +tNext + eol+ "\n";
 
-        return t +"ASSIGN : " + "\n" +tNext + identifier +  "\n" + type.toString() +tNext+ equalOperator + "\n"+ expressionsStr +tNext + eol+ "\n";
     }
+
 }
 
