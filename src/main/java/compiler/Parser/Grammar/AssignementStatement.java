@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public class AssignementStatement extends Statement {
     String identifier;
-    Type type;
+    ArrayList<Type> type;
     String equalOperator;
     ArrayList<Expression> expressions;
     String eol;
 
 
-    public AssignementStatement(String identifier, Type type, String  equalOperator, ArrayList<Expression> expressions, String eol, int tabIndex) {
+    public AssignementStatement(String identifier, ArrayList<Type> type, String  equalOperator, ArrayList<Expression> expressions, String eol, int tabIndex) {
         super(tabIndex);
         this.identifier = identifier;
         this.type = type;
@@ -23,9 +23,10 @@ public class AssignementStatement extends Statement {
 
     @Override
     public String toString() {
+        //TODO Implem ArrayList Type print
         String t = "\t".repeat(tabIndex);
         String tNext = t + "\t";
-        type.tabIndex = tabIndex + 1;
+        //type.tabIndex = tabIndex + 1;
         StringBuilder expressionsStr = new StringBuilder();
         for (Expression expression : expressions) {
             expression.tabIndex = tabIndex + 1;

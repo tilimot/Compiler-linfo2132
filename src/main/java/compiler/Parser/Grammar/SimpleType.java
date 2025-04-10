@@ -1,6 +1,6 @@
 package compiler.Parser.Grammar;
 
-public class SimpleType {
+public class SimpleType extends Type {
     String value;
     int tabIndex;
 

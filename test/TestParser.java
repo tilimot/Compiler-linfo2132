@@ -56,7 +56,7 @@ public class TestParser {
 
     @Test
     public void test_ShouldReturn_AssignmentStatement_Object() throws Exception{
-        String input = "a int = 1+/3*'hello'-true;";
+        String input = "a int = 1+b/3*'hello'-true;";
         System.out.println(input);
         Reader reader = new StringReader(input);
 
@@ -67,5 +67,20 @@ public class TestParser {
         Statement stmt = parser.parseCallOrDeclarationOrAssignment();
         assertTrue(stmt instanceof AssignementStatement);
     }
+
+    @Test
+    public void test_Shouldreturn_ArrayType_CorrectLength() throws Exception{
+        String input = "int []";
+        System.out.println(input);
+        Reader reader = new StringReader(input);
+
+        Lexer lexer = new Lexer(reader);
+        System.out.println(lexer);
+        Parser parser = new Parser(lexer);
+
+        ArrayList<Type> type = parser.parseType();
+        assertEquals(2,type.size());
+    }
+
 
 }

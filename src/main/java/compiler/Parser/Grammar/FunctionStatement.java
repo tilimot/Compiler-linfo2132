@@ -6,14 +6,14 @@ public class FunctionStatement extends Statement {
     String fun_;
     String identifier;
     String openParenthesis;
-    Type type;
+    ArrayList<Type> type;
     ArrayList<FuncParam> funcParams;
     String closingParenthesis;
-    Type return_type;
+    ArrayList<Type> return_type;
     Block block;
 
 
-    public FunctionStatement(String fun_, String identifier, String openParenthesis, Type type, ArrayList<FuncParam> funcParams, String closingParenthesis, Type return_type, Block block, int tabIndex){
+    public FunctionStatement(String fun_, String identifier, String openParenthesis, ArrayList<Type> type, ArrayList<FuncParam> funcParams, String closingParenthesis, ArrayList<Type> return_type, Block block, int tabIndex){
         super(tabIndex);
         this.fun_ = fun_;
         this.identifier = identifier;

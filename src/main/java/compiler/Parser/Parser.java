@@ -94,15 +94,14 @@ public class Parser {
         return new ArrayDeclarationBracket((String) left_bracket.getAttribute(), (String) right_bracket.getAttribute(), tabIndex);
     }
 
-    public Type parseType() throws Exception {
-        boolean isArray=false;
-        SimpleType simpleType = parseSimpleType();
-        if(currentSymbol.getAttribute() == "["){
-            isArray = true;
-            parseArrayDeclarationBracket();
+    public ArrayList<Type> parseType() throws Exception {
+        ArrayList<Type> types = new ArrayList<>();
+        types.add(parseSimpleType());
+        if(currentSymbol.getAttribute().equals("[")){
+            types.add(parseArrayDeclarationBracket());
         }
 
-        return new Type(simpleType,isArray,tabIndex );
+        return types;
     }
 
     public Param parseParam() throws Exception{
@@ -124,9 +123,9 @@ public class Parser {
 
 
     public FuncParam parseFuncParam() throws Exception {
-        Type type = parseType();
+        ArrayList<Type> types = parseType();
         Symbol identifier = match(TokenType.IDENTIFIER);
-        return new FuncParam(type, (String) identifier.getAttribute(),tabIndex );
+        return new FuncParam(types, (String) identifier.getAttribute(),tabIndex );
     }
 
     public ArrayList<FuncParam> parseFuncParams() throws Exception {
@@ -279,7 +278,7 @@ public class Parser {
          */
 
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
-        Type type = parseType();
+        ArrayList<Type> type = parseType();
         String eol = (String) match(TokenType.EOL).getAttribute();
 
         return new VariableDeclaration(identifier,type,eol,tabIndex );
@@ -381,10 +380,10 @@ public class Parser {
         String fun_ = match(TokenType.KEYWORD).getAttribute();
         String identifier = match(TokenType.IDENTIFIER).getAttribute();
         String openParenthesis = match(TokenType.OPERATOR).getAttribute();
-        Type type = parseType();
+        ArrayList<Type> type = parseType();
         ArrayList<FuncParam> funcParams = parseFuncParams();
         String closingParenthesis = match(TokenType.OPERATOR).getAttribute();
-        Type return_type = parseType();
+        ArrayList<Type> return_type = parseType();
         Block block = parseBlock();
 
         return new FunctionStatement(fun_, identifier, openParenthesis, type, funcParams, closingParenthesis, return_type, block,tabIndex );
@@ -409,7 +408,7 @@ public class Parser {
 //        else if () {
 //
 //        }
-        Type type = parseType();
+        ArrayList<Type> type = parseType();
 
 
         String equalOperator = (String) match(TokenType.OPERATOR).getAttribute();
@@ -436,7 +435,7 @@ public class Parser {
             statement = new MethodCall(identifier,opening_parenthesis, params, closing_parenthesis, eol, tabIndex);
         }
         else {
-            Type type = parseType();
+            ArrayList<Type> type = parseType();
 
             // Declaration
             if (currentSymbol.getTokenType() == TokenType.EOL) {
