@@ -3,6 +3,7 @@ package compiler.Lexer;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.security.cert.TrustAnchor;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -140,7 +141,7 @@ public class TokenClassifier {
     }
 
     public static boolean isString(String token) {
-        return token.startsWith("\"") && token.endsWith("\"");
+        return (token.startsWith("\"") && token.endsWith("\"") )|| (token.startsWith("'") && token.endsWith("'")) ;
     }
 
     public static boolean isOperator(String token) {
@@ -166,7 +167,7 @@ public class TokenClassifier {
         if(isVoidType(token)) return TokenType.VOID_TYPE;
         if (isIdentifier(token)) return TokenType.IDENTIFIER;
         if (isNaturalNumber(token)) return TokenType.NATURAL_NUMBER;
-        if (isFloatNumber(token)) return TokenType.FLOAT_NUMBER;
+        //if (isFloatNumber(token)) return TokenType.FLOAT_NUMBER;
         if (isString(token)) return TokenType.STRINGS;
         if (isEOL(token)) return TokenType.EOL;
         if (isOperator(token)) return TokenType.OPERATOR;

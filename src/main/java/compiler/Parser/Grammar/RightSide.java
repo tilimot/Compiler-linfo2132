@@ -1,7 +1,4 @@
 package compiler.Parser.Grammar;
 
-
-public abstract class Type {
-
+public abstract class RightSide {
 }
-

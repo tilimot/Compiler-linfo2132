@@ -5,13 +5,14 @@ import java.util.ArrayList;
 public class ReturnStatement extends Statement{
     String return_;
     ArrayList<Expression> expressions;
-    String eol = ";";
+    String eol;
 
 
-    public ReturnStatement(String return_, ArrayList<Expression> expressions, int tabIndex){
+    public ReturnStatement(String return_, ArrayList<Expression> expressions, String eol, int tabIndex){
         super(tabIndex);
         this.return_ = return_;
         this.expressions = expressions;
+        this.eol= eol;
 
     }
 

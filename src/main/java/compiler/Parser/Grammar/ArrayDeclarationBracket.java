@@ -1,19 +1,19 @@
 package compiler.Parser.Grammar;
 
-public class ArrayDeclarationBracket {
+public class ArrayDeclarationBracket extends Type {
     String leftBracket;
-    String rigthBracket;
+    String rightBracket;
     int tabIndex;
 
-    public ArrayDeclarationBracket(String leftbracket, String rigthBracket, int tabIndex){
+    public ArrayDeclarationBracket(String leftbracket, String rightBracket, int tabIndex){
         this.leftBracket = leftbracket;
-        this.rigthBracket = rigthBracket;
+        this.rightBracket = rightBracket;
         this.tabIndex = tabIndex;
     }
 
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
-        return t+leftBracket + "\n"+t + rigthBracket+"\n";
+        return t+leftBracket + "\n"+t + rightBracket +"\n";
     }
 }

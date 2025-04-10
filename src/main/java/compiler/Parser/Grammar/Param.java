@@ -1,23 +1,11 @@
 package compiler.Parser.Grammar;
 
+import java.util.ArrayList;
+
 public class Param {
-    Type type;
-    String identifier;
-    int tabIndex;
+    ArrayList<Expression> expressions = new ArrayList<>();
 
-
-    public Param(Type type, String identifier, int tabIndex) {
-        this.type = type;
-        this.identifier = identifier;
-        this.tabIndex = tabIndex;
-
-    }
-
-    @Override
-    public String toString() {
-        String t = "\t".repeat(tabIndex);
-        String tNext = "\t".repeat(tabIndex+1);
-        type.tabIndex = tabIndex+1;
-        return type + "\n"+ tNext+ identifier;
+    public Param(ArrayList<Expression> expressions){
+        this.expressions=expressions;
     }
 }
