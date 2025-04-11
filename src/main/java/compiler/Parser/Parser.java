@@ -123,15 +123,15 @@ public class Parser {
 
 
     public FuncParam parseFuncParam() throws Exception {
-        ArrayList<Type> types = parseType();
         Symbol identifier = match(TokenType.IDENTIFIER);
-        return new FuncParam(types, (String) identifier.getAttribute(),tabIndex );
+        ArrayList<Type> types = parseType();
+        return new FuncParam(types, identifier.getAttribute(),tabIndex );
     }
 
     public ArrayList<FuncParam> parseFuncParams() throws Exception {
         //TODO need to change TokenType.Operator with .ClosingPArenthesis
         ArrayList<FuncParam> parameters = new ArrayList<>();
-        if (currentSymbol.getAttribute().equals(")")) {
+        if (!currentSymbol.getAttribute().equals(")")) {
             parameters.add(parseFuncParam());
             while (currentSymbol.getAttribute().equals(",")) {
                 match(TokenType.OPERATOR);
@@ -384,13 +384,14 @@ public class Parser {
         String fun_ = match(TokenType.KEYWORD).getAttribute();
         String identifier = match(TokenType.IDENTIFIER).getAttribute();
         String openParenthesis = match(TokenType.OPERATOR).getAttribute();
-        ArrayList<Type> type = parseType();
+        //ArrayList<Type> type = parseType();
+
         ArrayList<FuncParam> funcParams = parseFuncParams();
         String closingParenthesis = match(TokenType.OPERATOR).getAttribute();
         ArrayList<Type> return_type = parseType();
         Block block = parseBlock();
 
-        return new FunctionStatement(fun_, identifier, openParenthesis, type, funcParams, closingParenthesis, return_type, block,tabIndex );
+        return new FunctionStatement(fun_, identifier, openParenthesis, funcParams, closingParenthesis, return_type, block,tabIndex );
     }
 
 /*
@@ -540,7 +541,7 @@ public class Parser {
     public Constant parseConstant() throws Exception {
         String final_ = match(TokenType.KEYWORD).getAttribute();
         String identifier = match(TokenType.IDENTIFIER).getAttribute();
-        SimpleType basetype = parseSimpleType();
+        ArrayList<Type> basetype = parseType();
         String equalOperator = match(TokenType.OPERATOR).getAttribute();
         ArrayList<Expression> expressions = parseExpressions();
         String eol = match(TokenType.EOL).getAttribute();

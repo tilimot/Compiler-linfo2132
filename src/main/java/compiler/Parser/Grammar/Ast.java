@@ -31,7 +31,7 @@ public class Ast {
             record.tabIndex = tabIndex+1;
             sb.append(record.toString());
         }
-        for (AssignementStatement globalVariable : globalVariables) {
+        for (Statement globalVariable : globalVariables) {
             globalVariable.tabIndex = tabIndex+1;
             sb.append(globalVariable.toString());
         }

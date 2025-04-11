@@ -30,7 +30,7 @@ public class Compiler {
             Reader readerFile = FileToReader.getReaderFromFile(filepath);
             Lexer lexer = new Lexer(readerFile);
             Parser parser = new Parser(lexer);
-            Statement  stmt = parser.parseCallOrDeclarationOrAssignment();
+            Statement  stmt = parser.parseFunctionStatement();
             System.out.println(stmt);
 
        }
