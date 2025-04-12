@@ -646,7 +646,9 @@ public class Parser {
         return new Ast(constants,records,globalVariables, functions, tabIndex);
     }
 
-
+    public Ast getAst() throws Exception{
+        return parseAst();
+    }
 
 }
 
