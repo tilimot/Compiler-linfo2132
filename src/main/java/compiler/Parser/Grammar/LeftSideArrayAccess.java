@@ -8,6 +8,7 @@ public class LeftSideArrayAccess extends LeftSide{
     String natural_number;
     String closing_bracket;
     ArrayList<RecordAttribute> recordAttributes;
+    int tabIndex;
 
     public LeftSideArrayAccess (String identifier, String opening_bracket, String natural_number, String closing_bracket, ArrayList<RecordAttribute> recordAttributes){
         this.identifier= identifier;

@@ -31,7 +31,16 @@ public class Constant {
             expression.tabIndex = tabIndex + 1;
             expressionsStr.append(expression);
         }
+        StringBuilder basetypeStr = new StringBuilder();
+        for (Type type : basetype) {
+            if (type instanceof SimpleType) {
+                ((SimpleType) type).tabIndex = tabIndex + 1;
+            } else if (type instanceof ArrayDeclarationBracket) {
+                ((ArrayDeclarationBracket) type).tabIndex = tabIndex + 1;
+            }
+            basetypeStr.append(type);
+        }
 
-        return t +"CONST : " + "\n" +tNext + final_ + "\n" +tNext + identifier +  "\n" + basetype + "\n" +tNext+ equalOperator + "\n"+ tNext + "EXPR :" + "\n" +expressionsStr +tNext + eol+ "\n";
+        return t +"CONST : " + "\n" +tNext + final_ + "\n" +tNext + identifier +  "\n" + basetypeStr + "\n" +tNext+ equalOperator + "\n"+ tNext + "EXPR :" + "\n" +expressionsStr +tNext + eol+ "\n";
     }
 }

@@ -19,4 +19,17 @@ public class Record {
         this.tabIndex = tabIndex;
     }
 
+    public String toString() {
+        String t = "\t".repeat(tabIndex);
+        String tNext = "\t".repeat(tabIndex + 1);
+        StringBuilder declarationStr = new StringBuilder();
+        for (VariableDeclaration varDecl : declaration) {
+            varDecl.tabIndex = tabIndex + 2;
+            declarationStr.append(varDecl.toString());
+        }
+        return t + "RECORD : " + "\n" + tNext + recordsName + "\n" + tNext + rec_ + "\n" + tNext +
+                openingBracket + "\n" + tNext + "DECLARATION : " + "\n" +
+                declarationStr + tNext + closingBracket + "\n";
+    }
+
 }

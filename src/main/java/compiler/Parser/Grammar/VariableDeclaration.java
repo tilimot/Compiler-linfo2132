@@ -17,9 +17,16 @@ public class VariableDeclaration extends Statement {
     }
 
     public String toString() {
-        //TODO Implem arraylist type print
         String t = "\t".repeat(tabIndex);
-        //type.tabIndex = tabIndex;
-        return t+identifier + "\n" + type.toString() + "\n" + t + eol + "\n";
+        StringBuilder typeStr = new StringBuilder();
+        for (Type type : type) {
+            if (type instanceof SimpleType) {
+                ((SimpleType) type).tabIndex = tabIndex;
+            } else if (type instanceof ArrayDeclarationBracket) {
+                ((ArrayDeclarationBracket) type).tabIndex = tabIndex;
+            }
+            typeStr.append(type);
+        }
+        return t+identifier + "\n" + typeStr + "\n" + t + eol + "\n";
     }
 }

@@ -2,6 +2,8 @@ package compiler.Parser.Grammar;
 
 import java.util.ArrayList;
 
+import static jdk.dynalink.linker.support.Guards.isInstance;
+
 public class FuncParam {
     ArrayList<Type> type;
     String identifier;
@@ -19,8 +21,16 @@ public class FuncParam {
     public String toString() {
         //TODO implem array list type
         String t = "\t".repeat(tabIndex);
-        String tNext = "\t".repeat(tabIndex+1);
-        //type.tabIndex = tabIndex+1;
-        return t + "PARAM" + "\n" + type.toString() + "\n"+ tNext+ identifier + "\n";
+        StringBuilder typeStr = new StringBuilder();
+        for (Type type : type) {
+            if (type instanceof SimpleType) {
+                ((SimpleType) type).tabIndex = tabIndex;
+            } else if (type instanceof ArrayDeclarationBracket) {
+                ((ArrayDeclarationBracket) type).tabIndex = tabIndex;
+            }
+            typeStr.append(type);
+            System.out.println("la classe = "+ type.getClass()+ " la valeur = "+ type);
+        }
+        return t + identifier+ "\n" + typeStr;
     }
 }

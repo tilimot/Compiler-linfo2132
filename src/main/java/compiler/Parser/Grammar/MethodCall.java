@@ -24,12 +24,12 @@ public class MethodCall extends Statement {
     public String toString() {
         String t = "\t".repeat(tabIndex);
         String tNext = "\t".repeat(tabIndex+1);
-        StringBuilder sb = new StringBuilder();
-        /*
+        StringBuilder paramStr = new StringBuilder();
+
         for (Param param : parameters) {
-            param.tabIndex = tabIndex+1;
-            sb.append(param.toString());
-        }*/
-        return t+"METD_CALL : " + "\n" + tNext + identifier + "\n" + tNext + opening_parenthesis + "\n" + tNext + sb + "\n" + tNext + closing_parenthesis + "\n" + tNext + eol + "\n";
+            param.tabIndex = tabIndex+2;
+            paramStr.append(param);
+        }
+        return t+"METD_CALL : " + "\n" + tNext + identifier + "\n" + tNext + opening_parenthesis + "\n" + tNext + "PARAM : " + "\n" + paramStr + "\n" + tNext + closing_parenthesis + "\n" + tNext + eol + "\n";
     }
 }

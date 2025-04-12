@@ -14,6 +14,6 @@ public class ArrayDeclarationBracket extends Type {
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);
-        return t+leftBracket + "\n"+t + rightBracket +"\n";
+        return "\n"+t+leftBracket + "\n"+t + rightBracket;
     }
 }

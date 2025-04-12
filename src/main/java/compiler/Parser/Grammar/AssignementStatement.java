@@ -22,14 +22,28 @@ public class AssignementStatement extends Statement {
         //TODO Implem ArrayList Type print
         String t = "\t".repeat(tabIndex);
         String tNext = t + "\t";
-        //type.tabIndex = tabIndex + 1;
+        if (leftSide instanceof LeftSideAssignement) {
+            ((LeftSideAssignement) leftSide).tabIndex = tabIndex + 1;
+        }
+        if (leftSide instanceof LeftSideRecordAccess) {
+            ((LeftSideRecordAccess) leftSide).tabIndex = tabIndex + 1;
+        }
+        if (leftSide instanceof LeftSideArrayAccess) {
+            ((LeftSideArrayAccess) leftSide).tabIndex = tabIndex + 1;
+        }
         StringBuilder expressionsStr = new StringBuilder();
-        /*
-        for (Expression expression : expressions) {
+        for (Expression expression : ((RightSideExpressions) rightSide).expressions) {
             expression.tabIndex = tabIndex + 1;
-            expressionsStr.append(expression.toString());
-        }*/
-        return t +"ASSIGN : " + "\n" +tNext /*+ identifier*/ +  "\n" /*+ type.toString()*/ +tNext+ equalOperator + "\n"+ expressionsStr +tNext + eol+ "\n";
+            expressionsStr.append(expression);
+
+        }
+
+        System.out.println("instance de + leftSide : " + leftSide.getClass());
+
+
+
+        return t +"ASSIGN : " + "\n"  + leftSide +  "\n" +tNext+ equalOperator + "\n" + tNext + "EXPR :"+ "\n"+
+                expressionsStr +tNext + eol+ "\n";
 
     }
 
