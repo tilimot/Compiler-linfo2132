@@ -5,19 +5,34 @@ package compiler;
 
 import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
+import compiler.Parser.Grammar.*;
+import compiler.Parser.Parser;
 
 import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
 
 public class Compiler {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
        if (args.length == 2 && args[0].equals("-lexer")) {
 
+           String filepath = args[1];
+           Reader readerFile = FileToReader.getReaderFromFile(filepath);
+           Lexer lexer = new Lexer(readerFile);
+
+           while (lexer.hasNextSymbol()) {
+               System.out.println(lexer.getNextSymbol());
+           }
+       }
+
+       if (args.length == 2 && args[0].equals("-parser")){
             String filepath = args[1];
             Reader readerFile = FileToReader.getReaderFromFile(filepath);
             Lexer lexer = new Lexer(readerFile);
-            while (lexer.hasNextSymbol()){
-                System.out.println(lexer.getNextSymbol());
-            }
+            Parser parser = new Parser(lexer);
+            Ast stmt = parser.getAst();
+            System.out.println(stmt);
+
        }
     }
 }

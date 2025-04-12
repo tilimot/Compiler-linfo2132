@@ -1,5 +1,7 @@
 package compiler.Lexer;
 
+import org.checkerframework.checker.interning.qual.EqualsMethod;
+
 public class Symbol {
     private TokenType token;
     private String attribute;
