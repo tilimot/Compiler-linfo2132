@@ -26,10 +26,12 @@ public class WhileStatement extends Statement {
         StringBuilder sb = new StringBuilder();
         String t = "\t".repeat(tabIndex);
         String tNext = "\t".repeat(tabIndex+1);
+        block.tabIndex = tabIndex+1;
         for (Expression expression : expressions) {
             expression.tabIndex = tabIndex+1;
-            sb.append(expression.toString()).append("\t");
+            sb.append(expression);
         }
-        return t + "WHILE : " + "\n" + tNext + while_ + "\n" + tNext + openingParenthesis + "\n" + sb  + closingParenthesis + "\n" + block.toString();
+        return t + "WHILE : " + "\n" + tNext + while_ + "\n" + tNext + openingParenthesis + "\n"
+                + tNext+"COND :"+ "\n" + sb +tNext + closingParenthesis + "\n" + block;
     }
 }

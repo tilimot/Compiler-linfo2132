@@ -23,13 +23,15 @@ public class IfStatement extends Statement {
 
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
         String t = "\t".repeat(tabIndex);
         String tNext = "\t".repeat(tabIndex+1);
-        StringBuilder sb = new StringBuilder();
         block.tabIndex = tabIndex+1;
         for (Expression expression : expressions) {
-            sb.append(expression.toString()).append("\t");
+            expression.tabIndex = tabIndex+1;
+            sb.append(expression);
         }
-        return t + "IF : " + "\n" + tNext + if_ + "\n" + tNext + openingParenthesis + "\n" + tNext + sb + tNext + closingParenthesis + "\n" + block.toString();
+        return t + "IF : " + "\n" + tNext + if_ + "\n" + tNext + openingParenthesis + "\n"
+                + tNext+"COND :"+ "\n" + sb +tNext + closingParenthesis + "\n" + block;
     }
 }

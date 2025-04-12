@@ -38,7 +38,6 @@ public class AssignementStatement extends Statement {
 
         }
 
-        System.out.println("instance de + leftSide : " + leftSide.getClass());
 
 
 

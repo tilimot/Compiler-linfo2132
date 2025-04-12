@@ -248,9 +248,39 @@ public class Parser {
         return expressions;
     }
 
-    public ArrayList<Expression> parseConditions() throws Exception{
-        //TODO
-        return null;
+    public ArrayList<Expression> parseConditions() throws Exception {
+        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        if (!currentSymbol.getAttribute().equals(")")) {
+            if (currentSymbol.getAttribute().equals("=") ||
+                    currentSymbol.getAttribute().equals("!") ||
+                    currentSymbol.getAttribute().equals("<") ||
+                    currentSymbol.getAttribute().equals(">"))
+                return parseComparisonCondition(identifier);
+        }
+        return parseSimpleCondition(identifier);
+
+
+
+    }
+
+    public ArrayList<Expression> parseSimpleCondition (String identifier) throws Exception{
+        ArrayList<Expression> simpleCondition = new ArrayList<>();
+        simpleCondition.add(new Expression(identifier, tabIndex));
+        return simpleCondition;
+    }
+
+    public ArrayList<Expression> parseComparisonCondition(String identifier) throws Exception{
+        ArrayList<Expression> comparisonCondition = new ArrayList<>();
+        comparisonCondition.add(new Expression(identifier, tabIndex));
+        String operator = match(TokenType.OPERATOR).getAttribute();
+        comparisonCondition.add(new Expression(operator, tabIndex));
+        if (currentSymbol.getTokenType() == TokenType.OPERATOR && !currentSymbol.getAttribute().equals(")")) {
+            String operator2 = match(TokenType.OPERATOR).getAttribute();
+            comparisonCondition.add(new Expression(operator2, tabIndex));
+        }
+        comparisonCondition.addAll(parseExpressions());
+
+        return comparisonCondition;
     }
 
     public ArrayList<Expression> parseExpressions() throws Exception {
@@ -342,11 +372,11 @@ public class Parser {
         //TODO develop more specific operator in Lexer !!
         String while_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
-        ArrayList<Expression> expressions =  parseMoreExpressions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
+        ArrayList<Expression> conditions =  parseConditions();
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
-        return new WhileStatement(while_,opening_parenthesis,expressions,closing_parenthesis, block, tabIndex);
+        return new WhileStatement(while_,opening_parenthesis,conditions,closing_parenthesis, block, tabIndex);
     }
 
 
@@ -359,11 +389,11 @@ public class Parser {
         //TODO develop more specific operator in Lexer !!
         String if_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
-        ArrayList<Expression> expressions =  parseMoreExpressions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
+        ArrayList<Expression> conditions =  parseConditions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
-        return new IfStatement(if_,opening_parenthesis,expressions,closing_parenthesis, block,tabIndex );
+        return new IfStatement(if_,opening_parenthesis,conditions,closing_parenthesis, block,tabIndex );
     }
 
 
@@ -525,6 +555,7 @@ public class Parser {
     public ArrayList<Statement> parseStatements() throws Exception {
         ArrayList<Statement> statements = new ArrayList<Statement>();
         while (!currentSymbol.getAttribute().equals("}")) {
+            System.out.println("PRESENT: " + currentSymbol.getAttribute());
             statements.add(parseStatement());
         }
         return statements;
