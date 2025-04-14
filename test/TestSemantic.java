@@ -19,7 +19,8 @@ public class TestSemantic {
 
     @Test
     public void ifLoops_WithoutCondition_Should_Throws_MissingConditionError() throws Exception {
-        String input = "if(){}";
+        String testInput = "if(){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -32,7 +33,8 @@ public class TestSemantic {
 
     @Test
     public void forLoops_WithoutCondition_Should_Throws_MissingConditionError() throws Exception {
-        String input = "for(){}";
+        String testInput = "for(){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -45,7 +47,8 @@ public class TestSemantic {
 
     @Test
     public void whileLoops_WithoutCondition_Should_Throws_MissingConditionError() throws Exception {
-        String input = "while(){}";
+        String testInput = "while(){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -58,7 +61,8 @@ public class TestSemantic {
 
     @Test
     public void forLoops_WithMissingCondition_Should_Throws_MissingConditionError() throws Exception {
-        String input = "for(,1,110,1){}";
+        String testInput = "for(,1,110,1){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -71,7 +75,8 @@ public class TestSemantic {
 
     @Test
     public void forLoops_WithMissingCondition2_Should_Throws_MissingConditionError() throws Exception {
-        String input = "for(i,,110,1){}";
+        String testInput = "for(i,,110,1){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -83,7 +88,8 @@ public class TestSemantic {
     }
     @Test
     public void forLoops_WithMissingCondition3_Should_Throws_MissingConditionError() throws Exception {
-        String input = "for(i,1,,1){}";
+        String testInput = "for(i,1,,1){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -96,7 +102,8 @@ public class TestSemantic {
 
     @Test
     public void forLoops_WithMissingCondition4_Should_Throws_MissingConditionError() throws Exception {
-        String input = "for(i,1,110,){}";
+        String testInput = "for(i,1,110,){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -109,7 +116,8 @@ public class TestSemantic {
 
     @Test
     public void forLoops_WithMissingCondition5_Should_Throws_MissingConditionError() throws Exception {
-        String input = "for(i,1){}";
+        String testInput = "for(i,1){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -122,7 +130,8 @@ public class TestSemantic {
 
     @Test
     public void forLoops_WithMissingCondition6_Should_Throws_MissingConditionError() throws Exception {
-        String input = "for(i,1,){}";
+        String testInput = "for(i,1,){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
         try {
             parser.getAST();
@@ -134,19 +143,38 @@ public class TestSemantic {
     }
 
     @Test
-    public void badAssignmentType() throws Exception {
-        String input = "a string = 1;";
+    public void forLoops_Should_Not_Throws_MissingConditionError() throws Exception{
+        String testInput = "for(i,1,100,1){}";
+        String input = "fun testFunc()int{"+testInput+"}";
         Parser parser = getParser(input);
-        Semantic semantic = new Semantic(parser.getAST());
         try {
             parser.getAST();
-            fail("MissingConditionError wasn't raise");
         } catch (MissingConditionException e) {
-            // Assert
-            assertEquals("MissingConditionError: Must attribute a condition", e.getMessage());
+            fail("Missing condition should not be raised");
         }
     }
 
+    @Test
+    public void whileLoops_Should_Not_Throws_MissingConditionError() throws Exception{
+        String testInput = "while(i>2){}";
+        String input = "fun testFunc()int{"+testInput+"}";
+        Parser parser = getParser(input);
+        try {
+            parser.getAST();
+        } catch (MissingConditionException e) {
+            fail("Missing condition should not be raised");
+        }
+    }
 
-
+    @Test
+    public void ifStmnt_Should_Not_Throws_MissingConditionError() throws Exception{
+        String testInput = "if(a){}";
+        String input = "fun testFunc()int{"+testInput+"}";
+        Parser parser = getParser(input);
+        try {
+            parser.getAST();
+        } catch (MissingConditionException e) {
+            fail("Missing condition should not be raised");
+        }
+    }
 }
