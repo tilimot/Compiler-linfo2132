@@ -438,9 +438,21 @@ public class Parser {
         return new DeallocationStatement(free_, identifier, eol,tabIndex );
     }
 
+    public FunctionStatement parseFunctionMain() throws Exception {
+        String fun_ = "fun";
+        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        String openParenthesis = match(TokenType.OPERATOR).getAttribute();
+        String closingParenthesis = match(TokenType.OPERATOR).getAttribute();
+        Block block = parseBlock();
+        return new FunctionMainStatement(fun_,identifier, openParenthesis, closingParenthesis,block, tabIndex);
+    }
+
     public FunctionStatement parseFunctionStatement() throws Exception {
         //TODO returnType dont manage constant Type
         String fun_ = match(TokenType.KEYWORD).getAttribute();
+        if (currentSymbol.getAttribute().equals("main")){
+            return parseFunctionMain();
+        }
         String identifier = match(TokenType.IDENTIFIER).getAttribute();
         String openParenthesis = match(TokenType.OPERATOR).getAttribute();
         //ArrayList<Type> type = parseType();

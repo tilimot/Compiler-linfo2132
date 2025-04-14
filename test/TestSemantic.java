@@ -219,6 +219,4 @@ public class TestSemantic {
         ast.semanticAnalysis(); // Doit lever TypeException
     }
 
-
-
 }

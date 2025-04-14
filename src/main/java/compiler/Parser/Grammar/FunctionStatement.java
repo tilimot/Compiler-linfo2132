@@ -20,10 +20,16 @@ public class FunctionStatement extends Statement {
         this.fun_ = fun_;
         this.identifier = identifier;
         this.openParenthesis = openParenthesis;
-        //this.type = type;
-        this.funcParams = funcParams;
         this.closingParenthesis =closingParenthesis;
-        this.return_type = return_type;
+        this.block = block;
+    }
+
+    public FunctionStatement(String fun_, String identifier, String openParenthesis, String closingParenthesis, Block block, int tabIndex){
+        super(tabIndex);
+        this.fun_ = fun_;
+        this.identifier = identifier;
+        this.openParenthesis = openParenthesis;
+        this.closingParenthesis =closingParenthesis;
         this.block = block;
     }
 
