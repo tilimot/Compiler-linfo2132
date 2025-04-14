@@ -369,17 +369,17 @@ public class Parser {
 
         checkMissingCondition();
         checkEarlyEndCondition();
-        String beginValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String beginValue = (String) match(TokenType.INTEGER).getAttribute();
         checkEarlyEndCondition();
         String coma2 = (String) match(TokenType.OPERATOR).getAttribute();
         checkMissingCondition();
         checkEarlyEndCondition();
-        String endValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String endValue = (String) match(TokenType.INTEGER).getAttribute();
         checkEarlyEndCondition();
         String coma3 = (String) match(TokenType.OPERATOR).getAttribute();
         checkMissingCondition();
         checkEarlyEndCondition();
-        String stepValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String stepValue = (String) match(TokenType.INTEGER).getAttribute();
 
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
