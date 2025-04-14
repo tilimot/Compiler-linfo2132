@@ -1,6 +1,5 @@
 package compiler.Parser;
 
-import compiler.Exception.TypeErrorException;
 import compiler.Parser.Grammar.Ast;
 import compiler.Parser.Grammar.Expression;
 
