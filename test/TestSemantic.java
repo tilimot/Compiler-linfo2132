@@ -1,5 +1,8 @@
 import compiler.Exception.MissingConditionException;
+import compiler.Exception.OperatorException;
+import compiler.Exception.TypeException;
 import compiler.Lexer.Lexer;
+import compiler.Parser.Grammar.Ast;
 import compiler.Parser.Parser;
 import compiler.Parser.Semantic;
 import org.junit.Test;
@@ -16,6 +19,8 @@ public class TestSemantic {
         Lexer lexer = new Lexer(reader);
         return new Parser(lexer);
     }
+
+
 
     @Test
     public void ifLoops_WithoutCondition_Should_Throws_MissingConditionError() throws Exception {
@@ -142,6 +147,7 @@ public class TestSemantic {
         }
     }
 
+
     @Test
     public void forLoops_Should_Not_Throws_MissingConditionError() throws Exception{
         String testInput = "for(i,1,100,1){}";
@@ -177,4 +183,42 @@ public class TestSemantic {
             fail("Missing condition should not be raised");
         }
     }
+
+
+    @Test
+    public void semanticAnalysis_Should_Pass_On_IntPlusInt() throws Exception {
+        String input = "x int = 3 + 4;";
+        Parser parser = getParser(input);
+        parser.getAST(); // ne doit pas lever d’exception
+    }
+
+    @Test(expected = OperatorException.class)
+    public void semanticAnalysis_Should_Throw_OperatorError_On_IntPlusString() throws Exception {
+        String input = "x int  = 3 + \"hello\";";
+        Parser parser = getParser(input);
+        Ast ast = parser.getAST();
+        ast.semanticAnalysis();
+    }
+
+
+
+    @Test(expected = OperatorException.class)
+    public void semanticAnalysis_Should_Throw_OperatorError_On_MixedTypesWithIdentifier() throws Exception {
+        String input = " x int= 5 + \"abc\" + y;";
+        Parser parser = getParser(input);
+        Ast ast = parser.getAST();
+        ast.semanticAnalysis(); // Doit lever OperatorException
+    }
+
+
+    @Test(expected = TypeException.class)
+    public void semanticAnalysis_Should_Throw_TypeError_On_AssignmentMismatch() throws Exception {
+        String input = " x int = \"hello\";";
+        Parser parser = getParser(input);
+        Ast ast = parser.getAST();
+        ast.semanticAnalysis(); // Doit lever TypeException
+    }
+
+
+
 }
