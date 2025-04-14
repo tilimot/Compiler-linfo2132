@@ -5,6 +5,7 @@ import compiler.Lexer.Symbol;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
 import compiler.Parser.Grammar.Record;
+import compiler.Exception.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -340,6 +341,17 @@ public class Parser {
         return new ReturnStatement(return_,expressions,eol,tabIndex);
     }
 
+    public void checkMissingCondition() throws MissingConditionException{
+        if (currentSymbol.getAttribute().equals(",")){
+            throw new MissingConditionException();
+        }
+    }
+
+    public void checkEarlyEndCondition() throws MissingConditionException{
+        if (currentSymbol.getAttribute().equals(")")){
+            throw new MissingConditionException();
+        }
+    }
 
     public ForStatement parseForStatement() throws Exception {
         /*
@@ -349,13 +361,26 @@ public class Parser {
         //TODO Deeply need to implem BLOCK block; !!!!
         String for_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        checkEarlyEndCondition();
+        checkMissingCondition();
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
+        checkEarlyEndCondition();
         String coma1 = (String) match(TokenType.OPERATOR).getAttribute();
-        String beginValue = (String) match(TokenType.INTEGER).getAttribute();
+
+        checkMissingCondition();
+        checkEarlyEndCondition();
+        String beginValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        checkEarlyEndCondition();
         String coma2 = (String) match(TokenType.OPERATOR).getAttribute();
-        String endValue = (String) match(TokenType.INTEGER).getAttribute();
+        checkMissingCondition();
+        checkEarlyEndCondition();
+        String endValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        checkEarlyEndCondition();
         String coma3 = (String) match(TokenType.OPERATOR).getAttribute();
-        String stepValue = (String) match(TokenType.INTEGER).getAttribute();
+        checkMissingCondition();
+        checkEarlyEndCondition();
+        String stepValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
@@ -372,6 +397,9 @@ public class Parser {
         //TODO develop more specific operator in Lexer !!
         String while_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        if (currentSymbol.getTokenType().equals(TokenType.OPERATOR)){
+            throw new MissingConditionException();
+        }
         ArrayList<Expression> conditions =  parseConditions();
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
@@ -389,6 +417,9 @@ public class Parser {
         //TODO develop more specific operator in Lexer !!
         String if_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        if (currentSymbol.getTokenType().equals(TokenType.OPERATOR)){
+            throw new MissingConditionException();
+        }
         ArrayList<Expression> conditions =  parseConditions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
@@ -524,7 +555,6 @@ public class Parser {
 
     public Statement parseStatement() throws Exception{
         Statement statement;
-
         System.out.println("CurrentSymbol: " + currentSymbol.getAttribute());
 
         if(currentSymbol.getAttribute().equals("if")){
