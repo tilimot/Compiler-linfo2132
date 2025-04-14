@@ -17,6 +17,10 @@ public class ArrayDeclarationBracket extends Type {
         return TokenType.ARRAY_TYPE;
     }
 
+    public String getValue() {
+        return leftBracket + rightBracket;
+    }
+
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);

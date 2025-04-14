@@ -1,5 +1,7 @@
 package compiler.Parser.Grammar;
 
+import compiler.Exception.OperatorException;
+import compiler.Exception.TypeException;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Semantic;
 
@@ -25,21 +27,20 @@ public class Constant {
     }
 
     public void semanticAnalysis() throws Exception{
-        TokenType leftType = basetype.getFirst().getType();
-        TokenType rightType = expressions.getFirst().getType();
-        Semantic.checkExpressionsType(expressions);
-        if (leftType != rightType && leftType != TokenType.IDENTIFIER && rightType != TokenType.IDENTIFIER) {
-            if (!((leftType == TokenType.FLOAT && rightType == TokenType.INTEGER) ||
-                (leftType == TokenType.INTEGER && rightType == TokenType.FLOAT))) {
-            //TODO : throw the good TypeErrorException
-            throw new Exception("TypeError: mismatched types in constant declaration (" + leftType + " vs " + rightType + ")   Valeur :" + basetype.getFirst() + " = " + expressions.getFirst());
+        ArrayList<TokenType> expressionType = new ArrayList<>();
+        for (Expression expression : expressions) {
+            expressionType.add(expression.getType());
         }
+        if (!Semantic.checkExpressionsType(expressionType)) {
+            throw new OperatorException();
+        }
+        expressionType.addFirst(basetype.getFirst().getType());
+        if (!Semantic.checkExpressionsType(expressionType)) {
+            throw new TypeException();
+        }
+        
     }
 
-
-
-
-    }
 
     @Override
     public String toString() {

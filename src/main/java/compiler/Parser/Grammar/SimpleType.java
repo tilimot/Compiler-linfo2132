@@ -14,17 +14,17 @@ public class SimpleType extends Type {
     }
 
     public TokenType getType(){
-        if (value.equals("int")){
-            return TokenType.INTEGER;
-        } else if (value.equals("float")){
-            return TokenType.FLOAT;
-        } else if (value.equals("string")){
-            return TokenType.STRINGS;
-        } else if (value.equals("bool")){
-            return TokenType.BOOLEAN;
-        } else {
-            return TokenType.IDENTIFIER;
-        }
+        return switch (value) {
+            case "int" -> TokenType.INTEGER;
+            case "float" -> TokenType.FLOAT;
+            case "string" -> TokenType.STRINGS;
+            case "bool" -> TokenType.BOOLEAN;
+            default -> TokenType.IDENTIFIER;
+        };
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

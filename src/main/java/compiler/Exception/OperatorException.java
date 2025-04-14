@@ -1,8 +1,10 @@
 package compiler.Exception;
 
 public class OperatorException extends Exception {
-    public OperatorException(String leftSide, String rightSide)
+    public OperatorException(
+
+    )
     {
-        super("OperatorError: Trying to operate "+leftSide+" with "+rightSide);
+        super("OperatorError: Trying to operate on incompatible types");
     }
 }

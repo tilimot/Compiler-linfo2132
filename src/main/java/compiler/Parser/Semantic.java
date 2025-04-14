@@ -33,28 +33,27 @@ public class Semantic {
 
     }
 
-    public static void checkExpressionsType(ArrayList<Expression> expressions) throws Exception {
-        if (expressions.isEmpty()) return;
-
-        TokenType baseType = expressions.getFirst().getType();
-        expressions.removeFirst();
-        for (Expression expression : expressions) {
-            TokenType currentType = expression.getType();
-            if (currentType != baseType && currentType != TokenType.IDENTIFIER && baseType != TokenType.IDENTIFIER) {
-                if (currentType == TokenType.OPERATOR) {
-                continue;
-            }
-            else if ((baseType == TokenType.FLOAT && currentType == TokenType.INTEGER) ||
-                    (baseType == TokenType.INTEGER && currentType == TokenType.FLOAT)) {
-                continue;
-            }
-            if (currentType != baseType) {
-                //TODO : throw the good TypeErrorException
-                throw new Exception("TypeError: mismatched types in constant declaration (" + currentType + " vs " + baseType + ")   Valeur :" + expression.getValue() + "vs" + baseType);
-            }
+    public static boolean checkExpressionsType(ArrayList<TokenType> expressions) throws Exception {
+        if (expressions.isEmpty()) return true;
+        ArrayList<TokenType> resolvedTypes = new ArrayList<>();
+        for (TokenType t : expressions) {
+            if (t != TokenType.IDENTIFIER && t != TokenType.OPERATOR) {
+                resolvedTypes.add(t);
             }
         }
+        if (resolvedTypes.isEmpty()) return true;
+
+        TokenType baseType = resolvedTypes.getFirst();
+
+        for (TokenType t : resolvedTypes) {
+            if ((baseType == TokenType.FLOAT && t == TokenType.INTEGER) ||
+                    (baseType == TokenType.INTEGER && t == TokenType.FLOAT)) {
+                continue;
+            }
+            if (t != baseType) {
+                return false;
+            }
+        }
+        return true;
     }
-
-
 }

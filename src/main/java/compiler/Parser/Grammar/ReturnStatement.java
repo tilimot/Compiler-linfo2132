@@ -27,4 +27,9 @@ public class ReturnStatement extends Statement{
         }
         return t +"RETURN : " + "\n" +tNext + return_ + "\n" + tNext + "EXPR : " + "\n" +  sb  + tNext + eol + "\n";
     }
+
+    @Override
+    public void semanticAnalysis() throws Exception {
+
+    }
 }

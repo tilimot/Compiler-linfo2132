@@ -29,4 +29,9 @@ public class VariableDeclaration extends Statement {
         }
         return t+identifier + "\n" + typeStr + "\n" + t + eol + "\n";
     }
+
+    @Override
+    public void semanticAnalysis() throws Exception {
+
+    }
 }
