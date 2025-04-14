@@ -7,6 +7,7 @@ import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
 import compiler.Parser.Grammar.*;
 import compiler.Parser.Parser;
+import compiler.Parser.Semantic;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -30,8 +31,10 @@ public class Compiler {
             Reader readerFile = FileToReader.getReaderFromFile(filepath);
             Lexer lexer = new Lexer(readerFile);
             Parser parser = new Parser(lexer);
-            Ast stmt = parser.getAst();
-            System.out.println(stmt);
+            Ast myAst = parser.getAst();
+            System.out.println(myAst);
+            Semantic semantic = new Semantic(myAst);
+            semantic.startAnalysis();
 
        }
     }

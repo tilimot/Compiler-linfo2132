@@ -1,7 +1,9 @@
 package compiler.Parser.Grammar;
 
 
+import compiler.Lexer.TokenType;
+
 public abstract class Type {
-    public abstract String getType();
+    public abstract TokenType getType();
 }
 

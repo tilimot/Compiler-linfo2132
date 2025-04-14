@@ -81,7 +81,7 @@ public class Parser {
 
     public ArrayAccesBracket parseArrayAccessBracket() throws  Exception {
         Symbol left_bracket = match(TokenType.OPERATOR);
-        Symbol integerValue = match(TokenType.NATURAL_NUMBER);
+        Symbol integerValue = match(TokenType.INTEGER);
         Symbol right_bracket = match(TokenType.OPERATOR);
         return new ArrayAccesBracket(left_bracket.getAttribute(), integerValue.getAttribute(), right_bracket.getAttribute());
     }
@@ -143,10 +143,10 @@ public class Parser {
 
     public Expression parseExpression() throws Exception {
         Symbol value;
-        if (currentSymbol.getTokenType() == TokenType.NATURAL_NUMBER) {
-            value = match(TokenType.NATURAL_NUMBER);
-        } else if (currentSymbol.getTokenType() == TokenType.FLOAT_NUMBER) {
-            value = match(TokenType.FLOAT_NUMBER);
+        if (currentSymbol.getTokenType() == TokenType.INTEGER) {
+            value = match(TokenType.INTEGER);
+        } else if (currentSymbol.getTokenType() == TokenType.FLOAT) {
+            value = match(TokenType.FLOAT);
         } else if(currentSymbol.getTokenType() == TokenType.STRINGS){
             value = match(TokenType.STRINGS);
         }
@@ -351,11 +351,11 @@ public class Parser {
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
         String coma1 = (String) match(TokenType.OPERATOR).getAttribute();
-        String beginValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String beginValue = (String) match(TokenType.INTEGER).getAttribute();
         String coma2 = (String) match(TokenType.OPERATOR).getAttribute();
-        String endValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String endValue = (String) match(TokenType.INTEGER).getAttribute();
         String coma3 = (String) match(TokenType.OPERATOR).getAttribute();
-        String stepValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        String stepValue = (String) match(TokenType.INTEGER).getAttribute();
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
@@ -493,7 +493,7 @@ public class Parser {
             // ArrayAccess : ( x[0] = .... | x[0].a = ...)
             else{
                 String leftBracket = match(TokenType.OPERATOR).getAttribute();
-                String index = match(TokenType.NATURAL_NUMBER).getAttribute();
+                String index = match(TokenType.INTEGER).getAttribute();
                 String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
                 ArrayList<RecordAttribute> recordAttributes = new ArrayList<>();

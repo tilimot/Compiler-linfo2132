@@ -1,5 +1,6 @@
 package compiler.Parser;
 
+import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.Ast;
 import compiler.Parser.Grammar.Expression;
 
@@ -17,24 +18,43 @@ public class Semantic {
         ast.semanticAnalysis();
     }
 
-    public String checkType(String expression_value ) {
+    public static TokenType checkType(String expression_value) {
         if (expression_value.contains("\""))
-            return "String";
+            return TokenType.STRINGS;
         if (expression_value.contains("true") || expression_value.contains("false"))
-            return "Boolean";
+            return TokenType.BOOLEAN;
+        if (expression_value.contains("."))
+            return TokenType.FLOAT;
         if (expression_value.matches(".*[a-zA-Z].*"))
-            return "Identifier";
+            return TokenType.IDENTIFIER;
         if (expression_value.matches(".*[0-9].*"))
-            return "Integer";
-        return expression_value;
+            return TokenType.INTEGER;
+        return TokenType.OPERATOR;
+
     }
 
-    public boolean checkExpressionsType(ArrayList<Expression> expressions) throws Exception {
-        String lastExpressionType = expressions.getFirst().getType();
+    public static void checkExpressionsType(ArrayList<Expression> expressions) throws Exception {
+        if (expressions.isEmpty()) return;
+
+        TokenType baseType = expressions.getFirst().getType();
+        expressions.removeFirst();
         for (Expression expression : expressions) {
-            return true;
+            TokenType currentType = expression.getType();
+            if (currentType != baseType && currentType != TokenType.IDENTIFIER && baseType != TokenType.IDENTIFIER) {
+                if (currentType == TokenType.OPERATOR) {
+                continue;
+            }
+            else if ((baseType == TokenType.FLOAT && currentType == TokenType.INTEGER) ||
+                    (baseType == TokenType.INTEGER && currentType == TokenType.FLOAT)) {
+                continue;
+            }
+            if (currentType != baseType) {
+                //TODO : throw the good TypeErrorException
+                throw new Exception("TypeError: mismatched types in constant declaration (" + currentType + " vs " + baseType + ")   Valeur :" + expression.getValue() + "vs" + baseType);
+            }
+            }
         }
-        return true;
     }
+
 
 }

@@ -1,5 +1,8 @@
 package compiler.Parser.Grammar;
 
+import compiler.Lexer.TokenType;
+import compiler.Parser.Semantic;
+
 import java.util.ArrayList;
 
 public class Constant {
@@ -22,8 +25,16 @@ public class Constant {
     }
 
     public void semanticAnalysis() throws Exception{
-        String leftType = basetype.getFirst().getType();
-        String rightType = expressions.getFirst().getType();
+        TokenType leftType = basetype.getFirst().getType();
+        TokenType rightType = expressions.getFirst().getType();
+        Semantic.checkExpressionsType(expressions);
+        if (leftType != rightType && leftType != TokenType.IDENTIFIER && rightType != TokenType.IDENTIFIER) {
+            if (!((leftType == TokenType.FLOAT && rightType == TokenType.INTEGER) ||
+                (leftType == TokenType.INTEGER && rightType == TokenType.FLOAT))) {
+            //TODO : throw the good TypeErrorException
+            throw new Exception("TypeError: mismatched types in constant declaration (" + leftType + " vs " + rightType + ")   Valeur :" + basetype.getFirst() + " = " + expressions.getFirst());
+        }
+    }
 
 
 
