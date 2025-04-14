@@ -34,4 +34,9 @@ public class WhileStatement extends Statement {
         return t + "WHILE : " + "\n" + tNext + while_ + "\n" + tNext + openingParenthesis + "\n"
                 + tNext+"COND :"+ "\n" + sb +tNext + closingParenthesis + "\n" + block;
     }
+
+    @Override
+    public void semanticAnalysis() throws Exception {
+
+    }
 }

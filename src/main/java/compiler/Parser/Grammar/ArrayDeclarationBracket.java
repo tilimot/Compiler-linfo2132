@@ -1,5 +1,7 @@
 package compiler.Parser.Grammar;
 
+import compiler.Lexer.TokenType;
+
 public class ArrayDeclarationBracket extends Type {
     String leftBracket;
     String rightBracket;
@@ -11,7 +13,11 @@ public class ArrayDeclarationBracket extends Type {
         this.tabIndex = tabIndex;
     }
 
-    public String getType(){
+    public TokenType getType(){
+        return TokenType.ARRAY_TYPE;
+    }
+
+    public String getValue() {
         return leftBracket + rightBracket;
     }
 

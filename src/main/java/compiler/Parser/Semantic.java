@@ -1,5 +1,6 @@
 package compiler.Parser;
 
+import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.Ast;
 import compiler.Parser.Grammar.Expression;
 
@@ -17,24 +18,42 @@ public class Semantic {
         ast.semanticAnalysis();
     }
 
-    public String checkType(String expression_value ) {
+    public static TokenType checkType(String expression_value) {
         if (expression_value.contains("\""))
-            return "String";
+            return TokenType.STRINGS;
         if (expression_value.contains("true") || expression_value.contains("false"))
-            return "Boolean";
+            return TokenType.BOOLEAN;
+        if (expression_value.contains("."))
+            return TokenType.FLOAT;
         if (expression_value.matches(".*[a-zA-Z].*"))
-            return "Identifier";
+            return TokenType.IDENTIFIER;
         if (expression_value.matches(".*[0-9].*"))
-            return "Integer";
-        return expression_value;
+            return TokenType.INTEGER;
+        return TokenType.OPERATOR;
+
     }
 
-    public boolean checkExpressionsType(ArrayList<Expression> expressions) throws Exception {
-        String lastExpressionType = expressions.getFirst().getType();
-        for (Expression expression : expressions) {
-            return true;
+    public static boolean checkExpressionsType(ArrayList<TokenType> expressions) throws Exception {
+        if (expressions.isEmpty()) return true;
+        ArrayList<TokenType> resolvedTypes = new ArrayList<>();
+        for (TokenType t : expressions) {
+            if (t != TokenType.IDENTIFIER && t != TokenType.OPERATOR) {
+                resolvedTypes.add(t);
+            }
+        }
+        if (resolvedTypes.isEmpty()) return true;
+
+        TokenType baseType = resolvedTypes.getFirst();
+
+        for (TokenType t : resolvedTypes) {
+            if ((baseType == TokenType.FLOAT && t == TokenType.INTEGER) ||
+                    (baseType == TokenType.INTEGER && t == TokenType.FLOAT)) {
+                continue;
+            }
+            if (t != baseType) {
+                return false;
+            }
         }
         return true;
     }
-
 }

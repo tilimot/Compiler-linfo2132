@@ -49,4 +49,9 @@ public class FunctionStatement extends Statement {
         return t + "FUNC : "+ "\n" + tNext + fun_ + "\n" + tNext + identifier + "\n" + tNext + openParenthesis + "\n"
                 + tNext + "PARAM :" +"\n" + funcParamStr + "\n" + tNext + closingParenthesis + "\n" + returnTypeStr + "\n" + block;
     }
+
+    @Override
+    public void semanticAnalysis() throws Exception {
+
+    }
 }

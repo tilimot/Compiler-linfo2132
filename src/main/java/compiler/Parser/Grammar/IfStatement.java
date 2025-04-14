@@ -34,4 +34,9 @@ public class IfStatement extends Statement {
         return t + "IF : " + "\n" + tNext + if_ + "\n" + tNext + openingParenthesis + "\n"
                 + tNext+"COND :"+ "\n" + sb +tNext + closingParenthesis + "\n" + block;
     }
+
+    @Override
+    public void semanticAnalysis() throws Exception {
+
+    }
 }

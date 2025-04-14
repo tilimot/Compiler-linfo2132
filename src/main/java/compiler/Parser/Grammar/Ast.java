@@ -22,14 +22,15 @@ public class Ast {
         for (Constant constant : constants) {
             constant.semanticAnalysis();
         }
-
+        for (Statement globalVariable : globalVariables) {
+                globalVariable.semanticAnalysis();
+        }
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         String t = "\t".repeat(tabIndex);
-        String tNext = "\t".repeat(tabIndex+1);
         for (Constant constant : constants) {
             constant.tabIndex = tabIndex+1;
             sb.append(constant.toString());

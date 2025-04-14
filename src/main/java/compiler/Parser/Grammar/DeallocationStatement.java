@@ -20,4 +20,9 @@ public class DeallocationStatement extends Statement {
         String t = "\t".repeat(tabIndex);
         return t +free_ + "\n" + t + identifier + "\n" +t + eol + "\n";
     }
+
+    @Override
+    public void semanticAnalysis() throws Exception {
+
+    }
 }

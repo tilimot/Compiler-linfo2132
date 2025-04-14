@@ -37,4 +37,9 @@ public class ForStatement extends Statement {
         block.tabIndex = tabIndex+1;
         return t+"FOR : "+ "\n"+tNext +for_ + "\n" + tNext + opening_parenthesis + "\n" +tNext+ identifier + "\n"+tNext + coma1 + "\n" +tNext+ beginValue + "\n"+tNext + coma2 + "\n"+tNext + endValue + "\n"+tNext + coma3 + "\n"+tNext  + stepValue + "\n" +tNext+ closing_parenthesis + "\n" + block.toString();
     }
+
+    @Override
+    public void semanticAnalysis() throws Exception {
+
+    }
 }

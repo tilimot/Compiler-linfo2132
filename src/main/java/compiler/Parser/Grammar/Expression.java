@@ -1,5 +1,8 @@
 package compiler.Parser.Grammar;
 
+import compiler.Lexer.TokenType;
+import compiler.Parser.Semantic;
+
 public class Expression {
     String value;
     int tabIndex;
@@ -12,8 +15,12 @@ public class Expression {
 
     }
 
-    public String getType(){
+    public String getValue() {
         return value;
+    }
+
+    public TokenType getType(){
+        return Semantic.checkType(value);
     }
 
     @Override
