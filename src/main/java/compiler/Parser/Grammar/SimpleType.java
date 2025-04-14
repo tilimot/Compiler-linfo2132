@@ -11,6 +11,10 @@ public class SimpleType extends Type {
 
     }
 
+    public String getType(){
+        return value;
+    }
+
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);

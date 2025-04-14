@@ -21,6 +21,15 @@ public class Constant {
         this.tabIndex = tabIndex;
     }
 
+    public void semanticAnalysis() throws Exception{
+        String leftType = basetype.getFirst().getType();
+        String rightType = expressions.getFirst().getType();
+
+
+
+
+    }
+
     @Override
     public String toString() {
         String t = "\t".repeat(tabIndex);

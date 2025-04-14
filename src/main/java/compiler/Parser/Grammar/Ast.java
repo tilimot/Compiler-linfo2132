@@ -18,6 +18,13 @@ public class Ast {
         this.tabIndex = tabIndex;
     }
 
+    public void semanticAnalysis() throws Exception {
+        for (Constant constant : constants) {
+            constant.semanticAnalysis();
+        }
+
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
