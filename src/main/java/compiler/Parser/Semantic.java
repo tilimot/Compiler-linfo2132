@@ -14,8 +14,9 @@ public class Semantic {
         this.ast = ast;
     }
 
-    public void startAnalysis () throws Exception {
+    public int startAnalysis () throws Exception {
         ast.semanticAnalysis();
+        return 1;
     }
 
     public static TokenType checkType(String expression_value) {
