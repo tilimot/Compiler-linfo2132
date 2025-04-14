@@ -50,9 +50,7 @@ public class Parser {
         }
     }
 
-    public File getAST() throws Exception {
-        return parseFile();
-    }
+
 
 
     public SimpleType parseSimpleType() throws Exception {
@@ -676,7 +674,7 @@ public class Parser {
         return new Ast(constants,records,globalVariables, functions, tabIndex);
     }
 
-    public Ast getAst() throws Exception{
+    public Ast getAST() throws Exception{
         return parseAst();
     }
 

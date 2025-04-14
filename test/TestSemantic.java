@@ -1,15 +1,11 @@
 import compiler.Exception.MissingConditionException;
 import compiler.Lexer.Lexer;
-import compiler.Parser.Grammar.*;
 import compiler.Parser.Parser;
+import compiler.Parser.Semantic;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -128,6 +124,20 @@ public class TestSemantic {
     public void forLoops_WithMissingCondition6_Should_Throws_MissingConditionError() throws Exception {
         String input = "for(i,1,){}";
         Parser parser = getParser(input);
+        try {
+            parser.getAST();
+            fail("MissingConditionError wasn't raise");
+        } catch (MissingConditionException e) {
+            // Assert
+            assertEquals("MissingConditionError: Must attribute a condition", e.getMessage());
+        }
+    }
+
+    @Test
+    public void badAssignmentType() throws Exception {
+        String input = "a string = 1;";
+        Parser parser = getParser(input);
+        Semantic semantic = new Semantic(parser.getAST());
         try {
             parser.getAST();
             fail("MissingConditionError wasn't raise");

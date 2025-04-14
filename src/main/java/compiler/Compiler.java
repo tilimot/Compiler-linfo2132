@@ -10,8 +10,6 @@ import compiler.Parser.Parser;
 import compiler.Parser.Semantic;
 
 import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
 
 public class Compiler {
     public static void main(String[] args) throws Exception {
@@ -31,7 +29,7 @@ public class Compiler {
             Reader readerFile = FileToReader.getReaderFromFile(filepath);
             Lexer lexer = new Lexer(readerFile);
             Parser parser = new Parser(lexer);
-            Ast myAst = parser.getAst();
+            Ast myAst = parser.getAST();
             System.out.println(myAst);
             Semantic semantic = new Semantic(myAst);
             semantic.startAnalysis();
