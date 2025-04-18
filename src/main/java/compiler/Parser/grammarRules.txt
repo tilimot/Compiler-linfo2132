@@ -31,9 +31,34 @@ AST -> MoreConstant MoreRecord MoreGlobalVariables FunctionInit
         FunctionStatement -> RegularFunction | FunctionMain | 𝜀 ( attention: LL2)
             RegularFunction -> fun identifier (FuncParams) Type Block
             FunctionMain    -> fun main() Block
+                Block -> {Statements}
 
-            ml
 
+Statements:
+Statements -> Statement Statements | 𝜀
+Statement -> IfStatement
+            | WhileStatement
+            | ForStatement
+            | ReturnStatement
+            | DeallocationStatement
+            | FunctionStatement
+            | CallOrDeclarationOrAssignement
+
+
+
+    CallOrDeclarationOrAssignement -> MethodCall| DeclarationOrAssignement (LL2)
+                    MethodCall -> identifier (Params) ;
+
+        DeclarationOrAssignement -> DeclarationOrLeftSideAssignement | AttributeOrArrayAccess
+
+            DeclarationOrLeftSideAssignement -> Declaration | LeftSideAssignement (LL2)
+                        Declaration -> identifier Types;
+                        LeftSideAssignement -> identifier Types
+
+            AttributeOrArrayAccess -> LeftSideRecordAccess | LeftSideArrayAccess
+                        LeftSideRecordAccess -> identifier . RecordAttributes
+                        LeftSideArrayAccess -> identifier [ integer ] | identifier [ integer ] RecordAttributes
+                        RecordAttribute -> . identifier
 
 
 

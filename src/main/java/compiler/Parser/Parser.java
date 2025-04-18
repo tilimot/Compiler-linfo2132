@@ -606,7 +606,7 @@ public class Parser {
         ArrayList<Statement> statements = parseStatements();
         String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
-        return new Block(leftBracket, statements, rightBracket,tabIndex);
+        return new Block(leftBracket, statements, rightBracket, tabIndex);
     }
 
     public Constant parseConstant() throws Exception {
