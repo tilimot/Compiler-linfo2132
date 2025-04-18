@@ -8,6 +8,9 @@ gradlew
 # Sauf aussi les sous-répertoires (sinon !*.java ne suffira pas)
 !*/
 
+# Sauf le fichier des règles de grammairs
+!grammarRules.txt
+
 # (Optionnel) ignorer les fichiers compilés
 *.class
 
