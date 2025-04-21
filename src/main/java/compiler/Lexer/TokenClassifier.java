@@ -113,6 +113,7 @@ public class TokenClassifier {
         for(int i = 0; i<token_length;i++){
             if(Character.isDigit(current_char)){
                 current_position = advance(input);
+                current_char = (char) current_position;
             }
             else {
                 return false;
@@ -124,6 +125,9 @@ public class TokenClassifier {
     public static boolean isFloatNumber(String token) {
         Reader input = new StringReader(token);
         int token_length = token.length();
+        if(token_length<=1){
+            return false;
+        }
         int current_position = advance(input);
         char current_char = (char) current_position;
 
@@ -165,7 +169,7 @@ public class TokenClassifier {
         if(isVoidType(token)) return TokenType.VOID_TYPE;
         if (isIdentifier(token)) return TokenType.IDENTIFIER;
         if (isNaturalNumber(token)) return TokenType.INTEGER;
-        //if (isFloatNumber(token)) return TokenType.FLOAT_NUMBER;
+        if (isFloatNumber(token)) return TokenType.FLOAT;
         if (isString(token)) return TokenType.STRINGS;
         if (isEOL(token)) return TokenType.EOL;
         if (isOperator(token)) return TokenType.OPERATOR;
