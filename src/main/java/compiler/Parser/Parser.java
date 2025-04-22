@@ -22,7 +22,6 @@ public class Parser {
             allSymbols.add(lexer.getNextSymbol());
         }
         this.currentSymbol = getCurrentSymbol();
-        //System.out.println("Parser: " + allSymbols);
     }
 
     public Symbol getCurrentSymbol() {
@@ -565,7 +564,6 @@ public class Parser {
 
     public Statement parseStatement() throws Exception{
         Statement statement;
-        System.out.println("CurrentSymbol: " + currentSymbol.getAttribute());
 
         if(currentSymbol.getAttribute().equals("if")){
             statement = parseIfStatement();
@@ -595,7 +593,6 @@ public class Parser {
     public ArrayList<Statement> parseStatements() throws Exception {
         ArrayList<Statement> statements = new ArrayList<Statement>();
         while (!currentSymbol.getAttribute().equals("}")) {
-            System.out.println("PRESENT: " + currentSymbol.getAttribute());
             statements.add(parseStatement());
         }
         return statements;
