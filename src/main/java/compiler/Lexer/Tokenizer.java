@@ -156,7 +156,7 @@ public class Tokenizer {
                 }
                 else {
                     // Go to terminal state ( not a Float or an Integer Anymore)
-                    state=3;
+                    return new TokenResult(buffer, i);
                 }
             }
             else if (state==2) {
@@ -171,11 +171,12 @@ public class Tokenizer {
                 }
                 else{
                     // Go to terminal state ( not a Float or an Integer Anymore)
-                    state=3;
+                    return new TokenResult(buffer, i);
                 }
             }
             else if (state==3) {
                 // Terminal State. Return Buffer
+                // Etat qui ne sert un peu à rien
                 return new TokenResult(buffer, i);
             }
 

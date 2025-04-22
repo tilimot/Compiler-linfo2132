@@ -20,7 +20,9 @@ public class FunctionStatement extends Statement {
         this.fun_ = fun_;
         this.identifier = identifier;
         this.openParenthesis = openParenthesis;
+        this.funcParams = funcParams;
         this.closingParenthesis =closingParenthesis;
+        this.return_type = return_type;
         this.block = block;
         this.funcParams = funcParams;
         this.return_type = return_type;
