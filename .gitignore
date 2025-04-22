@@ -1,5 +1,6 @@
 # Ignorer tout
 *
+gradlew
 
 # Sauf les fichiers Java
 !*.java
