@@ -26,11 +26,11 @@ public class TestLexer {
 
     @Test
     public void test() {
-        String input = "1.2 3.4 1.a 3 3 . 1 333 4.123a22";
+        String input = "a int= 2.4;";
         StringReader reader = new StringReader(input);
         Tokenizer t = new Tokenizer(reader);
         List<String> result = t.splitIntoTokens(input);
-        List<String> expected = List.of("1.2","3.4","1.","a","3","3",".","1","333","4.123","a22");
+        List<String> expected = List.of("a","int","=","2.4",";");
 
         assertEquals(expected,result);
     }
