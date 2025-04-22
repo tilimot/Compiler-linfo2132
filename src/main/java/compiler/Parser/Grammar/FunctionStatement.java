@@ -40,22 +40,33 @@ public class FunctionStatement extends Statement {
         String t = "\t".repeat(tabIndex);
         String tNext = "\t".repeat(tabIndex+1);
         block.tabIndex = tabIndex+1;
-        StringBuilder funcParamStr = new StringBuilder();
-        for (FuncParam funcParam : funcParams) {
-            funcParam.tabIndex = tabIndex+2;
-            funcParamStr.append(funcParam);
-        }
-        StringBuilder returnTypeStr = new StringBuilder();
-        for (Type type : return_type) {
-            if (type instanceof SimpleType) {
-                ((SimpleType) type).tabIndex = tabIndex + 1;
-            } else if (type instanceof ArrayDeclarationBracket) {
-                ((ArrayDeclarationBracket) type).tabIndex = tabIndex + 1;
+
+        if (this.funcParams != null) {
+            StringBuilder funcParamStr = new StringBuilder();
+            for (FuncParam funcParam : funcParams) {
+                funcParam.tabIndex = tabIndex + 2;
+                funcParamStr.append(funcParam);
             }
-            returnTypeStr.append(type);
+
+
+            StringBuilder returnTypeStr = new StringBuilder();
+            for (Type type : return_type) {
+                if (type instanceof SimpleType) {
+                    ((SimpleType) type).tabIndex = tabIndex + 1;
+                } else if (type instanceof ArrayDeclarationBracket) {
+                    ((ArrayDeclarationBracket) type).tabIndex = tabIndex + 1;
+                }
+                returnTypeStr.append(type);
+            }
+
+            return t + "FUNC : " + "\n" + tNext + fun_ + "\n" + tNext + identifier + "\n" + tNext + openParenthesis + "\n"
+                    + tNext + "PARAM :" + "\n" + funcParamStr + "\n" + tNext + closingParenthesis + "\n" + returnTypeStr + "\n" + block;
         }
-        return t + "FUNC : "+ "\n" + tNext + fun_ + "\n" + tNext + identifier + "\n" + tNext + openParenthesis + "\n"
-                + tNext + "PARAM :" +"\n" + funcParamStr + "\n" + tNext + closingParenthesis + "\n" + returnTypeStr + "\n" + block;
+
+        else{
+            return t + "FUNC : " + "\n" + tNext + fun_ + "\n" + tNext + identifier + "\n" + tNext + openParenthesis + "\n"
+                    + tNext + "PARAM :" + "\n" + "\n" + tNext + closingParenthesis + "\n" + "\n" + block;
+        }
     }
 
     @Override
