@@ -1,5 +1,7 @@
 package compiler.Lexer;
 
+import compiler.Exception.FloatException;
+
 import java.io.*;
 import java.util.*;
 
@@ -184,8 +186,10 @@ public class Tokenizer {
                 // Float State
                 if (Character.isDigit(c)){
                     buffer.append(c);
-                }
-                else{
+                } else if (Character.isLetter(c)) {
+                    throw new FloatException("Float must only be composed of digits");
+
+                } else{
                     return new TokenResult(buffer, i);
                 }
             }
