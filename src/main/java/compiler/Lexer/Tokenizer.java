@@ -19,8 +19,8 @@ public class Tokenizer {
 
     public class TokenResult {
         /*
-        * Class used only for splitting line into Float or Int
-        */
+         * Class used only for splitting line into Float or Int
+         */
         public StringBuilder token;
         public  int position;
 
@@ -87,36 +87,42 @@ public class Tokenizer {
                     buffer.setLength(0);
                 }
                 inWord = false;
-            } else if (isSymbol(c) && c!= '.') {
+            } else if (isSymbol(c) && c != '.') {
                 if (buffer.length() > 0) {
                     result.add(buffer.toString());
                     buffer.setLength(0);
                 }
                 result.add(Character.toString(c));
-            } else if (Character.isDigit(c) && !inWord) {
+            } else if (c == '.' && i > 0 && i < line.length() - 1 &&
+                    Character.isLetterOrDigit(line.charAt(i - 1)) &&
+                    Character.isLetterOrDigit(line.charAt(i + 1))) {
+                // Cas spécial item.value → item, .value
+                result.add(buffer.toString()); // Ajoute 'item'
+                buffer.setLength(0);           // Reset le buffer
+                buffer.append('.');            // Commence le prochain token par '.'
+                inWord = true;
+            } else if ((Character.isDigit(c) || (c == '.')) && !inWord) {
                 if (buffer.length() > 0) {
                     result.add(buffer.toString());
                     buffer.setLength(0);
                 }
                 TokenResult token = splitIntoFloatOrIntToken(line, i);
-                i = token.position-1;
+                i = token.position - 1;
                 result.add(token.token.toString());
-                buffer.setLength(0);
             } else {
-                inWord=true;
+                inWord = true;
                 buffer.append(c);
-
             }
         }
-        if (buffer.length() > 0) result.add(buffer.toString());
+
         return result;
     }
 
     public TokenResult splitIntoFloatOrIntToken(String input, int i){
         /*
-        * Take the string, the position in the string. Use an automaton to extract float or integer token.
-        *
-        * */
+         * Take the string, the position in the string. Use an automaton to extract float or integer token.
+         *
+         * */
         StringBuilder buffer = new StringBuilder();
         int l = input.length();
         int state = 0;
@@ -129,7 +135,7 @@ public class Tokenizer {
                 state = 1;
                 buffer.append(c);
             }
-            else if (state==0 && c=='.') {
+            else if (state==0 && c==('.')) {
                 // Manage float written as .3456
 
                 state = 4;
@@ -157,8 +163,8 @@ public class Tokenizer {
                     state=4;
                 }
                 else {
-                    // Go to terminal state ( not a Float or an Integer Anymore)
-                    return new TokenResult(buffer, i);
+                    // Go to terminal state (not a Float or an Integer Anymore)
+                    state=3;
                 }
             }
             else if (state==2) {
@@ -172,29 +178,24 @@ public class Tokenizer {
                     state=4;
                 }
                 else{
-                    // Go to terminal state ( not a Float or an Integer Anymore)
-                    return new TokenResult(buffer, i);
+                    // Go to terminal state (not a Float or an Integer Anymore)
+                    state=3;
                 }
             }
             else if (state==3) {
                 // Terminal State. Return Buffer
-                // Etat qui ne sert un peu à rien
                 return new TokenResult(buffer, i);
             }
 
-            else if (state==4){
+            else {
                 // Float State
                 if (Character.isDigit(c)){
                     buffer.append(c);
                 } else if (Character.isLetter(c)) {
-                    throw new FloatException("Float must only be composed of digits");
-
+                    throw new FloatException("Integer doesn't have attributes");
                 } else{
                     return new TokenResult(buffer, i);
                 }
-            }
-            else{
-                return new TokenResult(buffer, i);
             }
             i+=1;
         }
@@ -203,7 +204,7 @@ public class Tokenizer {
 
 
     private boolean isSymbol(char c) {
-        return "=+-*/%(){}[].,;<>!&|".indexOf(c) != -1;
+        return "=+-*/%(){}[],;<>!&|".indexOf(c) != -1;
     }
 
     public String nextToken() {
