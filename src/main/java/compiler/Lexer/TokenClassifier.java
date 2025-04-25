@@ -105,6 +105,9 @@ public class TokenClassifier {
         }
         return true;
     }
+    public static boolean isMain(String token) {
+        return token.equals("main");
+    }
 
     public static boolean isRecordName(String token) {
         Reader input = new StringReader(token);
@@ -194,7 +197,9 @@ public class TokenClassifier {
     // Détermine le type d’un token
     public static TokenType classifyToken(String token) {
         if (isEOF(token)) return TokenType.EOF;
+
         if (isComment(token)) return TokenType.COMMENT;
+        if (isMain(token))return TokenType.MAIN;
         if (isKeyword(token)) return TokenType.KEYWORD;
         if (isBoolean(token)) return TokenType.BOOLEAN;
         if(isBaseType(token)) return TokenType.BASE_TYPE;
