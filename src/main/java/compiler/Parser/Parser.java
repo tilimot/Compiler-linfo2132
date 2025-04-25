@@ -5,6 +5,7 @@ import compiler.Lexer.Symbol;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
 import compiler.Parser.Grammar.Record;
+import compiler.Exception.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -49,9 +50,7 @@ public class Parser {
         }
     }
 
-    public File getAST() throws Exception {
-        return parseFile();
-    }
+
 
 
     public SimpleType parseSimpleType() throws Exception {
@@ -81,7 +80,7 @@ public class Parser {
 
     public ArrayAccesBracket parseArrayAccessBracket() throws  Exception {
         Symbol left_bracket = match(TokenType.OPERATOR);
-        Symbol integerValue = match(TokenType.NATURAL_NUMBER);
+        Symbol integerValue = match(TokenType.INTEGER);
         Symbol right_bracket = match(TokenType.OPERATOR);
         return new ArrayAccesBracket(left_bracket.getAttribute(), integerValue.getAttribute(), right_bracket.getAttribute());
     }
@@ -143,10 +142,11 @@ public class Parser {
 
     public Expression parseExpression() throws Exception {
         Symbol value;
-        if (currentSymbol.getTokenType() == TokenType.NATURAL_NUMBER) {
-            value = match(TokenType.NATURAL_NUMBER);
-        } else if (currentSymbol.getTokenType() == TokenType.FLOAT_NUMBER) {
-            value = match(TokenType.FLOAT_NUMBER);
+        Symbol attribute;
+        if (currentSymbol.getTokenType() == TokenType.INTEGER) {
+            value = match(TokenType.INTEGER);
+        } else if (currentSymbol.getTokenType() == TokenType.FLOAT) {
+            value = match(TokenType.FLOAT);
         } else if(currentSymbol.getTokenType() == TokenType.STRINGS){
             value = match(TokenType.STRINGS);
         }
@@ -155,6 +155,10 @@ public class Parser {
         }
         else{
             value = match(TokenType.IDENTIFIER);
+            if (currentSymbol.getTokenType() == TokenType.ATTRIBUTE){
+                attribute = match(TokenType.ATTRIBUTE);
+                return new Expression((String) value.getAttribute(),tabIndex, ((String)attribute.getAttribute()).substring(1));
+            }
         }
         return new Expression((String) value.getAttribute(),tabIndex );
     }
@@ -245,6 +249,8 @@ public class Parser {
             expressions.addAll(parseMoreExpressions());
         }
 
+
+
         return expressions;
     }
 
@@ -295,8 +301,8 @@ public class Parser {
 
     public MethodCall parseMethodCall() throws Exception {
         /*
-        * GrammarRule: MethodCall -> identifier(Params) ;
-        */
+         * GrammarRule: MethodCall -> identifier(Params) ;
+         */
 
         Symbol identifier = match(TokenType.IDENTIFIER);
         Symbol opening_parenthesis = match(TokenType.OPERATOR);
@@ -340,6 +346,17 @@ public class Parser {
         return new ReturnStatement(return_,expressions,eol,tabIndex);
     }
 
+    public void checkMissingCondition() throws MissingConditionException{
+        if (currentSymbol.getAttribute().equals(",")){
+            throw new MissingConditionException();
+        }
+    }
+
+    public void checkEarlyEndCondition() throws MissingConditionException{
+        if (currentSymbol.getAttribute().equals(")")){
+            throw new MissingConditionException();
+        }
+    }
 
     public ForStatement parseForStatement() throws Exception {
         /*
@@ -349,13 +366,26 @@ public class Parser {
         //TODO Deeply need to implem BLOCK block; !!!!
         String for_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        checkEarlyEndCondition();
+        checkMissingCondition();
         String identifier = (String) match(TokenType.IDENTIFIER).getAttribute();
+        checkEarlyEndCondition();
         String coma1 = (String) match(TokenType.OPERATOR).getAttribute();
-        String beginValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+
+        checkMissingCondition();
+        checkEarlyEndCondition();
+        String beginValue = (String) match(TokenType.INTEGER).getAttribute();
+        checkEarlyEndCondition();
         String coma2 = (String) match(TokenType.OPERATOR).getAttribute();
-        String endValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        checkMissingCondition();
+        checkEarlyEndCondition();
+        String endValue = (String) match(TokenType.INTEGER).getAttribute();
+        checkEarlyEndCondition();
         String coma3 = (String) match(TokenType.OPERATOR).getAttribute();
-        String stepValue = (String) match(TokenType.NATURAL_NUMBER).getAttribute();
+        checkMissingCondition();
+        checkEarlyEndCondition();
+        String stepValue = (String) match(TokenType.INTEGER).getAttribute();
+
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
@@ -372,6 +402,9 @@ public class Parser {
         //TODO develop more specific operator in Lexer !!
         String while_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        if (currentSymbol.getTokenType().equals(TokenType.OPERATOR)){
+            throw new MissingConditionException();
+        }
         ArrayList<Expression> conditions =  parseConditions();
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
@@ -389,6 +422,9 @@ public class Parser {
         //TODO develop more specific operator in Lexer !!
         String if_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
+        if (currentSymbol.getTokenType().equals(TokenType.OPERATOR)){
+            throw new MissingConditionException();
+        }
         ArrayList<Expression> conditions =  parseConditions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
@@ -409,9 +445,21 @@ public class Parser {
         return new DeallocationStatement(free_, identifier, eol,tabIndex );
     }
 
+    public FunctionStatement parseFunctionMain() throws Exception {
+        String fun_ = "fun";
+        String identifier = match(TokenType.MAIN).getAttribute();
+        String openParenthesis = match(TokenType.OPERATOR).getAttribute();
+        String closingParenthesis = match(TokenType.OPERATOR).getAttribute();
+        Block block = parseBlock();
+        return new FunctionMainStatement(fun_,identifier, openParenthesis, closingParenthesis,block, tabIndex);
+    }
+
     public FunctionStatement parseFunctionStatement() throws Exception {
         //TODO returnType dont manage constant Type
         String fun_ = match(TokenType.KEYWORD).getAttribute();
+        if (currentSymbol.getAttribute().equals("main")){
+            return parseFunctionMain();
+        }
         String identifier = match(TokenType.IDENTIFIER).getAttribute();
         String openParenthesis = match(TokenType.OPERATOR).getAttribute();
         //ArrayList<Type> type = parseType();
@@ -478,8 +526,8 @@ public class Parser {
                 }
                 //LeftSideAssignement : (x int = ...)
                 else{
-                 LeftSideAssignement leftSide = new LeftSideAssignement(identifier,type);
-                 return parseAssignement(leftSide);
+                    LeftSideAssignement leftSide = new LeftSideAssignement(identifier,type);
+                    return parseAssignement(leftSide);
                 }
             }
             // Record Attribute Access :  ( x.a = ...)
@@ -493,7 +541,7 @@ public class Parser {
             // ArrayAccess : ( x[0] = .... | x[0].a = ...)
             else{
                 String leftBracket = match(TokenType.OPERATOR).getAttribute();
-                String index = match(TokenType.NATURAL_NUMBER).getAttribute();
+                String index = match(TokenType.INTEGER).getAttribute();
                 String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
                 ArrayList<RecordAttribute> recordAttributes = new ArrayList<>();
@@ -524,7 +572,6 @@ public class Parser {
 
     public Statement parseStatement() throws Exception{
         Statement statement;
-
         System.out.println("CurrentSymbol: " + currentSymbol.getAttribute());
 
         if(currentSymbol.getAttribute().equals("if")){
@@ -566,7 +613,7 @@ public class Parser {
         ArrayList<Statement> statements = parseStatements();
         String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
-        return new Block(leftBracket, statements, rightBracket,tabIndex);
+        return new Block(leftBracket, statements, rightBracket, tabIndex);
     }
 
     public Constant parseConstant() throws Exception {
@@ -646,7 +693,7 @@ public class Parser {
         return new Ast(constants,records,globalVariables, functions, tabIndex);
     }
 
-    public Ast getAst() throws Exception{
+    public Ast getAST() throws Exception{
         return parseAst();
     }
 

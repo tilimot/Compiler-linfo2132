@@ -1,0 +1,69 @@
+Missing:
+- Assignement Right Part:
+	- MethodCall
+	- p[0].x+p[1].x, p[0].y+p[1].y
+	- 
+- ArrayType complete
+- Built-in function
+- Float and Int
+- Nested method call
+- return Point(p[0].x+p[1].x, p[0].y+p[1].y); 
+- RecordTypes Management
+- Operations Priority PEMDAS
+- can directly use Flow Control block. Not mandatory in a func
+
+
+
+Grammar:
+
+AST:
+AST -> MoreConstant MoreRecord MoreGlobalVariables FunctionInit
+
+    MoreConstant -> Constant MoreConstant | 𝜀
+        Constant -> final identifier Type = Expressions ;
+
+    MoreRecord -> Record MoreRecord | 𝜀
+        Record -> recordName rec { MoreVariableDeclaration }
+
+    MoreGlobalVariable -> CallOrDeclarationOrAssignement | 𝜀  (will end up as Assignement)
+
+    FunctionInit -> FunctionStatement FunctionInit | 𝜀
+        FunctionStatement -> RegularFunction | FunctionMain | 𝜀 ( attention: LL2)
+            RegularFunction -> fun identifier (FuncParams) Type Block
+            FunctionMain    -> fun main() Block
+                Block -> {Statements}
+
+
+Statements:
+Statements -> Statement Statements | 𝜀
+Statement -> IfStatement
+            | WhileStatement
+            | ForStatement
+            | ReturnStatement
+            | DeallocationStatement
+            | FunctionStatement
+            | CallOrDeclarationOrAssignement
+
+
+
+    CallOrDeclarationOrAssignement -> MethodCall| DeclarationOrAssignement (LL2)
+                    MethodCall -> identifier (Params) ;
+
+        DeclarationOrAssignement -> DeclarationOrLeftSideAssignement | AttributeOrArrayAccess
+
+            DeclarationOrLeftSideAssignement -> Declaration | LeftSideAssignement (LL2)
+                        Declaration -> identifier Types;
+                        LeftSideAssignement -> identifier Types
+
+            AttributeOrArrayAccess -> LeftSideRecordAccess | LeftSideArrayAccess
+                        LeftSideRecordAccess -> identifier . RecordAttributes
+                        LeftSideArrayAccess -> identifier [ integer ] | identifier [ integer ] RecordAttributes
+                        RecordAttribute -> . identifier
+
+
+
+
+
+
+
+

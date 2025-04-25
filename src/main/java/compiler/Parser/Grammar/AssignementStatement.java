@@ -1,5 +1,10 @@
 package compiler.Parser.Grammar;
 
+import compiler.Exception.OperatorException;
+import compiler.Exception.TypeException;
+import compiler.Lexer.TokenType;
+import compiler.Parser.Semantic;
+
 import java.util.ArrayList;
 
 public class AssignementStatement extends Statement {
@@ -15,6 +20,25 @@ public class AssignementStatement extends Statement {
         this.equalOperator = equalOperator;
         this.rightSide=rightSide;
         this.eol = eol;
+    }
+
+    public void semanticAnalysis() throws Exception{
+        ArrayList<TokenType> expressionType = new ArrayList<>();
+        if (rightSide instanceof RightSideExpressions) {
+            for (Expression expression : ((RightSideExpressions) rightSide).expressions) {
+                expressionType.add(expression.getType());
+            }
+        }
+        if (!Semantic.checkExpressionsType(expressionType)) {
+            throw new OperatorException();
+        }
+        if (leftSide instanceof LeftSideAssignement) {
+            expressionType.addFirst(((LeftSideAssignement) leftSide).type.getFirst().getType());
+        }
+        if (!Semantic.checkExpressionsType(expressionType)) {
+            throw new TypeException();
+        }
+
     }
 
     @Override

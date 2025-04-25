@@ -1,5 +1,10 @@
 package compiler.Parser.Grammar;
 
+import compiler.Exception.OperatorException;
+import compiler.Exception.TypeException;
+import compiler.Lexer.TokenType;
+import compiler.Parser.Semantic;
+
 import java.util.ArrayList;
 
 public class Constant {
@@ -20,6 +25,22 @@ public class Constant {
         this.eol = eol;
         this.tabIndex = tabIndex;
     }
+
+    public void semanticAnalysis() throws Exception{
+        ArrayList<TokenType> expressionType = new ArrayList<>();
+        for (Expression expression : expressions) {
+            expressionType.add(expression.getType());
+        }
+        if (!Semantic.checkExpressionsType(expressionType)) {
+            throw new OperatorException();
+        }
+        expressionType.addFirst(basetype.getFirst().getType());
+        if (!Semantic.checkExpressionsType(expressionType)) {
+            throw new TypeException();
+        }
+        
+    }
+
 
     @Override
     public String toString() {

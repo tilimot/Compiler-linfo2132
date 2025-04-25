@@ -1,7 +1,10 @@
 package compiler.Parser.Grammar;
 
 
-public abstract class Type {
+import compiler.Lexer.TokenType;
 
+public abstract class Type {
+    public abstract TokenType getType();
+    public abstract String getValue();
 }
 

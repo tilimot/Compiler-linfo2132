@@ -7,10 +7,9 @@ import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
 import compiler.Parser.Grammar.*;
 import compiler.Parser.Parser;
+import compiler.Parser.Semantic;
 
 import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
 
 public class Compiler {
     public static void main(String[] args) throws Exception {
@@ -25,14 +24,27 @@ public class Compiler {
            }
        }
 
-       if (args.length == 2 && args[0].equals("-parser")){
+       else if (args.length == 2 && args[0].equals("-parser")){
             String filepath = args[1];
             Reader readerFile = FileToReader.getReaderFromFile(filepath);
             Lexer lexer = new Lexer(readerFile);
             Parser parser = new Parser(lexer);
-            Ast stmt = parser.getAst();
-            System.out.println(stmt);
+            Ast myAst = parser.getAST();
+            System.out.println(myAst);
+            Semantic semantic = new Semantic(myAst);
+            semantic.startAnalysis();
 
        }
+       else{
+           String filepath = args[1];
+           Reader readerFile = FileToReader.getReaderFromFile(filepath);
+           Lexer lexer = new Lexer(readerFile);
+           Parser parser = new Parser(lexer);
+           Ast myAst = parser.getAST();
+           Semantic semantic = new Semantic(myAst);
+           semantic.startAnalysis();
+
+       }
+       System.exit(0);
     }
 }
