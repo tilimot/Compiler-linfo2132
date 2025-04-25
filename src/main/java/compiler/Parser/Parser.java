@@ -142,6 +142,7 @@ public class Parser {
 
     public Expression parseExpression() throws Exception {
         Symbol value;
+        Symbol attribute;
         if (currentSymbol.getTokenType() == TokenType.INTEGER) {
             value = match(TokenType.INTEGER);
         } else if (currentSymbol.getTokenType() == TokenType.FLOAT) {
@@ -154,6 +155,10 @@ public class Parser {
         }
         else{
             value = match(TokenType.IDENTIFIER);
+            if (currentSymbol.getTokenType() == TokenType.ATTRIBUTE){
+                attribute = match(TokenType.ATTRIBUTE);
+                return new Expression((String) value.getAttribute(),tabIndex, ((String)attribute.getAttribute()).substring(1));
+            }
         }
         return new Expression((String) value.getAttribute(),tabIndex );
     }
@@ -244,6 +249,8 @@ public class Parser {
             expressions.addAll(parseMoreExpressions());
         }
 
+
+
         return expressions;
     }
 
@@ -294,8 +301,8 @@ public class Parser {
 
     public MethodCall parseMethodCall() throws Exception {
         /*
-        * GrammarRule: MethodCall -> identifier(Params) ;
-        */
+         * GrammarRule: MethodCall -> identifier(Params) ;
+         */
 
         Symbol identifier = match(TokenType.IDENTIFIER);
         Symbol opening_parenthesis = match(TokenType.OPERATOR);
@@ -440,7 +447,7 @@ public class Parser {
 
     public FunctionStatement parseFunctionMain() throws Exception {
         String fun_ = "fun";
-        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        String identifier = match(TokenType.MAIN).getAttribute();
         String openParenthesis = match(TokenType.OPERATOR).getAttribute();
         String closingParenthesis = match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
@@ -519,8 +526,8 @@ public class Parser {
                 }
                 //LeftSideAssignement : (x int = ...)
                 else{
-                 LeftSideAssignement leftSide = new LeftSideAssignement(identifier,type);
-                 return parseAssignement(leftSide);
+                    LeftSideAssignement leftSide = new LeftSideAssignement(identifier,type);
+                    return parseAssignement(leftSide);
                 }
             }
             // Record Attribute Access :  ( x.a = ...)

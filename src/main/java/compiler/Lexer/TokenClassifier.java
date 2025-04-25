@@ -76,6 +76,39 @@ public class TokenClassifier {
         return true;
     }
 
+    public static boolean isRecordAttribute(String token) {
+        Reader input = new StringReader(token);
+        int token_length = token.length();
+        int current_position = advance(input);
+        char current_char = (char) current_position;
+        int state = 0;
+
+        for(int i = 0; i<token_length;i++){
+            if(state ==0) {
+                if ((current_char =='.')) {
+                    current_position = advance(input);
+                    current_char = (char) current_position;
+                    state =1;
+                } else {
+                    return false;
+                }
+            }
+            else{
+                if (Character.isLetterOrDigit(current_char) || current_char == '_' ) {
+                    current_position = advance(input);
+                    current_char = (char) current_position;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public static boolean isMain(String token) {
+        return token.equals("main");
+    }
+
     public static boolean isRecordName(String token) {
         Reader input = new StringReader(token);
         int token_length = token.length();
@@ -87,6 +120,7 @@ public class TokenClassifier {
             if(state ==0) {
                 if (Character.isUpperCase(current_char)) {
                     current_position = advance(input);
+                    current_char = (char) current_position;
                     state =1;
                 } else {
                     return false;
@@ -95,6 +129,7 @@ public class TokenClassifier {
             else{
                 if (Character.isLetterOrDigit(current_char) || current_char == '_') {
                     current_position = advance(input);
+                    current_char = (char) current_position;
                 }
                 else {
                     return false;
@@ -113,6 +148,7 @@ public class TokenClassifier {
         for(int i = 0; i<token_length;i++){
             if(Character.isDigit(current_char)){
                 current_position = advance(input);
+                current_char = (char) current_position;
             }
             else {
                 return false;
@@ -124,12 +160,16 @@ public class TokenClassifier {
     public static boolean isFloatNumber(String token) {
         Reader input = new StringReader(token);
         int token_length = token.length();
+        if(token_length<=1){
+            return false;
+        }
         int current_position = advance(input);
         char current_char = (char) current_position;
 
         for(int i = 0; i<token_length;i++){
             if(Character.isDigit(current_char) || current_char == '.'){
                 current_position = advance(input);
+                current_char = (char) current_position;
             }
             else {
                 return false;
@@ -157,7 +197,9 @@ public class TokenClassifier {
     // Détermine le type d’un token
     public static TokenType classifyToken(String token) {
         if (isEOF(token)) return TokenType.EOF;
+
         if (isComment(token)) return TokenType.COMMENT;
+        if (isMain(token))return TokenType.MAIN;
         if (isKeyword(token)) return TokenType.KEYWORD;
         if (isBoolean(token)) return TokenType.BOOLEAN;
         if(isBaseType(token)) return TokenType.BASE_TYPE;
@@ -165,10 +207,12 @@ public class TokenClassifier {
         if(isVoidType(token)) return TokenType.VOID_TYPE;
         if (isIdentifier(token)) return TokenType.IDENTIFIER;
         if (isNaturalNumber(token)) return TokenType.INTEGER;
-        //if (isFloatNumber(token)) return TokenType.FLOAT_NUMBER;
+        if (isFloatNumber(token)) return TokenType.FLOAT;
         if (isString(token)) return TokenType.STRINGS;
         if (isEOL(token)) return TokenType.EOL;
         if (isOperator(token)) return TokenType.OPERATOR;
+        if (isRecordAttribute(token)) return TokenType.ATTRIBUTE;
+
 
         return null; // Si aucun type ne correspond
     }

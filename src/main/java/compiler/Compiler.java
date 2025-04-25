@@ -24,7 +24,7 @@ public class Compiler {
            }
        }
 
-       if (args.length == 2 && args[0].equals("-parser")){
+       else if (args.length == 2 && args[0].equals("-parser")){
             String filepath = args[1];
             Reader readerFile = FileToReader.getReaderFromFile(filepath);
             Lexer lexer = new Lexer(readerFile);
