@@ -23,8 +23,9 @@ public class Ast {
             constant.semanticAnalysis();
         }
         for (Statement globalVariable : globalVariables) {
-                globalVariable.semanticAnalysis();
+            globalVariable.semanticAnalysis();
         }
+        //Todo function, record
     }
 
     @Override

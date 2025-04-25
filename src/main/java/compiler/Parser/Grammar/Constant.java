@@ -3,7 +3,7 @@ package compiler.Parser.Grammar;
 import compiler.Exception.OperatorException;
 import compiler.Exception.TypeException;
 import compiler.Lexer.TokenType;
-import compiler.Parser.Semantic;
+import compiler.Semantic.Semantic;
 
 import java.util.ArrayList;
 

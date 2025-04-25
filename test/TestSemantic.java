@@ -4,7 +4,6 @@ import compiler.Exception.TypeException;
 import compiler.Lexer.Lexer;
 import compiler.Parser.Grammar.Ast;
 import compiler.Parser.Parser;
-import compiler.Parser.Semantic;
 import org.junit.Test;
 
 import java.io.Reader;
