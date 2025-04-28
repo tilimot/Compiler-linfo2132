@@ -27,6 +27,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
+
+    // ASM library for bytecode manipulation
+    implementation("org.ow2.asm:asm:9.5")
 }
 
 application {
