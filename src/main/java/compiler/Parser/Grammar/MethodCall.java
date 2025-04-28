@@ -1,6 +1,9 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.SymbolTable;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MethodCall extends Statement {
     String identifier;
@@ -33,8 +36,9 @@ public class MethodCall extends Statement {
         return t+"METD_CALL : " + "\n" + tNext + identifier + "\n" + tNext + opening_parenthesis + "\n" + tNext + "PARAM : " + "\n" + paramStr + "\n" + tNext + closing_parenthesis + "\n" + tNext + eol + "\n";
     }
 
+
     @Override
-    public void semanticAnalysis() throws Exception {
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
 
     }
 }

@@ -1,5 +1,9 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.SymbolTable;
+
+import java.util.HashMap;
+
 public class DeallocationStatement extends Statement {
     String free_;
     String identifier;
@@ -22,7 +26,7 @@ public class DeallocationStatement extends Statement {
     }
 
     @Override
-    public void semanticAnalysis() throws Exception {
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
 
     }
 }

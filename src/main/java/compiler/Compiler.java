@@ -31,8 +31,6 @@ public class Compiler {
             Parser parser = new Parser(lexer);
             Ast myAst = parser.getAST();
             System.out.println(myAst);
-            Semantic semantic = new Semantic(myAst);
-            semantic.startAnalysis();
 
        }
        else{

@@ -1,8 +1,10 @@
 package compiler.Parser.Grammar;
 
 import compiler.Parser.Parser;
+import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FunctionStatement extends Statement {
     String fun_;
@@ -63,7 +65,7 @@ public class FunctionStatement extends Statement {
     }
 
     @Override
-    public void semanticAnalysis() throws Exception {
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
 
     }
 }

@@ -8,13 +8,16 @@ import java.util.ArrayList;
 public class Semantic {
 
     public Ast ast;
+    public static SymbolTable symbolTable;
 
     public Semantic(Ast ast ){
         this.ast = ast;
+        symbolTable = new SymbolTable(null);
+
     }
 
     public int startAnalysis () throws Exception {
-        ast.semanticAnalysis();
+        ast.semanticAnalysis(SymbolTable.getTable());
         return 1;
     }
 
@@ -34,14 +37,14 @@ public class Semantic {
     }
 
     public static boolean checkExpressionsType(ArrayList<TokenType> expressions) throws Exception {
-        if (expressions.isEmpty()) return true;
+        if (expressions.isEmpty()) return false;
         ArrayList<TokenType> resolvedTypes = new ArrayList<>();
         for (TokenType t : expressions) {
             if (t != TokenType.IDENTIFIER && t != TokenType.OPERATOR) {
                 resolvedTypes.add(t);
             }
         }
-        if (resolvedTypes.isEmpty()) return true;
+        if (resolvedTypes.isEmpty()) return false;
 
         TokenType baseType = resolvedTypes.getFirst();
 
@@ -51,9 +54,13 @@ public class Semantic {
                 continue;
             }
             if (t != baseType) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
+    }
+
+    public static boolean checkIdentifier(String identifier) throws Exception {
+        return symbolTable.containsSymbol(identifier);
     }
 }
