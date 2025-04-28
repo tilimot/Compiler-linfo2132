@@ -1,7 +1,7 @@
 package compiler.Parser.Grammar;
 
 import compiler.Lexer.TokenType;
-import compiler.Parser.Semantic;
+import compiler.Semantic.Semantic;
 
 public class Expression {
     String value;

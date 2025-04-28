@@ -1,8 +1,7 @@
-package compiler.Parser;
+package compiler.Semantic;
 
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.Ast;
-import compiler.Parser.Grammar.Expression;
 
 import java.util.ArrayList;
 

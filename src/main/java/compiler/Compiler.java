@@ -7,7 +7,7 @@ import compiler.Lexer.FileToReader;
 import compiler.Lexer.Lexer;
 import compiler.Parser.Grammar.*;
 import compiler.Parser.Parser;
-import compiler.Parser.Semantic;
+import compiler.Semantic.Semantic;
 
 import java.io.Reader;
 
@@ -36,6 +36,7 @@ public class Compiler {
 
        }
        else{
+           System.out.println("SEMANTIC ANALYSIS");
            String filepath = args[1];
            Reader readerFile = FileToReader.getReaderFromFile(filepath);
            Lexer lexer = new Lexer(readerFile);
