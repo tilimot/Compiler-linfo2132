@@ -1,7 +1,8 @@
 package compiler.Semantic;
 
+import compiler.Exception.*;
 import compiler.Lexer.TokenType;
-import compiler.Parser.Grammar.Ast;
+import compiler.Parser.Grammar.*;
 
 import java.util.ArrayList;
 
@@ -60,7 +61,66 @@ public class Semantic {
         return false;
     }
 
-    public static boolean checkIdentifier(String identifier) throws Exception {
-        return symbolTable.containsSymbol(identifier);
+    public static void checkFinalDecl(Constant constant) throws Exception {
+        if (symbolTable.containsSymbol(constant.identifier))
+            throw new DuplicateException(constant.identifier);
+        Type fdType = constant.basetype.getFirst();
+        if (fdType.getValue().equals("void")){
+            throw new Exception("TypeError: Type of final var should not be void");
+        }
+        if (!fdType.getValue().equals("int") && !fdType.getValue().equals("float") && !fdType.getValue().equals("string") && !fdType.getValue().equals("bool")){
+            throw new Exception("TypeError: Type of final var should be a base type.");
+        }
+        ArrayList<TokenType> expressionType = new ArrayList<>();
+        for (Expression expression : constant.expressions) {
+            expressionType.add(expression.getType());
+        }
+        if (Semantic.checkExpressionsType(expressionType)) {
+            throw new OperatorException();
+        }
+        expressionType.addFirst(constant.basetype.getFirst().getType());
+        if (Semantic.checkExpressionsType(expressionType)) {
+            throw new TypeException();
+        }
+    }
+
+    public static void checkGlobalDecl(AssignementStatement global) throws Exception {
+        String id = ((LeftSideAssignement)global.leftSide).identifier;
+        Type type = ((LeftSideAssignement)global.leftSide).type.getFirst();
+        if (symbolTable.containsSymbol(id))
+            throw new DuplicateException(id);
+        if (type.getValue().equals("void")){
+            throw new Exception("TypeError: Type of final var should not be void");
+        }
+        ArrayList<TokenType> expressionType = new ArrayList<>();
+        if (global.rightSide instanceof RightSideExpressions) {
+            for (Expression expression : ((RightSideExpressions) global.rightSide).expressions) {
+                expressionType.add(expression.getType());
+            }
+        }
+        if (Semantic.checkExpressionsType(expressionType)) {
+            throw new OperatorException();
+        }
+        if (global.leftSide instanceof LeftSideAssignement) {
+            expressionType.addFirst(((LeftSideAssignement) global.leftSide).type.getFirst().getType());
+        }
+        if (Semantic.checkExpressionsType(expressionType)) {
+            throw new TypeException();
+        }
+    }
+
+    public static void checkRefToVariable(String identifier, ArrayList<Expression> expressions) throws Exception {
+        for (Expression expression : expressions) {
+            if(checkType(expression.getValue()) == TokenType.IDENTIFIER){
+                if (!symbolTable.containsSymbol(expression.getValue())){
+                    throw new ScopeException(expression.getValue());
+                }
+                System.out.println(symbolTable.getSymbol(identifier)+ " and "+symbolTable.getSymbol(expression.getValue()));
+
+                if (!symbolTable.getSymbol(identifier).getType().equals(symbolTable.getSymbol(expression.getValue()).getType())){
+                    throw new VariableException(symbolTable.getSymbol(identifier),symbolTable.getSymbol(expression.getValue()));
+                }
+            }
+        }
     }
 }

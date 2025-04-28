@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AssignementStatement extends Statement {
-    LeftSide leftSide;
+    public LeftSide leftSide;
     String equalOperator;
-    RightSide rightSide;
+    public RightSide rightSide;
     String eol;
 
 
@@ -25,21 +25,12 @@ public class AssignementStatement extends Statement {
     }
 
     public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
-        ArrayList<TokenType> expressionType = new ArrayList<>();
-        if (rightSide instanceof RightSideExpressions) {
-            for (Expression expression : ((RightSideExpressions) rightSide).expressions) {
-                expressionType.add(expression.getType());
-            }
-        }
-        if (Semantic.checkExpressionsType(expressionType)) {
-            throw new OperatorException();
-        }
-        if (leftSide instanceof LeftSideAssignement) {
-            expressionType.addFirst(((LeftSideAssignement) leftSide).type.getFirst().getType());
-        }
-        if (Semantic.checkExpressionsType(expressionType)) {
-            throw new TypeException();
-        }
+        Semantic.checkGlobalDecl(this);
+        st.put(((LeftSideAssignement)leftSide).identifier, ((LeftSideAssignement)leftSide).type.getFirst());
+
+        Semantic.checkRefToVariable(((LeftSideAssignement)leftSide).identifier,((RightSideExpressions)rightSide).expressions);
+
+
 
     }
 
