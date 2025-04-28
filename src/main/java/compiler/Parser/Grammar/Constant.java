@@ -1,11 +1,13 @@
 package compiler.Parser.Grammar;
 
-import compiler.Exception.OperatorException;
-import compiler.Exception.TypeException;
+import compiler.Exception.*;
 import compiler.Lexer.TokenType;
 import compiler.Semantic.Semantic;
+import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class Constant {
     String final_;
@@ -26,18 +28,25 @@ public class Constant {
         this.tabIndex = tabIndex;
     }
 
-    public void semanticAnalysis() throws Exception{
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception{
+
+        System.out.println("Analysing constant: " + identifier);
+
         ArrayList<TokenType> expressionType = new ArrayList<>();
         for (Expression expression : expressions) {
             expressionType.add(expression.getType());
         }
-        if (!Semantic.checkExpressionsType(expressionType)) {
+        if (Semantic.checkExpressionsType(expressionType)) {
             throw new OperatorException();
         }
         expressionType.addFirst(basetype.getFirst().getType());
-        if (!Semantic.checkExpressionsType(expressionType)) {
+        if (Semantic.checkExpressionsType(expressionType)) {
             throw new TypeException();
         }
+        if (Semantic.checkIdentifier(identifier)) {
+            throw new FinalException(identifier);
+        }
+        st.put(identifier, basetype.getFirst());
         
     }
 

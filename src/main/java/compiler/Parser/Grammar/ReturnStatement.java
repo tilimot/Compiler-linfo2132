@@ -1,6 +1,9 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.SymbolTable;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ReturnStatement extends Statement{
     String return_;
@@ -29,7 +32,7 @@ public class ReturnStatement extends Statement{
     }
 
     @Override
-    public void semanticAnalysis() throws Exception {
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
 
     }
 }

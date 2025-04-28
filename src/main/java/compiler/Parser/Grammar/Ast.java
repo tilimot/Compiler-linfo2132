@@ -1,6 +1,10 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.Semantic;
+import compiler.Semantic.SymbolTable;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Ast {
     //TODO: Miss functions
@@ -18,12 +22,12 @@ public class Ast {
         this.tabIndex = tabIndex;
     }
 
-    public void semanticAnalysis() throws Exception {
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
         for (Constant constant : constants) {
-            constant.semanticAnalysis();
+            constant.semanticAnalysis(st);
         }
         for (Statement globalVariable : globalVariables) {
-            globalVariable.semanticAnalysis();
+            globalVariable.semanticAnalysis(st);
         }
         //Todo function, record
     }

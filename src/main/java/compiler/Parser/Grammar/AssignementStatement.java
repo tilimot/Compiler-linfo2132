@@ -4,8 +4,10 @@ import compiler.Exception.OperatorException;
 import compiler.Exception.TypeException;
 import compiler.Lexer.TokenType;
 import compiler.Semantic.Semantic;
+import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AssignementStatement extends Statement {
     LeftSide leftSide;
@@ -22,20 +24,20 @@ public class AssignementStatement extends Statement {
         this.eol = eol;
     }
 
-    public void semanticAnalysis() throws Exception{
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
         ArrayList<TokenType> expressionType = new ArrayList<>();
         if (rightSide instanceof RightSideExpressions) {
             for (Expression expression : ((RightSideExpressions) rightSide).expressions) {
                 expressionType.add(expression.getType());
             }
         }
-        if (!Semantic.checkExpressionsType(expressionType)) {
+        if (Semantic.checkExpressionsType(expressionType)) {
             throw new OperatorException();
         }
         if (leftSide instanceof LeftSideAssignement) {
             expressionType.addFirst(((LeftSideAssignement) leftSide).type.getFirst().getType());
         }
-        if (!Semantic.checkExpressionsType(expressionType)) {
+        if (Semantic.checkExpressionsType(expressionType)) {
             throw new TypeException();
         }
 

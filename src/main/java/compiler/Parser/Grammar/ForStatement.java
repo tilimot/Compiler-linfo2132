@@ -1,5 +1,9 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.SymbolTable;
+
+import java.util.HashMap;
+
 public class ForStatement extends Statement {
     String for_;
     String opening_parenthesis;
@@ -39,7 +43,7 @@ public class ForStatement extends Statement {
     }
 
     @Override
-    public void semanticAnalysis() throws Exception {
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
 
     }
 }
