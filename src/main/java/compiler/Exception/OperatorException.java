@@ -6,7 +6,6 @@ public class OperatorException extends Exception {
     )
     {
         super("OperatorError: Trying to operate on incompatible types");
-        //System.exit(1);
 
     }
 }

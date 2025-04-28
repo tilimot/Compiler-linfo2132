@@ -3,7 +3,6 @@ package compiler.Parser.Grammar;
 import compiler.Exception.*;
 import compiler.Lexer.TokenType;
 import compiler.Semantic.Semantic;
-import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +10,10 @@ import java.util.HashMap;
 
 public class Constant {
     String final_;
-    String identifier;
-    ArrayList<Type> basetype;
+    public String identifier;
+    public ArrayList<Type> basetype;
     String equalOperator;
-    ArrayList<Expression> expressions;
+    public ArrayList<Expression> expressions;
     String eol;
     int tabIndex;
 
@@ -31,23 +30,11 @@ public class Constant {
     public void semanticAnalysis(HashMap<String, Type> st) throws Exception{
 
         System.out.println("Analysing constant: " + identifier);
-
-        ArrayList<TokenType> expressionType = new ArrayList<>();
-        for (Expression expression : expressions) {
-            expressionType.add(expression.getType());
-        }
-        if (Semantic.checkExpressionsType(expressionType)) {
-            throw new OperatorException();
-        }
-        expressionType.addFirst(basetype.getFirst().getType());
-        if (Semantic.checkExpressionsType(expressionType)) {
-            throw new TypeException();
-        }
-        if (Semantic.checkIdentifier(identifier)) {
-            throw new FinalException(identifier);
-        }
+        Semantic.checkFinalDecl(this);
         st.put(identifier, basetype.getFirst());
-        
+
+        Semantic.checkRefToVariable(identifier,expressions);
+
     }
 
 

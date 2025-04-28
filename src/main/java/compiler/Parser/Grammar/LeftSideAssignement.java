@@ -3,8 +3,8 @@ package compiler.Parser.Grammar;
 import java.util.ArrayList;
 
 public class LeftSideAssignement extends LeftSide{
-    String identifier;
-    ArrayList<Type> type;
+    public String identifier;
+    public ArrayList<Type> type;
     int tabIndex;
 
     public LeftSideAssignement(String identifier, ArrayList<Type> type){
