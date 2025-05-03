@@ -15,6 +15,8 @@ public class LeftSideAssignement extends LeftSide{
     public String toString() {
         String t = "\t".repeat(tabIndex);
         StringBuilder typeStr = new StringBuilder();
+        if (!type.isEmpty()){
+            typeStr.append("\n");}
         for (Type type : type) {
             if (type instanceof SimpleType) {
                 ((SimpleType) type).tabIndex = tabIndex;
@@ -25,6 +27,6 @@ public class LeftSideAssignement extends LeftSide{
             typeStr.append(type);
 
         }
-        return t + identifier + "\n"  + typeStr;
+        return t + identifier + typeStr;
     }
 }

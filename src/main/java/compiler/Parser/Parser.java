@@ -538,6 +538,12 @@ public class Parser {
                 return parseAssignement(leftside);
             }
 
+            else if (currentSymbol.getAttribute().equals("=")){
+                LeftSideAssignement leftSideAssignement = new LeftSideAssignement(identifier, new ArrayList<>());
+
+                return parseAssignement(leftSideAssignement);
+            }
+
             // ArrayAccess : ( x[0] = .... | x[0].a = ...)
             else{
                 String leftBracket = match(TokenType.OPERATOR).getAttribute();
