@@ -5,6 +5,7 @@ import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Semantic {
 
@@ -17,9 +18,8 @@ public class Semantic {
 
     }
 
-    public int startAnalysis () throws Exception {
+    public void startAnalysis () throws Exception {
         ast.semanticAnalysis(SymbolTable.getTable());
-        return 1;
     }
 
     public static TokenType checkType(String expression_value) {
@@ -85,29 +85,47 @@ public class Semantic {
     }
 
     public static void checkGlobalDecl(AssignementStatement global) throws Exception {
-        String id = ((LeftSideAssignement)global.leftSide).identifier;
-        Type type = ((LeftSideAssignement)global.leftSide).type.getFirst();
-        if (symbolTable.containsSymbol(id))
+
+        boolean initialized = false;
+        String id = global.leftSide.getIdentifier();
+
+        Type type;
+        if (global.leftSide.getType() == null) {
+            type = symbolTable.getSymbol(id);
+            initialized = true;
+        }
+        else {
+            type = global.leftSide.getType();
+        }
+
+        if (!initialized && symbolTable.containsSymbol(id)) {
             throw new DuplicateException(id);
-        if (type.getValue().equals("void")){
+        }
+
+        if (type.getValue().equals("void")) {
             throw new Exception("TypeError: Type of final var should not be void");
         }
+
         ArrayList<TokenType> expressionType = new ArrayList<>();
         if (global.rightSide instanceof RightSideExpressions) {
             for (Expression expression : ((RightSideExpressions) global.rightSide).expressions) {
                 expressionType.add(expression.getType());
             }
         }
+
         if (Semantic.checkExpressionsType(expressionType)) {
             throw new OperatorException();
         }
+
         if (global.leftSide instanceof LeftSideAssignement) {
-            expressionType.addFirst(((LeftSideAssignement) global.leftSide).type.getFirst().getType());
+            expressionType.addFirst(type.getType());
         }
+
         if (Semantic.checkExpressionsType(expressionType)) {
             throw new TypeException();
         }
     }
+
 
     public static void checkRefToVariable(String identifier, ArrayList<Expression> expressions) throws Exception {
         for (Expression expression : expressions) {

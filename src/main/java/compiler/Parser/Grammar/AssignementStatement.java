@@ -26,9 +26,11 @@ public class AssignementStatement extends Statement {
 
     public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
         Semantic.checkGlobalDecl(this);
-        st.put(((LeftSideAssignement)leftSide).identifier, ((LeftSideAssignement)leftSide).type.getFirst());
-
-        Semantic.checkRefToVariable(((LeftSideAssignement)leftSide).identifier,((RightSideExpressions)rightSide).expressions);
+        String identifier = leftSide.getIdentifier();
+        if (!st.containsKey(identifier)) {
+            st.put(identifier, leftSide.getType());
+        }
+        Semantic.checkRefToVariable(identifier,((RightSideExpressions)rightSide).expressions);
 
 
 

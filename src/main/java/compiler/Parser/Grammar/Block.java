@@ -1,6 +1,7 @@
 package compiler.Parser.Grammar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Block {
     String leftBracket;
@@ -15,6 +16,12 @@ public class Block {
         this.statements = statements;
         this.rightBracket = rightBracket;
         this.tabIndex = tabIndex;
+    }
+
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+        for (Statement statement : statements) {
+            statement.semanticAnalysis(st);
+        }
     }
 
     @Override

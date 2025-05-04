@@ -3,14 +3,22 @@ package compiler.Parser.Grammar;
 import java.util.ArrayList;
 
 public class LeftSideArrayAccess extends LeftSide{
-    String identifier;
+    public String identifier;
     String opening_bracket;
     String natural_number;
     String closing_bracket;
-    ArrayList<RecordAttribute> recordAttributes;
+    ArrayList<RecordDeclaration> recordAttributes;
     int tabIndex;
 
-    public LeftSideArrayAccess (String identifier, String opening_bracket, String natural_number, String closing_bracket, ArrayList<RecordAttribute> recordAttributes){
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public Type getType() {
+        return null; // ou autre selon ton design
+    }
+
+    public LeftSideArrayAccess (String identifier, String opening_bracket, String natural_number, String closing_bracket, ArrayList<RecordDeclaration> recordAttributes){
         this.identifier= identifier;
         this.opening_bracket=opening_bracket;
         this.natural_number=natural_number;

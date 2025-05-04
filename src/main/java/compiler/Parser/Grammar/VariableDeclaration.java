@@ -35,6 +35,10 @@ public class VariableDeclaration extends Statement {
 
     @Override
     public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+        if (st.containsKey(identifier)) {
+            throw new Exception("Variable " + identifier + " already declared");
+        }
+        st.put(identifier, type.getFirst());
 
     }
 }

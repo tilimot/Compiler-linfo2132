@@ -1,6 +1,7 @@
 package compiler.Parser.Grammar;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class LeftSideAssignement extends LeftSide{
     public String identifier;
@@ -10,6 +11,17 @@ public class LeftSideAssignement extends LeftSide{
     public LeftSideAssignement(String identifier, ArrayList<Type> type){
         this.identifier = identifier;
         this.type = type;
+    }
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public Type getType() {
+        System.out.println(identifier);
+        if (type.isEmpty()){
+            return null;
+        }
+        return type.getFirst();
     }
 
     public String toString() {

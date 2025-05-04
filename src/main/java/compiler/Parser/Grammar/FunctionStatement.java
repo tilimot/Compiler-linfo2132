@@ -35,6 +35,19 @@ public class FunctionStatement extends Statement {
         this.openParenthesis = openParenthesis;
         this.closingParenthesis =closingParenthesis;
         this.block = block;
+        this.funcParams = new ArrayList<>();
+    }
+
+    @Override
+    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+        for (FuncParam funcParam : funcParams) {
+            st.put(funcParam.identifier, funcParam.type.getFirst());
+        }
+        block.semanticAnalysis(st);
+
+
+
+
     }
 
     @Override
@@ -64,8 +77,5 @@ public class FunctionStatement extends Statement {
                 + tNext + "PARAM :" +"\n" + funcParamStr + "\n" + tNext + closingParenthesis + "\n" + returnTypeStr + "\n" + block;
     }
 
-    @Override
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
 
-    }
 }
