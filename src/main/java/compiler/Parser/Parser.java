@@ -72,10 +72,22 @@ public class Parser {
         return new SimpleType((String) value.getAttribute(),tabIndex );
     }
 
-    public RecordAttribute parseRecordAttribute() throws Exception {
-        Symbol dot = match(TokenType.OPERATOR);
-        Symbol attribute = match(TokenType.IDENTIFIER);
-        return  new RecordAttribute(dot.getAttribute(), attribute.getAttribute());
+    public RecordDeclaration parseRecordAttribute() throws Exception {
+
+        Symbol attribute = match(TokenType.ATTRIBUTE);
+        return  new RecordDeclaration(attribute.getAttribute(), tabIndex);
+    }
+
+    public RecordCall parseRecordAssignement() throws Exception {
+        Symbol equalOperator = match(TokenType.OPERATOR);
+        Symbol name = match(TokenType.RECORD_NAME);
+        Symbol oppeningParentesis = match(TokenType.OPERATOR);
+        ArrayList<Param> params = parseParams();
+        Symbol closingParentesis = match(TokenType.OPERATOR);
+        match(TokenType.EOL);
+
+
+        return new RecordCall(tabIndex, params, equalOperator.getAttribute(), name.getAttribute());
     }
 
     public ArrayAccesBracket parseArrayAccessBracket() throws  Exception {
@@ -152,6 +164,10 @@ public class Parser {
         }
         else if (currentSymbol.getTokenType() == TokenType.BOOLEAN){
             value = match(TokenType.BOOLEAN);
+        }
+        else if (currentSymbol.getTokenType() == TokenType.RECORD_NAME) {
+            value = match(TokenType.RECORD_NAME);
+
         }
         else{
             value = match(TokenType.IDENTIFIER);
@@ -514,9 +530,23 @@ public class Parser {
             return statement;
         }
         else{
-            //TODO add RecordType
+            if (currentSymbol.getTokenType().equals(TokenType.RECORD_NAME)){
+                ArrayList<Type> type = parseType();
+
+                //Declaration ( x int;)
+                if(currentSymbol.getTokenType().equals(TokenType.EOL)){
+                    String eol = match(TokenType.EOL).getAttribute();
+                    return new RecordDeclaration(identifier, tabIndex);
+                }
+                else{
+
+                    return parseRecordAssignement();
+                }
+
+
+            }
             //Declaration or LeftSideAssignement
-            if(currentSymbol.getTokenType().equals(TokenType.BASE_TYPE) || currentSymbol.getTokenType().equals(TokenType.RECORD_NAME)){
+            else if(currentSymbol.getTokenType().equals(TokenType.BASE_TYPE)){
                 ArrayList<Type> type = parseType() ;
 
                 //Declaration ( x int;)
@@ -531,8 +561,8 @@ public class Parser {
                 }
             }
             // Record Attribute Access :  ( x.a = ...)
-            else if (currentSymbol.getAttribute().equals(".")){
-                RecordAttribute recordAttribute = parseRecordAttribute();
+            else if (currentSymbol.getAttribute().startsWith(".")){
+                RecordDeclaration recordAttribute = parseRecordAttribute();
                 LeftSideRecordAccess leftside = new LeftSideRecordAccess(identifier,recordAttribute);
 
                 return parseAssignement(leftside);
@@ -550,7 +580,7 @@ public class Parser {
                 String index = match(TokenType.INTEGER).getAttribute();
                 String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
-                ArrayList<RecordAttribute> recordAttributes = new ArrayList<>();
+                ArrayList<RecordDeclaration> recordAttributes = new ArrayList<>();
                 while (!currentSymbol.getAttribute().equals("=")){
                     recordAttributes.add(parseRecordAttribute());
                 }

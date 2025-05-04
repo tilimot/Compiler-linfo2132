@@ -29,6 +29,9 @@ public class Ast {
         for (Statement globalVariable : globalVariables) {
             globalVariable.semanticAnalysis(st);
         }
+        for (FunctionStatement function : functions) {
+            function.semanticAnalysis(SymbolTable.getTable());
+        }
         //Todo function, record
     }
 

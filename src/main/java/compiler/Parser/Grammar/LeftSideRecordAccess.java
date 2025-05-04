@@ -1,15 +1,21 @@
 package compiler.Parser.Grammar;
 
-import java.util.ArrayList;
-
 public class LeftSideRecordAccess extends LeftSide {
-    String identifier;
-    RecordAttribute recordAttributes;
+    public String identifier;
+    RecordDeclaration recordAttributes;
     int tabIndex;
 
-    public LeftSideRecordAccess(String identifier, RecordAttribute recordAttributes){
+    public LeftSideRecordAccess(String identifier, RecordDeclaration recordAttributes){
         this.identifier=identifier;
         this.recordAttributes=recordAttributes;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public Type getType() {
+        return null; // ou autre selon ton design
     }
 
 

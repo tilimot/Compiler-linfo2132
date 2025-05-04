@@ -32,6 +32,7 @@ public class SymbolTable {
         if (currentTable != null) {
             return currentTable.table.get(name);
         } else {
+            System.out.println("currentTable: " + currentTable.table + " name: " + name);
             throw new Exception("VariableError, " + name + " is not defined.");
         }
     }
@@ -39,7 +40,6 @@ public class SymbolTable {
     public boolean containsSymbol(String name) throws Exception {
         SymbolTable currentTable = this;
         while ( currentTable != null && !currentTable.table.containsKey(name)){
-            System.out.println("currentTable: " + currentTable.table + " name: " + name);
             currentTable = currentTable.parentTable;
         }
         return currentTable != null;
