@@ -2,12 +2,13 @@ package compiler.Parser.Grammar;
 
 public class LeftSideRecordAccess extends LeftSide {
     public String identifier;
-    RecordDeclaration recordAttributes;
+    String  recordAttributes;
     int tabIndex;
 
-    public LeftSideRecordAccess(String identifier, RecordDeclaration recordAttributes){
+    public LeftSideRecordAccess(String identifier, String recordAttributes, int tabIndex){
         this.identifier=identifier;
         this.recordAttributes=recordAttributes;
+        this.tabIndex=tabIndex;
     }
 
     public String getIdentifier() {
@@ -21,8 +22,6 @@ public class LeftSideRecordAccess extends LeftSide {
 
     public String toString() {
         String t = "\t".repeat(tabIndex);
-        StringBuilder typeStr = new StringBuilder();
-
-        return t + identifier + "\n" + t + typeStr;
+        return t + identifier + "\n"+t+recordAttributes.toString();
     }
 }

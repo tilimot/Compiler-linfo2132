@@ -72,13 +72,13 @@ public class Parser {
         return new SimpleType((String) value.getAttribute(),tabIndex );
     }
 
-    public RecordDeclaration parseRecordAttribute() throws Exception {
+    public String parseRecordAttribute() throws Exception {
 
         Symbol attribute = match(TokenType.ATTRIBUTE);
-        return  new RecordDeclaration(attribute.getAttribute(), tabIndex);
+        return  attribute.getAttribute();
     }
 
-    public RecordCall parseRecordAssignement() throws Exception {
+    public RecordCall parseRecordAssignement(LeftSide leftSide, String identifier, int tabIndex) throws Exception {
         Symbol equalOperator = match(TokenType.OPERATOR);
         Symbol name = match(TokenType.RECORD_NAME);
         Symbol oppeningParentesis = match(TokenType.OPERATOR);
@@ -86,8 +86,7 @@ public class Parser {
         Symbol closingParentesis = match(TokenType.OPERATOR);
         match(TokenType.EOL);
 
-
-        return new RecordCall(tabIndex, params, equalOperator.getAttribute(), name.getAttribute());
+        return new RecordCall(leftSide,tabIndex, params, equalOperator.getAttribute(), name.getAttribute());
     }
 
     public ArrayAccesBracket parseArrayAccessBracket() throws  Exception {
@@ -165,8 +164,18 @@ public class Parser {
         else if (currentSymbol.getTokenType() == TokenType.BOOLEAN){
             value = match(TokenType.BOOLEAN);
         }
-        else if (currentSymbol.getTokenType() == TokenType.RECORD_NAME) {
-            value = match(TokenType.RECORD_NAME);
+        else if (currentSymbol.getTokenType() == TokenType.RECORD_NAME || currentSymbol.getTokenType() == TokenType.FUNC_NAME) {
+
+            if (currentSymbol.getTokenType() == TokenType.RECORD_NAME) {
+                value = match(TokenType.RECORD_NAME);
+            }
+            else {
+                value = match(TokenType.FUNC_NAME);
+            }
+            match(TokenType.OPERATOR);
+            ArrayList<Param> params = parseParams();
+            match(TokenType.OPERATOR);
+            return new Expression((String) value.getAttribute(),tabIndex,params);
 
         }
         else{
@@ -476,7 +485,7 @@ public class Parser {
         if (currentSymbol.getAttribute().equals("main")){
             return parseFunctionMain();
         }
-        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        String identifier = match(TokenType.FUNC_NAME).getAttribute();
         String openParenthesis = match(TokenType.OPERATOR).getAttribute();
         //ArrayList<Type> type = parseType();
 
@@ -518,7 +527,12 @@ public class Parser {
         //revoir l'utilisation de Assignement et Declaration avec les types
         Statement statement;
 
-        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        String identifier;
+        if (currentSymbol.getTokenType() == TokenType.IDENTIFIER || currentSymbol.getTokenType() == TokenType.FUNC_NAME) {
+            identifier = match(currentSymbol.getTokenType()).getAttribute();
+        } else {
+            throw new Exception("Expected IDENTIFIER or FUNC_NAME");
+        }
 
         //MethodCall
         if (currentSymbol.getAttribute().equals("(")){
@@ -533,14 +547,14 @@ public class Parser {
             if (currentSymbol.getTokenType().equals(TokenType.RECORD_NAME)){
                 ArrayList<Type> type = parseType();
 
-                //Declaration ( x int;)
+                //Declaration ( p Point;)
                 if(currentSymbol.getTokenType().equals(TokenType.EOL)){
                     String eol = match(TokenType.EOL).getAttribute();
-                    return new RecordDeclaration(identifier, tabIndex);
+                    return new RecordDeclaration(identifier,type.getFirst(), tabIndex);
                 }
                 else{
-
-                    return parseRecordAssignement();
+                    LeftSideAssignement leftSide = new LeftSideAssignement(identifier,type);
+                    return parseAssignement(leftSide);
                 }
 
 
@@ -562,8 +576,8 @@ public class Parser {
             }
             // Record Attribute Access :  ( x.a = ...)
             else if (currentSymbol.getAttribute().startsWith(".")){
-                RecordDeclaration recordAttribute = parseRecordAttribute();
-                LeftSideRecordAccess leftside = new LeftSideRecordAccess(identifier,recordAttribute);
+                String recordAttribute = parseRecordAttribute();
+                LeftSideRecordAccess leftside = new LeftSideRecordAccess(identifier,recordAttribute, tabIndex);
 
                 return parseAssignement(leftside);
             }
@@ -580,7 +594,7 @@ public class Parser {
                 String index = match(TokenType.INTEGER).getAttribute();
                 String rightBracket = match(TokenType.OPERATOR).getAttribute();
 
-                ArrayList<RecordDeclaration> recordAttributes = new ArrayList<>();
+                ArrayList<String> recordAttributes = new ArrayList<>();
                 while (!currentSymbol.getAttribute().equals("=")){
                     recordAttributes.add(parseRecordAttribute());
                 }

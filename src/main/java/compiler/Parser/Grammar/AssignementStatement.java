@@ -50,6 +50,8 @@ public class AssignementStatement extends Statement {
         if (leftSide instanceof LeftSideArrayAccess) {
             ((LeftSideArrayAccess) leftSide).tabIndex = tabIndex + 1;
         }
+
+
         StringBuilder expressionsStr = new StringBuilder();
         for (Expression expression : ((RightSideExpressions) rightSide).expressions) {
             expression.tabIndex = tabIndex + 1;
