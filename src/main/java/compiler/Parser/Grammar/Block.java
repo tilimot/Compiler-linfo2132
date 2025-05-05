@@ -31,7 +31,7 @@ public class Block {
         StringBuilder sb = new StringBuilder();
         for (Statement statement : statements) {
             statement.tabIndex = tabIndex+1;
-            sb.append(statement.toString());
+            sb.append(statement);
         }
         return t+"BLOCK : "+"\n"+tNext +leftBracket + "\n"+ sb + tNext+ rightBracket+ "\n";
     }

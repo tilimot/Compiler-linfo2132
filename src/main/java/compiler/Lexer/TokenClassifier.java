@@ -195,7 +195,7 @@ public class TokenClassifier {
     }
 
     // Détermine le type d’un token
-    public static TokenType classifyToken(String token) {
+    public static TokenType classifyToken(String token, String tokenNext) {
         if (isEOF(token)) return TokenType.EOF;
 
         if (isComment(token)) return TokenType.COMMENT;
@@ -205,7 +205,9 @@ public class TokenClassifier {
         if(isBaseType(token)) return TokenType.BASE_TYPE;
         if(isRecordName(token)) return TokenType.RECORD_NAME;
         if(isVoidType(token)) return TokenType.VOID_TYPE;
-        if (isIdentifier(token)) return TokenType.IDENTIFIER;
+        if (isIdentifier(token)) {
+            if (tokenNext.equals("("))return TokenType.FUNC_NAME;
+            else return TokenType.IDENTIFIER;}
         if (isNaturalNumber(token)) return TokenType.INTEGER;
         if (isFloatNumber(token)) return TokenType.FLOAT;
         if (isString(token)) return TokenType.STRINGS;

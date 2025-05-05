@@ -21,7 +21,11 @@ public class Lexer {
     public Symbol getNextSymbol() {
         if (hasNextSymbol()){
             String token = tokenList.get(currentIndex);
-            Symbol symbol = new Symbol(TokenClassifier.classifyToken(token),token);
+            String tokenNext = "";
+            if (currentIndex +1 < tokenList.size()){
+                tokenNext = tokenList.get(currentIndex+1);
+            }
+            Symbol symbol = new Symbol(TokenClassifier.classifyToken(token, tokenNext),token);
             this.currentIndex +=1;
             return symbol;
         }
