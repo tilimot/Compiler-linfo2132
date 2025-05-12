@@ -29,4 +29,4 @@ build/
 # Tests / outputs temporaires
 *.log
 *.tmp
-
+code_test.txt
