@@ -1,4 +1,5 @@
 package compiler.CodeGeneration;
+import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.Expression;
 import org.objectweb.asm.*;
 import java.io.IOException;
@@ -58,6 +59,7 @@ public class CodeGenerator{
 
         for(Expression expr:expressions){
             String val = expr.getValue();
+            TokenType tp = expr.getType();
 
             if (expr.getValue().equals("+")){
                 addition = true;
@@ -71,6 +73,12 @@ public class CodeGenerator{
             else if(expr.getValue().equals("/")){
                 division=true;
             }
+            else if (tp.equals(TokenType.INTEGER)) {
+                int intValue =  Integer.valueOf(val);
+                mv.visitLdcInsn(intValue);
+                term +=1;
+            }
+            /*
             else if (val.equals("1")){
                 mv.visitLdcInsn(1); //load on stack
                 term +=1;
@@ -78,7 +86,7 @@ public class CodeGenerator{
             else if(val.equals("2")){
                 mv.visitLdcInsn(2); //load on stack
                 term +=1;
-            }
+            }*/
 
             if(term==2){ // if there is 2 terms, it means there must be an operation
                 term=1; // bc there is now the previous elemement
@@ -109,15 +117,15 @@ public class CodeGenerator{
     //TODO: Need to delete it at the end
     public static void main(String[] args) throws Exception {
         ArrayList<Expression> expressions = new ArrayList<>();
-        expressions.add(new Expression("1",0));
-        expressions.add(new Expression("+",0));
-        expressions.add(new Expression("2",0));
-        expressions.add(new Expression("*",0));
-        expressions.add(new Expression("1",0));
-        expressions.add(new Expression("/",0));
-        expressions.add(new Expression("2",0));
-        expressions.add(new Expression("-",0));
-        expressions.add(new Expression("2",0));
+        expressions.add(new Expression("1", TokenType.INTEGER,0));
+        expressions.add(new Expression("+",TokenType.OPERATOR,0));
+        expressions.add(new Expression("3",TokenType.INTEGER,0));
+        expressions.add(new Expression("*",TokenType.OPERATOR,0));
+        expressions.add(new Expression("19",TokenType.INTEGER,0));
+        expressions.add(new Expression("/",TokenType.OPERATOR,0));
+        expressions.add(new Expression("23",TokenType.INTEGER,0));
+        expressions.add(new Expression("-",TokenType.OPERATOR,0));
+        expressions.add(new Expression("2",TokenType.INTEGER,0));
 
 
         CodeGenerator cg = new CodeGenerator("MyTest2",expressions);

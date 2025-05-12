@@ -175,17 +175,17 @@ public class Parser {
             match(TokenType.OPERATOR);
             ArrayList<Param> params = parseParams();
             match(TokenType.OPERATOR);
-            return new Expression((String) value.getAttribute(),tabIndex,params);
+            return new Expression((String) value.getAttribute(), value.getTokenType(),tabIndex,params);
 
         }
         else{
             value = match(TokenType.IDENTIFIER);
             if (currentSymbol.getTokenType() == TokenType.ATTRIBUTE){
                 attribute = match(TokenType.ATTRIBUTE);
-                return new Expression((String) value.getAttribute(),tabIndex, ((String)attribute.getAttribute()).substring(1));
+                return new Expression((String) value.getAttribute(),value.getTokenType(),tabIndex, ((String)attribute.getAttribute()).substring(1));
             }
         }
-        return new Expression((String) value.getAttribute(),tabIndex );
+        return new Expression((String) value.getAttribute(),value.getTokenType(),tabIndex );
     }
 
     public ArrayList<Expression> parseFactor() throws Exception {
@@ -197,9 +197,9 @@ public class Parser {
 
         // Grammar rule:  Factor -> (Expressions) | Expression
         if (currentSymbol.getAttribute().equals("(")){
-            openingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute(), tabIndex);
+            openingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute(),TokenType.OPERATOR, tabIndex);
             inside_expressions = parseExpressions();
-            closingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute(), tabIndex);
+            closingParenthesis = new Expression((String) match(TokenType.OPERATOR).getAttribute(),TokenType.OPERATOR, tabIndex);
 
             // Add to list
             expressions.add(openingParenthesis);
@@ -221,7 +221,7 @@ public class Parser {
 
         // Grammar rule: Term' -> * Factor Term’ | /  Factor Term’ | epsilon
         if(currentSymbol.getAttribute().equals("*")) {
-            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(), tabIndex);
+            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(),TokenType.OPERATOR, tabIndex);
             factor = parseFactor();
 
             expressions.add(operatorSign);
@@ -229,7 +229,7 @@ public class Parser {
             expressions.addAll(parseTermPrime());
         }
         else if (currentSymbol.getAttribute().equals("/")) {
-            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(), tabIndex);
+            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(),TokenType.OPERATOR, tabIndex);
             factor = parseFactor();
 
             expressions.add(operatorSign);
@@ -258,7 +258,7 @@ public class Parser {
 
         //Grammar rule : MoreExpressions  -> +Term MoreExpression | - Term MoreExpression | epsilon
         if (currentSymbol.getAttribute().equals("+")) {
-            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(),tabIndex );
+            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(),TokenType.OPERATOR,tabIndex );
             term = parseTerm();
 
             expressions.add(operatorSign);
@@ -266,7 +266,7 @@ public class Parser {
             expressions.addAll(parseMoreExpressions());
         }
         else if (currentSymbol.getAttribute().equals("-")) {
-            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(), tabIndex);
+            operatorSign = new Expression((String)  match(TokenType.OPERATOR).getAttribute(),TokenType.OPERATOR, tabIndex);
             term = parseTerm();
 
             expressions.add(operatorSign);
@@ -296,18 +296,18 @@ public class Parser {
 
     public ArrayList<Expression> parseSimpleCondition (String identifier) throws Exception{
         ArrayList<Expression> simpleCondition = new ArrayList<>();
-        simpleCondition.add(new Expression(identifier, tabIndex));
+        simpleCondition.add(new Expression(identifier, TokenType.IDENTIFIER,tabIndex));
         return simpleCondition;
     }
 
     public ArrayList<Expression> parseComparisonCondition(String identifier) throws Exception{
         ArrayList<Expression> comparisonCondition = new ArrayList<>();
-        comparisonCondition.add(new Expression(identifier, tabIndex));
+        comparisonCondition.add(new Expression(identifier, TokenType.IDENTIFIER,tabIndex));
         String operator = match(TokenType.OPERATOR).getAttribute();
-        comparisonCondition.add(new Expression(operator, tabIndex));
+        comparisonCondition.add(new Expression(operator, TokenType.OPERATOR,tabIndex));
         if (currentSymbol.getTokenType() == TokenType.OPERATOR && !currentSymbol.getAttribute().equals(")")) {
             String operator2 = match(TokenType.OPERATOR).getAttribute();
-            comparisonCondition.add(new Expression(operator2, tabIndex));
+            comparisonCondition.add(new Expression(operator2, TokenType.OPERATOR,tabIndex));
         }
         comparisonCondition.addAll(parseExpressions());
 

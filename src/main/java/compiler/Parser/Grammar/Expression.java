@@ -9,23 +9,27 @@ public class Expression {
     String value;
     int tabIndex;
     String attribute;
+    TokenType tokentype;
     ArrayList<Param> params;
 
 
 
-    public Expression(String value, int tabIndex){
+    public Expression(String value,TokenType tokentype, int tabIndex){
         this.value = value;
+        this.tokentype = tokentype;
         this.tabIndex = tabIndex;
 
     }
-    public Expression(String value, int tabIndex, String attribute) {
+    public Expression(String value, TokenType tokentype, int tabIndex, String attribute) {
         this.value = value;
+        this.tokentype = tokentype;
         this.tabIndex = tabIndex;
         this.attribute = attribute;
     }
 
-    public Expression(String value, int tabIndex, ArrayList<Param> params){
+    public Expression(String value, TokenType tokentype, int tabIndex, ArrayList<Param> params){
         this.value = value;
+        this.tokentype = tokentype;
         this.tabIndex = tabIndex;
         this.params = params;
     }
