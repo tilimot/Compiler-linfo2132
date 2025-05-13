@@ -1,5 +1,6 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.Semantic;
 import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
@@ -32,7 +33,10 @@ public class ReturnStatement extends Statement{
     }
 
     @Override
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
+        System.out.println("return : "+symbolTable.getTable());
+        Type retType = symbolTable.getTable().get("RETURN_TYPE");
+        Semantic.checkReturn(retType,expressions);
 
     }
 }

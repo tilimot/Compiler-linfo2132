@@ -1,11 +1,13 @@
 package compiler.Semantic;
 
+import compiler.Compiler;
 import compiler.Exception.*;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
-import java.util.Optional;
+
 
 public class Semantic {
 
@@ -14,12 +16,12 @@ public class Semantic {
 
     public Semantic(Ast ast ){
         this.ast = ast;
-        symbolTable = new SymbolTable(null);
+        symbolTable = new SymbolTable(null,"root");
 
     }
 
     public void startAnalysis () throws Exception {
-        ast.semanticAnalysis(SymbolTable.getTable());
+        ast.semanticAnalysis(symbolTable);
     }
 
     public static TokenType checkType(String expression_value) {
@@ -84,14 +86,14 @@ public class Semantic {
         }
     }
 
-    public static void checkGlobalDecl(AssignementStatement global) throws Exception {
+    public static void checkGlobalDecl(AssignementStatement global, SymbolTable symbolTable) throws Exception {
 
         boolean initialized = false;
         String id = global.leftSide.getIdentifier();
 
         Type type;
         if (global.leftSide.getType() == null) {
-            type = symbolTable.getSymbol(id);
+            type = symbolTable.getSymbol(id,symbolTable);
             initialized = true;
         }
         else {
@@ -125,20 +127,67 @@ public class Semantic {
             throw new TypeException();
         }
     }
-
-
-    public static void checkRefToVariable(String identifier, ArrayList<Expression> expressions) throws Exception {
-        for (Expression expression : expressions) {
-            if(checkType(expression.getValue()) == TokenType.IDENTIFIER){
-                if (!symbolTable.containsSymbol(expression.getValue())){
-                    throw new ScopeException(expression.getValue());
+    public static void checkParams(SymbolTable st, Expression expression) throws Exception {
+        if (expression.params.size() != st.getTable().size()) {
+            throw new Exception("TypeError: Number of parameters in record access is not correct");
+        }
+        int i = 0;
+        for (Type type : st.getTable().values()) {
+            for (int j = 0; j < expression.params.get(i).expressions.size(); j++) {
+                TokenType type1 = expression.params.get(i).expressions.get(j).getType();
+                if (type1 == TokenType.IDENTIFIER) {
+                    int size = st.getParentTable().getParentTable().getChildTable().size();
+                    type1 = st.getParentTable().getParentTable().getChildTable().get(size-1).getTable().get(expression.params.get(i).expressions.get(j).getValue()).getType();
                 }
-                System.out.println(symbolTable.getSymbol(identifier)+ " and "+symbolTable.getSymbol(expression.getValue()));
-
-                if (!symbolTable.getSymbol(identifier).getType().equals(symbolTable.getSymbol(expression.getValue()).getType())){
-                    throw new VariableException(symbolTable.getSymbol(identifier),symbolTable.getSymbol(expression.getValue()));
+                if (type1 != type.getType() && type1 != TokenType.OPERATOR) {
+                    throw new InvalidParametersException(expression.params.get(i).expressions.get(j).getValue(), type.getValue());
                 }
             }
+            i++;
         }
+    }
+
+    public static void checkReturn(Type returnType, ArrayList<Expression> expressions) throws Exception {
+        ArrayList<Type> returnTypes  = new ArrayList<>();
+        returnTypes.add(returnType);
+        checkFinalDecl(new Constant("final", "return", returnTypes, "=", expressions, ";", 0));
+    }
+
+    public static void checkRefToVariable(String identifier, ArrayList<Expression> expressions, SymbolTable symbolTable) throws Exception {
+        for (Expression expression : expressions) {
+            if(checkType(expression.getValue()) == TokenType.IDENTIFIER) {
+                if (!symbolTable.containsSymbol(expression.getValue())) {
+                    throw new ScopeException(expression.getValue());
+                }
+                if (!symbolTable.getSymbol(identifier, symbolTable).getType().equals(symbolTable.getSymbol(expression.getValue(), symbolTable).getType())) {
+                    throw new VariableException(symbolTable.getSymbol(identifier, symbolTable), symbolTable.getSymbol(expression.getValue(), symbolTable));
+                }
+                if (symbolTable.getSymbol(identifier, symbolTable).getValue().equals("void")) {
+                    throw new Exception("TypeError: Type of final var should not be void");
+                }
+                if (symbolTable.getSymbol(identifier, symbolTable).getType() == TokenType.RECORD_NAME || expression.params != null) {
+
+                    SymbolTable currentTable = symbolTable;
+                    while (currentTable.getParentTable() != null) {
+                        currentTable = currentTable.getParentTable();
+                    }
+                    for (SymbolTable st : currentTable.getChildTable()) {
+
+                        if (st.getName().equals(symbolTable.getSymbol(identifier, symbolTable).getValue())) {
+                            Semantic.checkParams(st, expression);
+                        }
+                        else if (st.getName().equals(expression.getValue())) {
+                            st = st.getChildTable().getFirst();
+                            Semantic.checkParams(st, expression);
+                        }
+                    }
+
+
+                }
+
+
+            }
+        }
+
     }
 }

@@ -38,7 +38,7 @@ public class MethodCall extends Statement {
 
 
     @Override
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
 
     }
 }

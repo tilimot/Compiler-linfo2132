@@ -8,6 +8,7 @@ import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class AssignementStatement extends Statement {
     public LeftSide leftSide;
@@ -24,13 +25,16 @@ public class AssignementStatement extends Statement {
         this.eol = eol;
     }
 
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
-        Semantic.checkGlobalDecl(this);
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
+        LinkedHashMap<String, Type> st = symbolTable.getTable();
+        Semantic.checkGlobalDecl(this,symbolTable);
         String identifier = leftSide.getIdentifier();
         if (!st.containsKey(identifier)) {
+
             st.put(identifier, leftSide.getType());
+
         }
-        Semantic.checkRefToVariable(identifier,((RightSideExpressions)rightSide).expressions);
+        Semantic.checkRefToVariable(identifier,((RightSideExpressions)rightSide).expressions, symbolTable);
 
 
 

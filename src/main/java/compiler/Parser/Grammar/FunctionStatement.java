@@ -1,10 +1,12 @@
 package compiler.Parser.Grammar;
 
 import compiler.Parser.Parser;
+import compiler.Semantic.Semantic;
 import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class FunctionStatement extends Statement {
     String fun_;
@@ -39,11 +41,20 @@ public class FunctionStatement extends Statement {
     }
 
     @Override
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
+
+        LinkedHashMap<String, Type> st = symbolTable.getTable();
+        SymbolTable params = new SymbolTable(symbolTable, "params");
+        symbolTable.setChildTable(params);
         for (FuncParam funcParam : funcParams) {
-            st.put(funcParam.identifier, funcParam.type.getFirst());
+            params.getTable().put(funcParam.identifier, funcParam.type.getFirst());
         }
-        block.semanticAnalysis(st);
+        if (return_type != null) {
+            st.put(identifier, return_type.getFirst());
+            st.put("RETURN_TYPE", return_type.getFirst());
+            symbolTable.getParentTable().getTable().put(identifier, return_type.getFirst());
+        }
+        block.semanticAnalysis(symbolTable);
 
 
 

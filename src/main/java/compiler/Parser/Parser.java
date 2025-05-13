@@ -697,7 +697,7 @@ public class Parser {
     }
 
     public ArrayList<Record> parseMoreRecord() throws Exception{
-        ArrayList<Record> records = new ArrayList<Record>();
+        ArrayList<Record> records = new ArrayList<>();
         while(currentSymbol.getTokenType() == TokenType.RECORD_NAME){
             records.add(parseRecord());
         }

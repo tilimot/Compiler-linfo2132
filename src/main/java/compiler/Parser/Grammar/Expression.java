@@ -9,7 +9,7 @@ public class Expression {
     String value;
     int tabIndex;
     String attribute;
-    ArrayList<Param> params;
+    public ArrayList<Param> params;
 
 
 
