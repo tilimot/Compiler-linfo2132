@@ -8,6 +8,7 @@ import compiler.Lexer.Lexer;
 import compiler.Parser.Grammar.*;
 import compiler.Parser.Parser;
 import compiler.Semantic.Semantic;
+import compiler.CodeGeneration.CodeGenerator;
 
 import java.io.Reader;
 
@@ -33,16 +34,24 @@ public class Compiler {
             System.out.println(myAst);
 
        }
-       else{
-           System.out.println("SEMANTIC ANALYSIS");
-           String filepath = args[0];
-           Reader readerFile = FileToReader.getReaderFromFile(filepath);
+
+       else {
+           String sourceFilePath = args[0];
+           String targetFilePath;
+           if (args.length == 3) {
+               targetFilePath = args[2];
+           }
+           else{
+               targetFilePath = "CompiledCode";
+           }
+           Reader readerFile = FileToReader.getReaderFromFile(sourceFilePath);
            Lexer lexer = new Lexer(readerFile);
            Parser parser = new Parser(lexer);
            Ast myAst = parser.getAST();
            Semantic semantic = new Semantic(myAst);
            semantic.startAnalysis();
-
+           CodeGenerator cg = new CodeGenerator(targetFilePath,myAst);
+           cg.generateFileClass();
        }
        System.exit(0);
     }

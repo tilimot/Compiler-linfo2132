@@ -42,6 +42,25 @@ public class Ast {
         //Todo function, record
     }
 
+
+    public ArrayList<Constant> getConstant(){
+        return this.constants;
+    }
+
+    public ArrayList<Record> getRecords(){
+        return this.records;
+    }
+
+    public ArrayList<Statement> getGlobalVariables(){
+        return this.globalVariables;
+    }
+
+    public ArrayList<FunctionStatement> getFunctions(){
+        return this.functions;
+    };
+
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -1,6 +1,8 @@
 package compiler.CodeGeneration;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
+import compiler.Parser.Grammar.Record;
+import compiler.Parser.Grammar.Type;
 import org.junit.experimental.theories.internal.Assignments;
 import org.objectweb.asm.*;
 import java.io.IOException;
@@ -18,14 +20,14 @@ import compiler.Parser.*;
 public class CodeGenerator{
     ClassWriter cw;
     String generatedClass;
-    AssignementStatement assignment; //TODO: replace by AST at the end
+    Ast ast; //TODO: replace by AST at the end
     IndexTable indexTable;
 
 
-    public CodeGenerator(String generatedClass,AssignementStatement assignment){
+    public CodeGenerator(String generatedClass,Ast ast){
         this.cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         this.generatedClass=generatedClass;
-        this.assignment=assignment; //TODO: replace by AST at the end
+        this.ast=ast; //TODO: replace by AST at the end
         this.indexTable = new IndexTable(null);
 
     }
@@ -33,15 +35,15 @@ public class CodeGenerator{
     public void generateFileClass() throws Exception{
         // CreateClass
         cw.visit(Opcodes.V1_8, ACC_PUBLIC, this.generatedClass, null, "java/lang/Object", null);
-        generateMainMethod();
+        generateMainMethod(); //TODO: should generate AST and generateAST should generateMAIN
     }
 
     public void generateMainMethod() throws IOException {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mv.visitCode();
 
-        //generateExpression(mv);
-        generateAssignment(mv,this.assignment, this.indexTable);
+        //
+        generateAST(mv,this.ast, this.indexTable);
 
         mv.visitVarInsn(ISTORE, 1); // store the result in var1
 
@@ -55,8 +57,28 @@ public class CodeGenerator{
         System.out.println("Classe générée : "+this.generatedClass+".class");
     }
 
-    public void generateAssignment(MethodVisitor mv,AssignementStatement assignment ,IndexTable indexTable){
+    public void  generateAST(MethodVisitor mv, Ast ast, IndexTable indexTable){
+        // TODO: INCOMPLETE -> Manage only restraint globalVariable
+
+        // Ast grammar: AST -> Constants Records GlobalVariables Functions
+        ArrayList<Constant> cst = ast.getConstant();
+        ArrayList<Record> records = ast.getRecords();
+        ArrayList<Statement> globalVariables = ast.getGlobalVariables();
+        ArrayList<FunctionStatement> functions = ast.getFunctions();
+
+        // generate Global Variable
+        for(Statement stmt: globalVariables){
+            AssignementStatement assign = (AssignementStatement) stmt;
+            generateAssignment(mv,assign, indexTable);
+        }
+    }
+
+    public void generateAssignment(MethodVisitor mv,AssignementStatement assignment, IndexTable indexTable){
+        //TODO: INCOMPLETE --> manage only rightSide. Must store identifier id in IndexTable
         // Manage assignement
+        LeftSide ls = assignment.leftSide;
+        RightSideExpressions rs = (RightSideExpressions) assignment.rightSide;
+        generateExpression(mv,rs.expressions);
     }
 
     public void generateExpression(MethodVisitor mv, ArrayList<Expression> expressions){
@@ -134,29 +156,4 @@ public class CodeGenerator{
         }
 
     }
-
-    //TODO: Need to delete it at the end
-    public static void main(String[] args) throws Exception {
-        ArrayList<Expression> expressions = new ArrayList<>();
-        expressions.add(new Expression("hello", TokenType.STRINGS,0));
-        expressions.add(new Expression("+",TokenType.OPERATOR,0));
-        expressions.add(new Expression(" world",TokenType.STRINGS,0));
-        /*
-        expressions.add(new Expression("1.3", TokenType.FLOAT,0));
-        expressions.add(new Expression("+",TokenType.OPERATOR,0));
-        expressions.add(new Expression("3",TokenType.INTEGER,0));
-        expressions.add(new Expression("*",TokenType.OPERATOR,0));
-        expressions.add(new Expression("false",TokenType.BOOLEAN,0));
-        expressions.add(new Expression("/",TokenType.OPERATOR,0));
-        expressions.add(new Expression("hello",TokenType.STRINGS,0));
-        expressions.add(new Expression("-",TokenType.OPERATOR,0));
-        expressions.add(new Expression("2",TokenType.INTEGER,0));
-         */
-
-        //CodeGenerator cg = new CodeGenerator("MyTest2",expressions);
-        //cg.generateFileClass();
-    }
-
-
-
 }
