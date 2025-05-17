@@ -106,7 +106,7 @@ public class CodeGenerator{
         mv.visitVarInsn(ISTORE, varindex);
     }
 
-    public void generateExpression(MethodVisitor mv, ArrayList<Expression> expressions){
+    public void generateExpression(MethodVisitor mv, ArrayList<Expression> expressions) throws Exception {
         /*
         * Add on stack each element of the expression.
         * When term =2, apply the given operation between the 2 elements on stack
@@ -158,6 +158,11 @@ public class CodeGenerator{
             else if(tp.equals(TokenType.STRINGS)) {
                 mv.visitLdcInsn(val);
                 term +=1;
+            }
+            else if(tp.equals(TokenType.IDENTIFIER)){
+                int varIndex = indexTable.getIndexIdentifier(val);
+                mv.visitVarInsn(ILOAD, varIndex);
+                term+=1;
             }
 
             if(term==2){ // if there is 2 terms, it means there must be an operation
