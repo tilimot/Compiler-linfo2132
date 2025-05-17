@@ -17,7 +17,6 @@ public class LeftSideAssignement extends LeftSide{
     }
 
     public Type getType() {
-        System.out.println(identifier);
         if (type.isEmpty()){
             return null;
         }

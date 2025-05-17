@@ -2,6 +2,8 @@ package compiler.Parser.Grammar;
 
 import compiler.Lexer.TokenType;
 
+import static java.lang.Character.isUpperCase;
+
 public class SimpleType extends Type {
     String value;
     int tabIndex;
@@ -19,7 +21,13 @@ public class SimpleType extends Type {
             case "float" -> TokenType.FLOAT;
             case "string" -> TokenType.STRINGS;
             case "bool" -> TokenType.BOOLEAN;
-            default -> TokenType.IDENTIFIER;
+            default -> {
+                if (!value.isEmpty() && Character.isUpperCase(value.charAt(0))) {
+                    yield TokenType.RECORD_NAME;
+                } else {
+                    yield TokenType.IDENTIFIER;
+                }
+            }
         };
     }
 

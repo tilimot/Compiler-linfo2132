@@ -4,6 +4,7 @@ import compiler.Exception.TypeException;
 import compiler.Lexer.Lexer;
 import compiler.Parser.Grammar.Ast;
 import compiler.Parser.Parser;
+import compiler.Semantic.SymbolTable;
 import org.junit.Test;
 
 import java.io.Reader;
@@ -18,7 +19,7 @@ public class TestSemantic {
         Lexer lexer = new Lexer(reader);
         return new Parser(lexer);
     }
-
+    SymbolTable symbolTable = new SymbolTable(null, "root");
 
 
     @Test
@@ -196,7 +197,7 @@ public class TestSemantic {
         String input = "x int  = 3 + \"hello\";";
         Parser parser = getParser(input);
         Ast ast = parser.getAST();
-        ast.semanticAnalysis();
+        ast.semanticAnalysis(symbolTable);
     }
 
 
@@ -204,9 +205,10 @@ public class TestSemantic {
     @Test(expected = OperatorException.class)
     public void semanticAnalysis_Should_Throw_OperatorError_On_MixedTypesWithIdentifier() throws Exception {
         String input = " x int= 5 + \"abc\" + y;";
+
         Parser parser = getParser(input);
         Ast ast = parser.getAST();
-        ast.semanticAnalysis(); // Doit lever OperatorException
+        ast.semanticAnalysis(symbolTable); // Doit lever OperatorException
     }
 
 
@@ -215,7 +217,18 @@ public class TestSemantic {
         String input = " x int = \"hello\";";
         Parser parser = getParser(input);
         Ast ast = parser.getAST();
-        ast.semanticAnalysis(); // Doit lever TypeException
+        ast.semanticAnalysis(symbolTable); // Doit lever TypeException
     }
+    @Test
+    public void testFunctionCallWithCorrectTypes() throws Exception {
+        String input = " Point rec { x int; y int;} fun square(v Point, p int) string { return \"ok\";} fun main()" +
+                " { c string = \"hello\";a Point = Point(1,2); b string = square(a, 3);} ";
+        Parser parser = getParser(input);
+        Ast ast = parser.getAST();
+        ast.semanticAnalysis(new SymbolTable(null,"root"));
+    }
+
+
+
 
 }

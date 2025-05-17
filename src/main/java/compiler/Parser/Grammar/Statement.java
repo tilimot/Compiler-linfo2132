@@ -10,7 +10,7 @@ public abstract class Statement {
         this.tabIndex = tabIndex;
     }
 
-    public abstract void semanticAnalysis(HashMap<String, Type> st) throws Exception;
+    public abstract void semanticAnalysis(SymbolTable symbolTable) throws Exception;
 
 
 }

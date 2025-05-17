@@ -1,5 +1,7 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.SymbolTable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,7 +24,7 @@ public class RecordCall extends Statement {
     }
 
     @Override
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
     }
 
     @Override

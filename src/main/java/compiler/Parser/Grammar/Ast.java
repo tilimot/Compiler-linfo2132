@@ -22,15 +22,22 @@ public class Ast {
         this.tabIndex = tabIndex;
     }
 
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
         for (Constant constant : constants) {
-            constant.semanticAnalysis(st);
+            constant.semanticAnalysis(symbolTable);
+        }
+        for (Record record : records) {
+            SymbolTable recSymbTable = new SymbolTable(symbolTable, record.recordsName);
+            symbolTable.setChildTable(recSymbTable);
+            record.semanticAnalysis(recSymbTable);
         }
         for (Statement globalVariable : globalVariables) {
-            globalVariable.semanticAnalysis(st);
+            globalVariable.semanticAnalysis(symbolTable);
         }
         for (FunctionStatement function : functions) {
-            function.semanticAnalysis(SymbolTable.getTable());
+            SymbolTable funcSymbTable = new SymbolTable(symbolTable,function.identifier);
+            symbolTable.setChildTable(funcSymbTable);
+            function.semanticAnalysis(funcSymbTable);
         }
         //Todo function, record
     }

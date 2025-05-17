@@ -3,9 +3,11 @@ package compiler.Parser.Grammar;
 import compiler.Exception.*;
 import compiler.Lexer.TokenType;
 import compiler.Semantic.Semantic;
+import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 
 public class Constant {
@@ -27,13 +29,12 @@ public class Constant {
         this.tabIndex = tabIndex;
     }
 
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception{
-
-        System.out.println("Analysing constant: " + identifier);
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception{
+        LinkedHashMap<String, Type> st = symbolTable.getTable();
         Semantic.checkFinalDecl(this);
         st.put(identifier, basetype.getFirst());
 
-        Semantic.checkRefToVariable(identifier,expressions);
+        Semantic.checkRefToVariable(identifier,expressions,symbolTable);
 
     }
 

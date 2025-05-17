@@ -1,5 +1,7 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.SymbolTable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,9 +20,9 @@ public class Block {
         this.tabIndex = tabIndex;
     }
 
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
         for (Statement statement : statements) {
-            statement.semanticAnalysis(st);
+            statement.semanticAnalysis(symbolTable);
         }
     }
 

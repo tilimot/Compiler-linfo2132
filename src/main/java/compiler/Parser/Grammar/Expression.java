@@ -10,16 +10,15 @@ public class Expression {
     int tabIndex;
     String attribute;
     TokenType tokentype;
-    ArrayList<Param> params;
-
+    public ArrayList<Param> params;
 
 
     public Expression(String value,TokenType tokentype, int tabIndex){
         this.value = value;
         this.tokentype = tokentype;
         this.tabIndex = tabIndex;
-
     }
+
     public Expression(String value, TokenType tokentype, int tabIndex, String attribute) {
         this.value = value;
         this.tokentype = tokentype;

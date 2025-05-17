@@ -163,6 +163,7 @@ public class Parser {
         }
         else if (currentSymbol.getTokenType() == TokenType.BOOLEAN){
             value = match(TokenType.BOOLEAN);
+
         }
         else if (currentSymbol.getTokenType() == TokenType.RECORD_NAME || currentSymbol.getTokenType() == TokenType.FUNC_NAME) {
 
@@ -697,7 +698,7 @@ public class Parser {
     }
 
     public ArrayList<Record> parseMoreRecord() throws Exception{
-        ArrayList<Record> records = new ArrayList<Record>();
+        ArrayList<Record> records = new ArrayList<>();
         while(currentSymbol.getTokenType() == TokenType.RECORD_NAME){
             records.add(parseRecord());
         }

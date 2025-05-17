@@ -1,6 +1,9 @@
 package compiler.Parser.Grammar;
 
+import compiler.Semantic.SymbolTable;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Record {
     String recordsName;
@@ -32,4 +35,10 @@ public class Record {
                 declarationStr + tNext + closingBracket + "\n";
     }
 
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
+        symbolTable.getParentTable().getTable().put(recordsName, new SimpleType(recordsName, tabIndex));
+        for (VariableDeclaration varDecl : declaration) {
+            varDecl.semanticAnalysis(symbolTable);
+        }
+    }
 }

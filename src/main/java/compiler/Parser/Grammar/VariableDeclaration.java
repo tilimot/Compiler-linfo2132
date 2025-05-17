@@ -4,6 +4,7 @@ import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class VariableDeclaration extends Statement {
     String identifier;
@@ -34,7 +35,8 @@ public class VariableDeclaration extends Statement {
     }
 
     @Override
-    public void semanticAnalysis(HashMap<String, Type> st) throws Exception {
+    public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
+        LinkedHashMap<String, Type> st = symbolTable.getTable();
         if (st.containsKey(identifier)) {
             throw new Exception("Variable " + identifier + " already declared");
         }
