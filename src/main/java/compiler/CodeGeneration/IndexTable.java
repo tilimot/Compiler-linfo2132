@@ -9,20 +9,26 @@ public class IndexTable {
     private HashMap<String, Integer> table;
     private int current_index; //current number of identifier stored
 
-    public IndexTable(IndexTable parentTable) {
+    public IndexTable(IndexTable parentTable, int current_index) {
         this.parentTable = parentTable;
         this.table = new HashMap<>();
-        this.current_index = 0;
+        this.current_index = current_index;
     }
 
-    public void addSymbol(String identifier) throws Exception {
+    public void addIdentifier(String identifier) throws Exception {
         this.current_index+=1;
         int index = current_index;
         table.put(identifier, index);
     }
 
+    public int getCurrent_index(){
+        return this.current_index;
+    }
 
-    public Integer getSymbol(String identifier) throws Exception {
+    public Integer getIndexIdentifier(String identifier) throws Exception {
+        /*
+        * Return the index associated to the given identifier
+        * */
         IndexTable currentTable = this;
         while (currentTable != null && !currentTable.table.containsKey(identifier)) {
             currentTable = currentTable.parentTable;

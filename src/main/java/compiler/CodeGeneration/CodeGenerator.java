@@ -28,8 +28,7 @@ public class CodeGenerator{
         this.cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         this.generatedClass=generatedClass;
         this.ast=ast; //TODO: replace by AST at the end
-        this.indexTable = new IndexTable(null);
-
+        this.indexTable = new IndexTable(null,0);
     }
 
     public void generateFileClass() throws Exception{
@@ -38,50 +37,80 @@ public class CodeGenerator{
         generateMainMethod(); //TODO: should generate AST and generateAST should generateMAIN
     }
 
-    public void generateMainMethod() throws IOException {
+    public void generateMainMethod() throws Exception {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mv.visitCode();
 
-        //
+        // Should be the inverse. GenerateAST should call generateMainMethod
         generateAST(mv,this.ast, this.indexTable);
 
-        mv.visitVarInsn(ISTORE, 1); // store the result in var1
 
         // Fin de la méthode
         mv.visitInsn(RETURN);
+
+        //mv.visitMaxs(100, indexTable.getCurrent_index());
         mv.visitMaxs(0, 0);
         mv.visitEnd();
 
         byte[] bytecode = cw.toByteArray();
         java.nio.file.Files.write(java.nio.file.Paths.get(this.generatedClass+".class"), bytecode);
-        System.out.println("Classe générée : "+this.generatedClass+".class");
     }
 
-    public void  generateAST(MethodVisitor mv, Ast ast, IndexTable indexTable){
+    public void  generateAST(MethodVisitor mv, Ast ast, IndexTable indexTable) throws Exception {
         // TODO: INCOMPLETE -> Manage only restraint globalVariable
 
         // Ast grammar: AST -> Constants Records GlobalVariables Functions
         ArrayList<Constant> cst = ast.getConstant();
         ArrayList<Record> records = ast.getRecords();
-        ArrayList<Statement> globalVariables = ast.getGlobalVariables();
-        ArrayList<FunctionStatement> functions = ast.getFunctions();
+
 
         // generate Global Variable
-        for(Statement stmt: globalVariables){
-            AssignementStatement assign = (AssignementStatement) stmt;
-            generateAssignment(mv,assign, indexTable);
+        ArrayList<Statement> globalVariables = ast.getGlobalVariables();
+        if (globalVariables.size()>0) {
+            generateGlobalVariable(mv, globalVariables, indexTable);
         }
+
+
+
+        ArrayList<FunctionStatement> functions = ast.getFunctions();
+
+
     }
 
-    public void generateAssignment(MethodVisitor mv,AssignementStatement assignment, IndexTable indexTable){
+    public void generateGlobalVariable(MethodVisitor mv, ArrayList<Statement> globalVariables, IndexTable indexTable) throws Exception {
+        //TODO: Must call different generate Assignement depending if this is a simple variable assignment (i.e: a int= 1+2), array attribution (i.e: c int[]= array [5]), or else
+        //Currently consider only simple variable assignement (i.e: a int= 1+2)
+
+        for(Statement stmt: globalVariables){
+            AssignementStatement assign = (AssignementStatement) stmt;
+            generateVariableAssignment(mv,assign, indexTable);
+        }
+
+    }
+
+    public void generateVariableAssignment(MethodVisitor mv,AssignementStatement assignment, IndexTable indexTable) throws Exception {
         //TODO: INCOMPLETE --> manage only rightSide. Must store identifier id in IndexTable
         // Manage assignement
+
+        // RightSide - store identifier in IndexTable
         LeftSide ls = assignment.leftSide;
+        String identifier = ls.getIdentifier();
+        indexTable.addIdentifier(identifier);
+
+        // LeftSide - generate expression
         RightSideExpressions rs = (RightSideExpressions) assignment.rightSide;
         generateExpression(mv,rs.expressions);
+
+        // Store the result
+        int varindex = indexTable.getCurrent_index();
+        mv.visitVarInsn(ISTORE, varindex);
     }
 
     public void generateExpression(MethodVisitor mv, ArrayList<Expression> expressions){
+        /*
+        * Add on stack each element of the expression.
+        * When term =2, apply the given operation between the 2 elements on stack
+        */
         // Currently only manage Sum of int
         Boolean addition = false;
         Boolean substraction = false;
