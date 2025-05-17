@@ -1,6 +1,7 @@
 package compiler.CodeGeneration;
 import compiler.Lexer.TokenType;
-import compiler.Parser.Grammar.Expression;
+import compiler.Parser.Grammar.*;
+import org.junit.experimental.theories.internal.Assignments;
 import org.objectweb.asm.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,12 +18,16 @@ import compiler.Parser.*;
 public class CodeGenerator{
     ClassWriter cw;
     String generatedClass;
-    ArrayList<Expression> expressions; //TODO: replace by AST at the end
+    AssignementStatement assignment; //TODO: replace by AST at the end
+    IndexTable indexTable;
 
-    public CodeGenerator(String generatedClass, ArrayList<Expression> expressions){
+
+    public CodeGenerator(String generatedClass,AssignementStatement assignment){
         this.cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         this.generatedClass=generatedClass;
-        this.expressions=expressions; //TODO: replace by AST at the end
+        this.assignment=assignment; //TODO: replace by AST at the end
+        this.indexTable = new IndexTable(null);
+
     }
 
     public void generateFileClass() throws Exception{
@@ -35,7 +40,8 @@ public class CodeGenerator{
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mv.visitCode();
 
-        generateExpression(mv);
+        //generateExpression(mv);
+        generateAssignment(mv,this.assignment, this.indexTable);
 
         mv.visitVarInsn(ISTORE, 1); // store the result in var1
 
@@ -49,7 +55,11 @@ public class CodeGenerator{
         System.out.println("Classe générée : "+this.generatedClass+".class");
     }
 
-    public void generateExpression(MethodVisitor mv){
+    public void generateAssignment(MethodVisitor mv,AssignementStatement assignment ,IndexTable indexTable){
+        // Manage assignement
+    }
+
+    public void generateExpression(MethodVisitor mv, ArrayList<Expression> expressions){
         // Currently only manage Sum of int
         Boolean addition = false;
         Boolean substraction = false;
@@ -78,15 +88,26 @@ public class CodeGenerator{
                 mv.visitLdcInsn(intValue);
                 term +=1;
             }
-            /*
-            else if (val.equals("1")){
-                mv.visitLdcInsn(1); //load on stack
+            else if(tp.equals(TokenType.FLOAT)) {
+                float floatValue = Float.valueOf(val);
+                mv.visitLdcInsn(floatValue);
                 term +=1;
             }
-            else if(val.equals("2")){
-                mv.visitLdcInsn(2); //load on stack
+            else if(tp.equals(TokenType.BOOLEAN)) {
+                boolean boolValue;
+                if(val.equals("true")){
+                    boolValue = true;
+                }
+                else{
+                    boolValue = false;
+                }
+                mv.visitLdcInsn(boolValue);
                 term +=1;
-            }*/
+            }
+            else if(tp.equals(TokenType.STRINGS)) {
+                mv.visitLdcInsn(val);
+                term +=1;
+            }
 
             if(term==2){ // if there is 2 terms, it means there must be an operation
                 term=1; // bc there is now the previous elemement
@@ -117,19 +138,23 @@ public class CodeGenerator{
     //TODO: Need to delete it at the end
     public static void main(String[] args) throws Exception {
         ArrayList<Expression> expressions = new ArrayList<>();
-        expressions.add(new Expression("1", TokenType.INTEGER,0));
+        expressions.add(new Expression("hello", TokenType.STRINGS,0));
+        expressions.add(new Expression("+",TokenType.OPERATOR,0));
+        expressions.add(new Expression(" world",TokenType.STRINGS,0));
+        /*
+        expressions.add(new Expression("1.3", TokenType.FLOAT,0));
         expressions.add(new Expression("+",TokenType.OPERATOR,0));
         expressions.add(new Expression("3",TokenType.INTEGER,0));
         expressions.add(new Expression("*",TokenType.OPERATOR,0));
-        expressions.add(new Expression("19",TokenType.INTEGER,0));
+        expressions.add(new Expression("false",TokenType.BOOLEAN,0));
         expressions.add(new Expression("/",TokenType.OPERATOR,0));
-        expressions.add(new Expression("23",TokenType.INTEGER,0));
+        expressions.add(new Expression("hello",TokenType.STRINGS,0));
         expressions.add(new Expression("-",TokenType.OPERATOR,0));
         expressions.add(new Expression("2",TokenType.INTEGER,0));
+         */
 
-
-        CodeGenerator cg = new CodeGenerator("MyTest2",expressions);
-        cg.generateFileClass();
+        //CodeGenerator cg = new CodeGenerator("MyTest2",expressions);
+        //cg.generateFileClass();
     }
 
 
