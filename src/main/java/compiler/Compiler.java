@@ -35,7 +35,7 @@ public class Compiler {
        }
        else{
            System.out.println("SEMANTIC ANALYSIS");
-           String filepath = args[1];
+           String filepath = args[0];
            Reader readerFile = FileToReader.getReaderFromFile(filepath);
            Lexer lexer = new Lexer(readerFile);
            Parser parser = new Parser(lexer);
