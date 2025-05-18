@@ -17,6 +17,14 @@ public class FuncParam {
 
     }
 
+    public String getIdentifier(){
+        return this.identifier;
+    }
+
+    public ArrayList<Type> getType(){
+        return this.type;
+    }
+
     @Override
     public String toString() {
         //TODO implem array list type

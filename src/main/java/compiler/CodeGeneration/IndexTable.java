@@ -9,10 +9,10 @@ public class IndexTable {
     private HashMap<String, Integer> table;
     private int current_index; //current number of identifier stored
 
-    public IndexTable(IndexTable parentTable, int current_index) {
+    public IndexTable(IndexTable parentTable) {
         this.parentTable = parentTable;
         this.table = new HashMap<>();
-        this.current_index = current_index;
+        this.current_index = 0;
     }
 
     public void addIdentifier(String identifier) throws Exception {

@@ -1,0 +1,6 @@
+- Generate Function Main
+- generateStatements (while, for, if, ...)
+- L'index table doit aller chercher dans les get static si elle ne trouve rien dans les Indextables, avant de retourner une
+ erreur. Les variables globales ne sont pas exactement stockée sur la stack mais dans une table des champs aux niveau
+ de la classe. GETSTATIC permet de lire l"instruction et de lacharger sur le haut de la pile.
+

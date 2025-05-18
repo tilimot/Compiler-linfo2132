@@ -11,6 +11,12 @@ gradlew
 # Sauf le fichier des règles de grammairs
 !grammarRules.txt
 
+# Sauf les Todos
+!ToDo.txt
+
+# sauf les codes de test
+!code_test.txt
+
 # (Optionnel) ignorer les fichiers compilés
 *.class
 
@@ -29,4 +35,3 @@ build/
 # Tests / outputs temporaires
 *.log
 *.tmp
-code_test.txt

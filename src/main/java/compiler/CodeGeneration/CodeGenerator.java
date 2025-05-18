@@ -29,7 +29,7 @@ public class CodeGenerator{
         this.cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         this.generatedClass=generatedClass;
         this.ast=ast; //TODO: replace by AST at the end
-        this.indexTable = new IndexTable(null,0);
+        this.indexTable = new IndexTable(null);
     }
 
 
@@ -66,10 +66,11 @@ public class CodeGenerator{
         clinit.visitMaxs(0, 0);
         clinit.visitEnd();
 
+        // Functions
         ArrayList<FunctionStatement> functions = ast.getFunctions();
-
-
-        //generateMainMethod();
+        if(!functions.isEmpty()){
+            generateMoreFunction(this.cw,functions, this.indexTable);
+        }
 
         cw.visitEnd();
         // generateFile into Bytecode
@@ -106,19 +107,13 @@ public class CodeGenerator{
         //TODO: Must call different generate Assignement depending if this is a simple variable assignment (i.e: a int= 1+2), array attribution (i.e: c int[]= array [5]), or else
         //Currently consider only simple variable assignement (i.e: a int= 1+2). Miss array assignement, records attribute assignement, declaration
 
-        // Static Bloc : static {x = 10; ...}
-        //MethodVisitor clinit = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+
         clinit.visitCode();
 
         // Adding fields:  public static x=10
         for(Statement globVar: globalVariables) {
             generateGlobalAssignmentVariable(cw, clinit,  globVar);
         }
-        /*
-        clinit.visitInsn(RETURN);
-        clinit.visitMaxs(0, 0);
-        clinit.visitEnd();
-        */
 
     }
 
@@ -162,10 +157,7 @@ public class CodeGenerator{
         for( Constant cst: constants) {
             generateConstant(cw, clinit, cst);
         }
-        /*
-        clinit.visitInsn(RETURN);
-        clinit.visitMaxs(0, 0);
-        clinit.visitEnd();*/
+
     }
 
     public void generateConstant(ClassWriter cw, MethodVisitor clinit, Constant cst) throws Exception{
@@ -185,17 +177,49 @@ public class CodeGenerator{
 
     }
 
+    public void generateMoreFunction(ClassWriter cw, ArrayList<FunctionStatement> functions, IndexTable indexTable) throws Exception{
 
-    public void generateFunction(MethodVisitor mv, ArrayList<FunctionStatement> functions, IndexTable indexTable){
-
-
-        int currentVarIndex = indexTable.getCurrent_index();
-        for(FunctionStatement function: functions) {
-            String methodName = function.getIdentifier();
-            ArrayList<Type> returnType = function.getReturn_type();
-            ArrayList<FuncParam> params = function.getParams();
-            Block block = function.getBlock();
+        for (FunctionStatement function: functions){
+            IndexTable funcIndexTable = new IndexTable(indexTable);
+            generateFunction(cw, function, funcIndexTable);
         }
+    }
+
+
+    public void generateFunction(ClassWriter cw, FunctionStatement function, IndexTable indexTable) throws Exception {
+
+        String methodName = function.getIdentifier();
+        String returnTypeDescriptor = getTypeDescriptor(function.getReturn_type().get(0).getType());
+        Block block = function.getBlock();
+
+        // Get params TypeDescriptor - quelle idée de le gérer comme ça aussi
+        String paramsTypeDescriptor = "";
+        ArrayList<FuncParam> params = function.getParams();
+        for(FuncParam param:params){
+            String paramTD = getTypeDescriptor(param.getType().get(0).getType());
+            paramsTypeDescriptor += paramTD;
+        }
+
+
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC , methodName, "("+paramsTypeDescriptor+")"+returnTypeDescriptor, null, null);
+        mv.visitCode();
+
+        // Load Param on Stack and store them on IndexTable
+        for(FuncParam param:params){
+            String identifier = param.getIdentifier();
+            indexTable.addIdentifier(identifier);
+            int varIndex = indexTable.getIndexIdentifier(identifier);
+            mv.visitVarInsn(ISTORE, varIndex);
+        }
+
+        // TODO
+        //generateStatement(block, funcIndexTable);
+
+
+        // Fin de la méthode
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
 
