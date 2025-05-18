@@ -31,6 +31,7 @@ public class FunctionStatement extends Statement {
     }
 
     public FunctionStatement(String fun_, String identifier, String openParenthesis, String closingParenthesis, Block block, int tabIndex){
+        //Function main
         super(tabIndex);
         this.fun_ = fun_;
         this.identifier = identifier;
@@ -39,6 +40,21 @@ public class FunctionStatement extends Statement {
         this.block = block;
         this.funcParams = new ArrayList<>();
     }
+
+    public String getIdentifier(){
+        return this.identifier;
+    }
+
+    public ArrayList<FuncParam> getParams(){
+        return this.funcParams;
+    }
+
+    public ArrayList<Type> getReturn_type(){
+        return this.return_type;
+    };
+    public Block getBlock(){
+        return this.block;
+    };
 
     @Override
     public void semanticAnalysis(SymbolTable symbolTable) throws Exception {

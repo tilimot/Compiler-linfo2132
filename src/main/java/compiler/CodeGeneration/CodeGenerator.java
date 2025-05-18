@@ -74,6 +74,8 @@ public class CodeGenerator{
 
         ArrayList<FunctionStatement> functions = ast.getFunctions();
 
+        generateMainMethod();
+
 
     }
 
@@ -86,6 +88,16 @@ public class CodeGenerator{
             generateVariableAssignment(mv,assign, indexTable);
         }
 
+    }
+
+    public void generateFunction(MethodVisitor mv, ArrayList<FunctionStatement> functions, IndexTable indexTable){
+        int currentVarIndex = indexTable.getCurrent_index();
+        for(FunctionStatement function: functions) {
+            String methodName = function.getIdentifier();
+            ArrayList<Type> returnType = function.getReturn_type();
+            ArrayList<FuncParam> params = function.getParams();
+            Block block = function.getBlock();
+        }
     }
 
     public void generateVariableAssignment(MethodVisitor mv,AssignementStatement assignment, IndexTable indexTable) throws Exception {
