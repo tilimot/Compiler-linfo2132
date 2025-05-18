@@ -6,6 +6,7 @@ import compiler.Parser.Grammar.Type;
 import org.junit.experimental.theories.internal.Assignments;
 import org.objectweb.asm.*;
 import java.io.IOException;
+import java.lang.invoke.TypeDescriptor;
 import java.util.ArrayList;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -41,23 +42,34 @@ public class CodeGenerator{
         // Ast grammar: AST -> Constants Records GlobalVariables Functions
         Ast ast = this.ast;
 
+        // Begin Static bloc --> to store static variable
+        MethodVisitor clinit = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
 
-        // Generate elements of AST
-        ArrayList<Constant> cst = ast.getConstant();
+
+        // Constants
+        ArrayList<Constant> csts = ast.getConstant();
+        if(!csts.isEmpty()){
+            generateMoreConstant(this.cw, csts, clinit);
+        }
+
+        // Records
         ArrayList<Record> records = ast.getRecords();
 
-        // generate Global Variable only if this is not empty
+        // Global Variable
         ArrayList<Statement> globalVariables = ast.getGlobalVariables();
         if (!globalVariables.isEmpty()) {
-            // Static Bloc : static {x = 10;}
-           generateMoreGlobalVariable(this.cw, globalVariables);
+           generateMoreGlobalVariable(this.cw, globalVariables, clinit);
         }
+
+        // End static bloc
+        clinit.visitInsn(RETURN);
+        clinit.visitMaxs(0, 0);
+        clinit.visitEnd();
 
         ArrayList<FunctionStatement> functions = ast.getFunctions();
 
 
-        //generateMainMethod(); //TODO: should generate AST and generateAST should generateMAIN
-
+        //generateMainMethod();
 
         cw.visitEnd();
         // generateFile into Bytecode
@@ -90,24 +102,28 @@ public class CodeGenerator{
     }
 
 
-    public void generateMoreGlobalVariable(ClassWriter cw, ArrayList<Statement> globalVariables ) throws Exception {
+    public void generateMoreGlobalVariable(ClassWriter cw, ArrayList<Statement> globalVariables, MethodVisitor clinit ) throws Exception {
+        //TODO: Must call different generate Assignement depending if this is a simple variable assignment (i.e: a int= 1+2), array attribution (i.e: c int[]= array [5]), or else
+        //Currently consider only simple variable assignement (i.e: a int= 1+2). Miss array assignement, records attribute assignement, declaration
+
         // Static Bloc : static {x = 10; ...}
-        MethodVisitor clinit = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+        //MethodVisitor clinit = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
         clinit.visitCode();
 
         // Adding fields:  public static x=10
         for(Statement globVar: globalVariables) {
             generateGlobalAssignmentVariable(cw, clinit,  globVar);
         }
+        /*
         clinit.visitInsn(RETURN);
         clinit.visitMaxs(0, 0);
         clinit.visitEnd();
+        */
+
     }
 
 
     public void generateGlobalAssignmentVariable(ClassWriter cw, MethodVisitor clinit,Statement globalVariable) throws Exception {
-        //TODO: Must call different generate Assignement depending if this is a simple variable assignment (i.e: a int= 1+2), array attribution (i.e: c int[]= array [5]), or else
-        //Currently consider only simple variable assignement (i.e: a int= 1+2). Miss array assignement, records attribute assignement, declaration
 
         AssignementStatement assignment = (AssignementStatement) globalVariable;
 
@@ -129,12 +145,60 @@ public class CodeGenerator{
         cw.visitField( ACC_PUBLIC + ACC_STATIC, identifier, td, null, null).visitEnd();
 
         // Generate the expression
-        generateExpression(clinit, expressions,"gv", td);
+        generateExpression(clinit, expressions,"classVar", td);
 
         // Initialize the field
         clinit.visitFieldInsn(Opcodes.PUTSTATIC, this.generatedClass, identifier, td);
 
     }
+
+    public void generateMoreConstant(ClassWriter cw, ArrayList<Constant> constants, MethodVisitor clinit ) throws Exception{
+
+        // Static Bloc : static {x = 10; ...}
+        //MethodVisitor clinit = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+        clinit.visitCode();
+
+        // Adding fields:  public static x=10
+        for( Constant cst: constants) {
+            generateConstant(cw, clinit, cst);
+        }
+        /*
+        clinit.visitInsn(RETURN);
+        clinit.visitMaxs(0, 0);
+        clinit.visitEnd();*/
+    }
+
+    public void generateConstant(ClassWriter cw, MethodVisitor clinit, Constant cst) throws Exception{
+
+        String identifier = cst.identifier;
+        String td = this.getTypeDescriptor(cst.basetype.get(0).getType());
+        ArrayList<Expression> expressions =  cst.expressions;
+
+        // Add field: static type identifier;
+        cw.visitField( ACC_PUBLIC + ACC_STATIC, identifier, td, null, null).visitEnd();
+
+        // Generate the expression
+        generateExpression(clinit, expressions,"classVar", td);
+
+        // Initialize the field
+        clinit.visitFieldInsn(Opcodes.PUTSTATIC, this.generatedClass, identifier, td);
+
+    }
+
+
+    public void generateFunction(MethodVisitor mv, ArrayList<FunctionStatement> functions, IndexTable indexTable){
+
+
+        int currentVarIndex = indexTable.getCurrent_index();
+        for(FunctionStatement function: functions) {
+            String methodName = function.getIdentifier();
+            ArrayList<Type> returnType = function.getReturn_type();
+            ArrayList<FuncParam> params = function.getParams();
+            Block block = function.getBlock();
+        }
+    }
+
+
 
 
     public void generateExpression(MethodVisitor mv, ArrayList<Expression> expressions, String statementType, String typeDescriptor) throws Exception {
@@ -143,12 +207,12 @@ public class CodeGenerator{
          * When term =2, apply the given operation between the 2 elements on stack
          *
          * @param statementType  Allow to know if the value of a variable is stored on the IndexTable or in the field table class.
-         *                     "gv": GlobalVariable -> value stored on field table
-         *                     "reg": Regular       -> value stored in indexTable
-         * @param identifier  Identifier of the variable. Used only to retrieve in value of variable in case of statementType = "gv".
-         *                    If no "gv", can be set to "".
-         * @param typeDescriptor typeD of the variable. Used only to retrieve in value of variable in case of statementType = "gv".
-         *                       If no "gv", can be set to "".
+         *                     "classVar": GlobalVariable or Constant -> value stored on field table
+         *                     "funcVar": Regular       -> value stored in indexTable
+         * @param identifier  Identifier of the variable. Used only to retrieve in value of variable in case of statementType = "classVar".
+         *                    If no "classVar", can be set to "".
+         * @param typeDescriptor typeD of the variable. Used only to retrieve in value of variable in case of statementType = "classVar".
+         *                       If no "classVar", can be set to "".
          */
 
 
@@ -201,12 +265,12 @@ public class CodeGenerator{
                 term +=1;
             }
             else if(tp.equals(TokenType.IDENTIFIER)){
-                if (statementType.equals("reg")) {
+                if (statementType.equals("funcVar")) {
                     int varIndex = indexTable.getIndexIdentifier(val);
                     mv.visitVarInsn(ILOAD, varIndex);
                     term += 1;
                 }
-                else if(statementType.equals("gv")){
+                else if(statementType.equals("classVar")){
                     mv.visitFieldInsn(GETSTATIC, this.generatedClass, val, typeDescriptor);
                     term+=1;
                 }
@@ -242,18 +306,6 @@ public class CodeGenerator{
     }
 
 
-    public void generateFunction(MethodVisitor mv, ArrayList<FunctionStatement> functions, IndexTable indexTable){
-
-
-        int currentVarIndex = indexTable.getCurrent_index();
-        for(FunctionStatement function: functions) {
-            String methodName = function.getIdentifier();
-            ArrayList<Type> returnType = function.getReturn_type();
-            ArrayList<FuncParam> params = function.getParams();
-            Block block = function.getBlock();
-        }
-    }
-
     /*
 
     public void generateMainMethod() throws Exception {
@@ -276,27 +328,6 @@ public class CodeGenerator{
     }
 
 
-    public void  generateAST(MethodVisitor mv, Ast ast, IndexTable indexTable) throws Exception {
-        // TODO: INCOMPLETE -> Manage only restraint globalVariable
-
-        // Ast grammar: AST -> Constants Records GlobalVariables Functions
-        ArrayList<Constant> cst = ast.getConstant();
-        ArrayList<Record> records = ast.getRecords();
-
-
-        // generate Global Variable
-        ArrayList<Statement> globalVariables = ast.getGlobalVariables();
-        if (globalVariables.size()>0) {
-            generateGlobalVariable(mv, globalVariables, indexTable);
-        }
-
-
-
-        ArrayList<FunctionStatement> functions = ast.getFunctions();
-
-        generateMainMethod();
-
-
     }*/
 
 
@@ -311,11 +342,11 @@ public class CodeGenerator{
 
         // LeftSide - generate expression
         RightSideExpressions rs = (RightSideExpressions) assignment.rightSide;
-        generateExpression(mv,rs.expressions,"gv", "");
+        generateExpression(mv,rs.expressions,"classVar", "");
 
         // Store the result
         int varindex = indexTable.getCurrent_index();
-        mv.visitVarInsn(ISTORE, varindex);
+        mv.visitVarInsn(ISTORE , varindex);
     }
 
 
