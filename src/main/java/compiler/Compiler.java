@@ -34,6 +34,17 @@ public class Compiler {
             System.out.println(myAst);
 
        }
+       else if (args.length == 2 && args[0].equals("-semantic")) {
+           System.out.println("SEMANTIC ANALYSIS");
+           String filepath = args[1];
+           Reader readerFile = FileToReader.getReaderFromFile(filepath);
+           Lexer lexer = new Lexer(readerFile);
+           Parser parser = new Parser(lexer);
+           Ast myAst = parser.getAST();
+           Semantic semantic = new Semantic(myAst);
+           semantic.startAnalysis();
+
+       }
 
        else if (args.length == 2 && args[0].equals("-semantic")) {
            String sourceFilePath = args[1];
