@@ -18,6 +18,8 @@ public class SimpleType extends Type {
     public TokenType getType(){
         return switch (value) {
             case "int" -> TokenType.INTEGER;
+            case "of" -> TokenType.OF;
+            case "array" -> TokenType.ARRAY;
             case "float" -> TokenType.FLOAT;
             case "string" -> TokenType.STRINGS;
             case "bool" -> TokenType.BOOLEAN;

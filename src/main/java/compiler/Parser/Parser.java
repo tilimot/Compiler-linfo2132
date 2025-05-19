@@ -22,7 +22,6 @@ public class Parser {
             allSymbols.add(lexer.getNextSymbol());
         }
         this.currentSymbol = getCurrentSymbol();
-        //System.out.println("Parser: " + allSymbols);
     }
 
     public Symbol getCurrentSymbol() {
@@ -96,20 +95,12 @@ public class Parser {
         return new ArrayAccesBracket(left_bracket.getAttribute(), integerValue.getAttribute(), right_bracket.getAttribute());
     }
 
-    public ArrayDeclarationBracket parseArrayDeclarationBracket() throws Exception {
-        //TODO need to implement TokenType.OpenParenthesis / .ClosingParenthesis / .OpenBracket / Closing.Bracket
 
-        Symbol left_bracket = match(TokenType.OPERATOR);
-        Symbol right_bracket = match(TokenType.OPERATOR);
-        return new ArrayDeclarationBracket((String) left_bracket.getAttribute(), (String) right_bracket.getAttribute(), tabIndex);
-    }
 
     public ArrayList<Type> parseType() throws Exception {
         ArrayList<Type> types = new ArrayList<>();
         types.add(parseSimpleType());
-        if(currentSymbol.getAttribute().equals("[")){
-            types.add(parseArrayDeclarationBracket());
-        }
+
 
         return types;
     }
@@ -166,7 +157,6 @@ public class Parser {
 
         }
         else if (currentSymbol.getTokenType() == TokenType.RECORD_NAME || currentSymbol.getTokenType() == TokenType.FUNC_NAME) {
-
             if (currentSymbol.getTokenType() == TokenType.RECORD_NAME) {
                 value = match(TokenType.RECORD_NAME);
             }
@@ -178,6 +168,11 @@ public class Parser {
             match(TokenType.OPERATOR);
             return new Expression((String) value.getAttribute(), value.getTokenType(),tabIndex,params);
 
+        }
+        else if (currentSymbol.getTokenType() == TokenType.ARRAY) {
+            parseArrayAssignement(null, null, "");
+
+            return new Expression("Array", TokenType.ARRAY, tabIndex);
         }
         else{
             value = match(TokenType.IDENTIFIER);
@@ -525,7 +520,6 @@ public class Parser {
 
     public Statement parseCallOrDeclarationOrAssignment() throws Exception{
         //TODO implem le cas ou c'est la définition d'un fonction
-        //revoir l'utilisation de Assignement et Declaration avec les types
         Statement statement;
 
         String identifier;
@@ -568,6 +562,20 @@ public class Parser {
                 if(currentSymbol.getTokenType().equals(TokenType.EOL)){
                     String eol = match(TokenType.EOL).getAttribute();
                     return new VariableDeclaration(identifier,type,eol,tabIndex);
+                }
+                else if (currentSymbol.getAttribute().equals("[")){
+                    String left = match(TokenType.OPERATOR).getAttribute();
+                    String right = match(TokenType.OPERATOR).getAttribute();
+                    ArrayDeclarationBracket arrayDecl = new ArrayDeclarationBracket(left,right,tabIndex);
+                    if (currentSymbol.getAttribute().equals("=")){
+                        String equal = match(TokenType.OPERATOR).getAttribute();
+                        ArrayAssignement arrayAssignement =  parseArrayAssignement(identifier,type,equal);
+                        match(TokenType.EOL);
+                        return arrayAssignement;
+                    }
+                    type.add(1,arrayDecl);
+                    String eol = match(TokenType.EOL).getAttribute();
+                    return new VariableDeclaration(identifier, type, eol,tabIndex);
                 }
                 //LeftSideAssignement : (x int = ...)
                 else{
@@ -612,6 +620,18 @@ public class Parser {
         return new RightSideExpressions(expressions);
     }
 
+    public ArrayAssignement parseArrayAssignement(String identifier, ArrayList<Type> type, String equal) throws Exception{
+        String array = match(TokenType.ARRAY).getAttribute();
+        match(TokenType.OPERATOR);
+        ArrayList<Expression> size = parseExpressions();
+
+        match(TokenType.OPERATOR);
+        match(TokenType.OF);
+        String typeOf = match(TokenType.BASE_TYPE).getAttribute();
+
+        return new ArrayAssignement(identifier, type, equal,array,size,typeOf,tabIndex);
+    }
+
     public AssignementStatement parseAssignement(LeftSide leftside) throws Exception{
         String equalOperator = match(TokenType.OPERATOR).getAttribute();
         RightSide rightSide = parseRightSide();
@@ -623,7 +643,6 @@ public class Parser {
 
     public Statement parseStatement() throws Exception{
         Statement statement;
-        System.out.println("CurrentSymbol: " + currentSymbol.getAttribute());
 
         if(currentSymbol.getAttribute().equals("if")){
             statement = parseIfStatement();
@@ -653,7 +672,6 @@ public class Parser {
     public ArrayList<Statement> parseStatements() throws Exception {
         ArrayList<Statement> statements = new ArrayList<Statement>();
         while (!currentSymbol.getAttribute().equals("}")) {
-            System.out.println("PRESENT: " + currentSymbol.getAttribute());
             statements.add(parseStatement());
         }
         return statements;

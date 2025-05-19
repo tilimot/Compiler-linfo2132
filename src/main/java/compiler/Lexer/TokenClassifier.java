@@ -35,6 +35,13 @@ public class TokenClassifier {
     public static boolean isComment(String token) {
         return token.startsWith("$");
     }
+    public static boolean isOF(String token){
+        return token.equals("of");
+    }
+
+    public static boolean isArray(String token) {
+        return token.equals("array");
+    }
 
     public static boolean isKeyword(String token) {
         return KEYWORDS.contains(token);
@@ -197,7 +204,8 @@ public class TokenClassifier {
     // Détermine le type d’un token
     public static TokenType classifyToken(String token, String tokenNext) {
         if (isEOF(token)) return TokenType.EOF;
-
+        if (isOF(token)) return TokenType.OF;
+        if (isArray(token)) return TokenType.ARRAY;
         if (isComment(token)) return TokenType.COMMENT;
         if (isMain(token))return TokenType.MAIN;
         if (isKeyword(token)) return TokenType.KEYWORD;

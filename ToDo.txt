@@ -1,17 +1,6 @@
-- Generate Function Main
+c string[] = array [s+f] of int;                  $String et int différents
 
-- generateStatements (while, for, if, ...)
 
-- L'index table doit aller chercher dans les get static si elle ne trouve rien dans les Indextables, avant de retourner une
- erreur. Les variables globales ne sont pas exactement stockée sur la stack mais dans une table des champs aux niveau
- de la classe. GETSTATIC permet de lire l"instruction et de lacharger sur le haut de la pile.
-
-- parse else !!!!
-
-- parseCondition --> identifier comparisonOperator identifier
-    Cela empeche d'avoir qlqch comme ( 3 < a ) ou ( a > 3 )
-    Je ne sais pas non plus si on gère les cas (!a)
-    --> revérifier
 
 
 - Je ne peux faire des conditions que sur les entiers pour l'instants --> modifier generate Expressions en conséquences
