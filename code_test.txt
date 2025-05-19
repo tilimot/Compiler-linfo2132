@@ -15,7 +15,8 @@ s string = "hello";
 
 
 fun square(v int, z float, h string, k bool) int {
-    return v*v;
+        t int = 2;
+        return t;
 }
 
 fun circle(v2 int, z2 float, h2 string, k2 bool) string {

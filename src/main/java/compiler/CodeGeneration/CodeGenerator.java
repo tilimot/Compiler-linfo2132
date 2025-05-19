@@ -140,7 +140,7 @@ public class CodeGenerator{
         cw.visitField( ACC_PUBLIC + ACC_STATIC, identifier, td, null, null).visitEnd();
 
         // Generate the expression
-        generateExpression(clinit, expressions,"classVar", td);
+        generateExpression(clinit, expressions, indexTable,"classVar", td);
 
         // Initialize the field
         clinit.visitFieldInsn(Opcodes.PUTSTATIC, this.generatedClass, identifier, td);
@@ -170,7 +170,7 @@ public class CodeGenerator{
         cw.visitField( ACC_FINAL+ACC_PUBLIC + ACC_STATIC, identifier, td, null, null).visitEnd();
 
         // Generate the expression
-        generateExpression(clinit, expressions,"classVar", td);
+        generateExpression(clinit, expressions, indexTable,"classVar", td);
 
         // Initialize the field
         clinit.visitFieldInsn(Opcodes.PUTSTATIC, this.generatedClass, identifier, td);
@@ -200,8 +200,10 @@ public class CodeGenerator{
             paramsTypeDescriptor += paramTD;
         }
 
-
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC , methodName, "("+paramsTypeDescriptor+")"+returnTypeDescriptor, null, null);
+        String descriptor = "("+paramsTypeDescriptor+")"+returnTypeDescriptor;
+        //String descriptor = "("+paramsTypeDescriptor+")"+"V";
+        System.out.println(descriptor);
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC , methodName, descriptor, null, null);
         mv.visitCode();
 
         // Load Param on Stack and store them on IndexTable
@@ -212,20 +214,84 @@ public class CodeGenerator{
             mv.visitVarInsn(ISTORE, varIndex);
         }
 
-        // TODO
-        //generateStatement(block, funcIndexTable);
 
+        generateBlock(mv, block, indexTable, returnTypeDescriptor);
 
         // Fin de la méthode
-        mv.visitInsn(RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
+    public void generateBlock(MethodVisitor mv, Block block, IndexTable indexTable, String returnTypeDescriptor) throws Exception {
+
+        ArrayList<Statement> statements = block.getStatements();
+
+        for(Statement statement: statements) {
+
+            if (Statement.iAssignStatement(statement)){
+                generateAssignmentStatement(mv, statement, indexTable);
+            }
+            else if(Statement.isReturnStatement(statement)){
+                generateReturnStatement(mv, statement, indexTable, returnTypeDescriptor);
+            }
+        }
 
 
 
-    public void generateExpression(MethodVisitor mv, ArrayList<Expression> expressions, String statementType, String typeDescriptor) throws Exception {
+    }
+
+    public void generateAssignmentStatement(MethodVisitor mv, Statement stmt, IndexTable indexTable) throws Exception {
+        /**
+         * Manage the following Assignement:
+         *      VarAssignement :
+         *          - a int = 2;
+         *          - a str = mtdcall();
+         * */
+
+        AssignementStatement assignement = (AssignementStatement) stmt;
+        if (Statement.isVarAssignStatement(assignement)){
+            generateVariableAssignment(mv, assignement, indexTable);
+        }
+
+    }
+
+    public void generateVariableAssignment(MethodVisitor mv,AssignementStatement assignment, IndexTable indexTable) throws Exception {
+
+        // RightSide - store identifier in IndexTable
+        LeftSide ls = assignment.leftSide;
+        String identifier = ls.getIdentifier();
+        indexTable.addIdentifier(identifier);
+
+        // LeftSide - generate expression
+        RightSideExpressions rs = (RightSideExpressions) assignment.rightSide;
+        generateExpression(mv, rs.expressions, indexTable,"funcVar", "");
+
+        // Store the result
+        int varindex = indexTable.getIndexIdentifier(identifier);
+        mv.visitVarInsn(ISTORE , varindex);
+
+    }
+
+    public void generateReturnStatement(MethodVisitor mv, Statement stmt, IndexTable indexTable, String returnTypeDescriptor) throws Exception {
+
+        ReturnStatement rtrnStmt = (ReturnStatement) stmt;
+        ArrayList<Expression> expressions = rtrnStmt.getReturn();
+        generateExpression(mv, expressions, indexTable,"funcVar","");
+
+
+        if(returnTypeDescriptor.equals("I")){
+            mv.visitInsn(IRETURN);
+        }
+        else if (returnTypeDescriptor.equals("F")){
+            mv.visitInsn(FRETURN);
+        } else {
+            mv.visitInsn(ARETURN);
+        }
+
+    }
+
+
+    public void generateExpression(MethodVisitor mv, ArrayList<Expression> expressions, IndexTable indexTable, String statementType, String typeDescriptor) throws Exception {
         /**
          * Add on stack each element of the expression.
          * When term =2, apply the given operation between the 2 elements on stack
@@ -353,25 +419,6 @@ public class CodeGenerator{
 
 
     }*/
-
-
-    public void generateVariableAssignment(MethodVisitor mv,AssignementStatement assignment, IndexTable indexTable) throws Exception {
-        //TODO: INCOMPLETE --> manage only rightSide. Must store identifier id in IndexTable
-        // Manage assignement
-
-        // RightSide - store identifier in IndexTable
-        LeftSide ls = assignment.leftSide;
-        String identifier = ls.getIdentifier();
-        indexTable.addIdentifier(identifier);
-
-        // LeftSide - generate expression
-        RightSideExpressions rs = (RightSideExpressions) assignment.rightSide;
-        generateExpression(mv,rs.expressions,"classVar", "");
-
-        // Store the result
-        int varindex = indexTable.getCurrent_index();
-        mv.visitVarInsn(ISTORE , varindex);
-    }
 
 
 }

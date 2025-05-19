@@ -20,6 +20,10 @@ public class Block {
         this.tabIndex = tabIndex;
     }
 
+    public ArrayList<Statement> getStatements(){
+        return this.statements;
+    }
+
     public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
         for (Statement statement : statements) {
             statement.semanticAnalysis(symbolTable);

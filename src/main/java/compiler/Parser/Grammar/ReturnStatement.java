@@ -17,7 +17,11 @@ public class ReturnStatement extends Statement{
         this.return_ = return_;
         this.expressions = expressions;
         this.eol= eol;
+    }
 
+
+    public ArrayList<Expression> getReturn(){
+        return this.expressions;
     }
 
     @Override
