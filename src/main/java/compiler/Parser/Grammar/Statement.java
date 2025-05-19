@@ -14,13 +14,11 @@ public abstract class Statement {
         return stmt instanceof  AssignementStatement;
     }
 
-    public static boolean isVarAssignStatement(AssignementStatement statement){
-        return statement.leftSide instanceof LeftSideAssignement;
-    }
+    public static boolean isVarAssignStatement(AssignementStatement statement){ return (statement.leftSide instanceof LeftSideAssignement) && (statement.leftSide.getType() != null) ;}
 
-    public static boolean isReturnStatement(Statement stmt){
-        return  stmt instanceof ReturnStatement;
-    }
+    public static boolean isVarReassignStatement(AssignementStatement statement){ return (statement.leftSide instanceof LeftSideAssignement) && (statement.leftSide.getType() == null) ;}
+
+    public static boolean isReturnStatement(Statement stmt){ return  stmt instanceof ReturnStatement;}
 
     public abstract void semanticAnalysis(SymbolTable symbolTable) throws Exception;
 

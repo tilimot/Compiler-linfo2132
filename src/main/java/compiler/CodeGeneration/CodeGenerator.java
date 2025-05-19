@@ -253,6 +253,9 @@ public class CodeGenerator{
         if (Statement.isVarAssignStatement(assignement)){
             generateVariableAssignment(mv, assignement, indexTable);
         }
+        else if ( Statement.isVarReassignStatement(assignement)){
+            generateVarReassignStatement(mv, assignement, indexTable);
+        }
 
     }
 
@@ -272,6 +275,22 @@ public class CodeGenerator{
         mv.visitVarInsn(ISTORE , varindex);
 
     }
+
+    public void generateVarReassignStatement(MethodVisitor mv,AssignementStatement assignment, IndexTable indexTable) throws Exception {
+        // RightSide - store identifier in IndexTable
+        LeftSide ls = assignment.leftSide;
+        String identifier = ls.getIdentifier();
+
+        // LeftSide - generate expression
+        RightSideExpressions rs = (RightSideExpressions) assignment.rightSide;
+        generateExpression(mv, rs.expressions, indexTable,"funcVar", "");
+
+        // Store the result
+        int varindex = indexTable.getIndexIdentifier(identifier);
+        mv.visitVarInsn(ISTORE , varindex);
+
+    }
+
 
     public void generateReturnStatement(MethodVisitor mv, Statement stmt, IndexTable indexTable, String returnTypeDescriptor) throws Exception {
 
