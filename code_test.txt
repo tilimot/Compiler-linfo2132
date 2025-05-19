@@ -21,4 +21,3 @@ fun square(v int, z float, h string, k bool) int {
 fun circle(v2 int, z2 float, h2 string, k2 bool) string {
     return h2;
 }
-

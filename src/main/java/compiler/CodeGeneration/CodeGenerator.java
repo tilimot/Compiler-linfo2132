@@ -167,7 +167,7 @@ public class CodeGenerator{
         ArrayList<Expression> expressions =  cst.expressions;
 
         // Add field: static type identifier;
-        cw.visitField( ACC_PUBLIC + ACC_STATIC, identifier, td, null, null).visitEnd();
+        cw.visitField( ACC_FINAL+ACC_PUBLIC + ACC_STATIC, identifier, td, null, null).visitEnd();
 
         // Generate the expression
         generateExpression(clinit, expressions,"classVar", td);

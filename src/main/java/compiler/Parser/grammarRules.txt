@@ -36,15 +36,31 @@ AST -> MoreConstant MoreRecord MoreGlobalVariables FunctionInit
 
 Statements:
 Statements -> Statement Statements | 𝜀
-Statement -> IfStatement
-            | WhileStatement
-            | ForStatement
-            | ReturnStatement
-            | DeallocationStatement
-            | FunctionStatement
-            | CallOrDeclarationOrAssignement
+    Statement -> IfStatement
+                | WhileStatement
+                | ForStatement
+                | ReturnStatement
+                | DeallocationStatement
+                | FunctionStatement
+                | CallOrDeclarationOrAssignement
 
 
+
+    IfStatement -> if ( Conditions ) Block
+
+    WhileStatement -> while ( Conditions ) Block
+            Condition ->  identifier SimpleCondition identifier | identifier ComparisonCondition identifier
+                    SimpleCondition -> > | <
+                    ComparisonCondition ->  != | >= | <=
+
+    ForStatement -> for ( identifier, string(beginValue), string(endValue), string(stepValue) ) Block
+
+    ReturnStatement -> return Expressions ;
+
+    DeallocationStatement -> free identifier ;
+
+    FunctionStatement -> fun identifier (FuncParam ) ReturnType Block | fun identifier () BLock
+                    FuncParam -> identifier Type
 
     CallOrDeclarationOrAssignement -> MethodCall| DeclarationOrAssignement (LL2)
                     MethodCall -> identifier (Params) ;
@@ -60,6 +76,25 @@ Statement -> IfStatement
                         LeftSideArrayAccess -> identifier [ integer ] | identifier [ integer ] RecordAttributes
                         RecordAttribute -> . identifier
 
+
+
+    Expressions -> Term MoreExpression
+        MoreExpression -> + Term MoreExpression | - Term MoreExpression | ε
+        Term -> Factor Term'
+        Term' -> *Factor Term' | / Factor Term' | ε
+        Factor -> (Expressions) | Expression
+        Expression -> integer | float | string | bool | RecordOrFunc | IdentifierOrAttribute
+            RecordOrFunc -> recordName ( Params ) | funcName ( Params )
+            IdentifierOrAttribute -> identifier | identifier attribue
+
+
+    Params -> Param, Params | ε
+        Param -> Expressions
+
+
+    Type -> SimpleType ArrayDeclaration
+        SimpleType -> type
+        ArrayDeclaration -> [] | ε
 
 
 
