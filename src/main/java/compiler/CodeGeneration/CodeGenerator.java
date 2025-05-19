@@ -149,8 +149,7 @@ public class CodeGenerator{
 
     public void generateMoreConstant(ClassWriter cw, ArrayList<Constant> constants, MethodVisitor clinit ) throws Exception{
 
-        // Static Bloc : static {x = 10; ...}
-        //MethodVisitor clinit = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+
         clinit.visitCode();
 
         // Adding fields:  public static x=10
@@ -201,21 +200,23 @@ public class CodeGenerator{
         }
 
         String descriptor = "("+paramsTypeDescriptor+")"+returnTypeDescriptor;
-        //String descriptor = "("+paramsTypeDescriptor+")"+"V";
         System.out.println(descriptor);
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC , methodName, descriptor, null, null);
         mv.visitCode();
+
 
         // Load Param on Stack and store them on IndexTable
         for(FuncParam param:params){
             String identifier = param.getIdentifier();
             indexTable.addIdentifier(identifier);
             int varIndex = indexTable.getIndexIdentifier(identifier);
-            mv.visitVarInsn(ISTORE, varIndex);
+            //mv.visitVarInsn(ISTORE, varIndex);
         }
 
 
+
         generateBlock(mv, block, indexTable, returnTypeDescriptor);
+        mv.visitVarInsn(ISTORE, 1);
 
         // Fin de la méthode
         mv.visitMaxs(0, 0);
