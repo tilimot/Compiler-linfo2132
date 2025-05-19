@@ -13,3 +13,6 @@
     Je ne sais pas non plus si on gère les cas (!a)
     --> revérifier
 
+
+- Je ne peux faire des conditions que sur les entiers pour l'instants --> modifier generate Expressions en conséquences
+par generateIntExpressions, generateFloatExpressions, .... ou pas

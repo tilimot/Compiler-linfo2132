@@ -8,11 +8,13 @@ public class IndexTable {
     private IndexTable parentTable = null;
     private HashMap<String, Integer> table;
     private int current_index; //current number of identifier stored
+    FieldTable fieldTable;
 
     public IndexTable(IndexTable parentTable) {
         this.parentTable = parentTable;
         this.table = new HashMap<>();
         this.current_index = 0;
+        this.fieldTable = new FieldTable();
     }
 
     public void addIdentifier(String identifier) throws Exception {
@@ -35,7 +37,8 @@ public class IndexTable {
         }
         if (currentTable != null) {
             return currentTable.table.get(identifier);
-        } else {
+        }
+        else  {
             System.out.println("currentTable: " + currentTable.table + " identifier: " + identifier);
             throw new Exception("VariableError, " + identifier + " is not defined.");
         }
