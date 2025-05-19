@@ -38,7 +38,6 @@ public class ReturnStatement extends Statement{
 
     @Override
     public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
-        System.out.println("return : "+symbolTable.getTable());
         Type retType = symbolTable.getTable().get("RETURN_TYPE");
         Semantic.checkReturn(retType,expressions);
 

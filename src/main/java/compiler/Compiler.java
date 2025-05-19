@@ -21,7 +21,6 @@ public class Compiler {
            Lexer lexer = new Lexer(readerFile);
 
            while (lexer.hasNextSymbol()) {
-               System.out.println(lexer.getNextSymbol());
            }
        }
 

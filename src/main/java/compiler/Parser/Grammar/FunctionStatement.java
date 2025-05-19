@@ -64,6 +64,7 @@ public class FunctionStatement extends Statement {
         symbolTable.setChildTable(params);
         for (FuncParam funcParam : funcParams) {
             params.getTable().put(funcParam.identifier, funcParam.type.getFirst());
+            st.put(funcParam.identifier, funcParam.type.getFirst());
         }
         if (return_type != null) {
             st.put(identifier, return_type.getFirst());

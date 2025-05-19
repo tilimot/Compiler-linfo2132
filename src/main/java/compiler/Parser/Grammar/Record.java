@@ -5,7 +5,7 @@ import compiler.Semantic.SymbolTable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Record {
+public class Record extends Statement{
     String recordsName;
     String rec_;
     String openingBracket;
@@ -14,6 +14,7 @@ public class Record {
     int tabIndex;
 
     public Record(String recordsName, String rec_, String openingBracket, ArrayList<VariableDeclaration> declaration, String closingBracket,int tabIndex) {
+        super(tabIndex);
         this.recordsName = recordsName;
         this.rec_ = rec_;
         this.openingBracket = openingBracket;

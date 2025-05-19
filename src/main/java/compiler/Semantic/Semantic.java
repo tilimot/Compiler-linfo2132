@@ -25,10 +25,13 @@ public class Semantic {
     }
 
     public static TokenType checkType(String expression_value) {
+
         if (expression_value.contains("\""))
             return TokenType.STRINGS;
         if (expression_value.contains("true") || expression_value.contains("false"))
             return TokenType.BOOLEAN;
+        if (expression_value.equals("Array"))
+            return TokenType.ARRAY;
         if (expression_value.contains("."))
             return TokenType.FLOAT;
         if (expression_value.matches(".*[a-zA-Z].*"))
@@ -99,8 +102,8 @@ public class Semantic {
         else {
             type = global.leftSide.getType();
         }
-
-        if (!initialized && symbolTable.containsSymbol(id)) {
+        System.out.println(symbolTable.getName().equals("root")+ "  "+global.leftSide.getIdentifier());
+        if (!initialized && symbolTable.containsSymbol(id) && symbolTable.getName().equals("root")) {
             throw new DuplicateException(id);
         }
 
@@ -136,10 +139,20 @@ public class Semantic {
             for (int j = 0; j < expression.params.get(i).expressions.size(); j++) {
                 TokenType type1 = expression.params.get(i).expressions.get(j).getType();
                 if (type1 == TokenType.IDENTIFIER) {
-                    int size = st.getParentTable().getParentTable().getChildTable().size();
-                    type1 = st.getParentTable().getParentTable().getChildTable().get(size-1).getTable().get(expression.params.get(i).expressions.get(j).getValue()).getType();
+                    int size = st.getParentTable().getChildTable().size();
+                    boolean inFunc = st.getParentTable().getChildTable().get(size-1).getTable().containsKey(expression.params.get(i).expressions.get(j).getValue());
+                    if (inFunc)
+                        type1 = st.getParentTable().getChildTable().get(size-1).getTable().get(expression.params.get(i).expressions.get(j).getValue()).getType();
+                    else {
+                        var entry = st.getParentTable().getTable().get(expression.params.get(i).expressions.get(j).getValue());
+                        if (entry != null) {
+                            type1 = entry.getType();
+                        } else {
+                            throw new ScopeException(expression.params.get(i).expressions.get(j).getValue());
+                        }
+                    }
                 }
-                if (type1 != type.getType() && type1 != TokenType.OPERATOR) {
+                if (type1 != type.getType() && type1 != TokenType.OPERATOR && type1 != TokenType.ARRAY) {
                     throw new InvalidParametersException(expression.params.get(i).expressions.get(j).getValue(), type.getValue());
                 }
             }
@@ -157,6 +170,7 @@ public class Semantic {
         for (Expression expression : expressions) {
             if(checkType(expression.getValue()) == TokenType.IDENTIFIER) {
                 if (!symbolTable.containsSymbol(expression.getValue())) {
+                    System.out.println(symbolTable.getTable()+"   "+expression.getValue());
                     throw new ScopeException(expression.getValue());
                 }
                 if (!symbolTable.getSymbol(identifier, symbolTable).getType().equals(symbolTable.getSymbol(expression.getValue(), symbolTable).getType())) {

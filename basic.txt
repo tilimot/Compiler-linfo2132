@@ -1,0 +1,37 @@
+
+Point rec {
+
+    x int;
+
+    y int;
+
+}
+
+Person rec {
+
+    x string;
+
+    y string;
+
+    z string;
+
+}
+
+f int = 1;
+
+
+
+
+fun square(v Point, p int) string {
+    ki int = p;
+    d Person= Person("me", "e",f);
+    return p;
+}
+
+fun main() {
+
+    fd Point = Point(1,2);
+
+
+
+}
