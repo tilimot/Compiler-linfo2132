@@ -2,6 +2,7 @@ package compiler.Semantic;
 
 import compiler.Compiler;
 import compiler.Exception.*;
+import compiler.Lexer.Symbol;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
 import org.checkerframework.checker.units.qual.C;
@@ -102,7 +103,6 @@ public class Semantic {
         else {
             type = global.leftSide.getType();
         }
-        System.out.println(symbolTable.getName().equals("root")+ "  "+global.leftSide.getIdentifier());
         if (!initialized && symbolTable.containsSymbol(id) && symbolTable.getName().equals("root")) {
             throw new DuplicateException(id);
         }
@@ -173,13 +173,23 @@ public class Semantic {
                     System.out.println(symbolTable.getTable()+"   "+expression.getValue());
                     throw new ScopeException(expression.getValue());
                 }
-                if (!symbolTable.getSymbol(identifier, symbolTable).getType().equals(symbolTable.getSymbol(expression.getValue(), symbolTable).getType())) {
-                    throw new VariableException(symbolTable.getSymbol(identifier, symbolTable), symbolTable.getSymbol(expression.getValue(), symbolTable));
+                Type identifierSymbol = symbolTable.getSymbol(identifier, symbolTable);
+                if (identifierSymbol == null && symbolTable.getParentTable() != null) {
+                    identifierSymbol = symbolTable.getParentTable().getSymbol(identifier, symbolTable.getParentTable());
                 }
-                if (symbolTable.getSymbol(identifier, symbolTable).getValue().equals("void")) {
+
+                Type expressionSymbol = symbolTable.getSymbol(expression.getValue(), symbolTable);
+
+
+                if (!identifierSymbol.getType().equals(expressionSymbol.getType())) {
+                    throw new VariableException(identifierSymbol, expressionSymbol);
+                }
+
+                if (identifierSymbol.getValue().equals("void")) {
                     throw new Exception("TypeError: Type of final var should not be void");
                 }
-                if (symbolTable.getSymbol(identifier, symbolTable).getType() == TokenType.RECORD_NAME || expression.params != null) {
+
+                if (identifierSymbol.getType() == TokenType.RECORD_NAME || expression.params != null) {
 
                     SymbolTable currentTable = symbolTable;
                     while (currentTable.getParentTable() != null) {
