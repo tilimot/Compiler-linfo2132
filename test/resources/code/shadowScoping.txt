@@ -1,0 +1,6 @@
+e int = 2+9*9-18;
+
+fun test() int {
+    e int = 1;
+    return e;
+}

@@ -20,6 +20,9 @@ gradlew
 # sauf les ressources des tests
 !./test/resources/*
 
+#sauf les txt de façon générales
+!*.txt
+
 # (Optionnel) ignorer les fichiers compilés
 *.class
 
