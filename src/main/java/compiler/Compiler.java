@@ -44,18 +44,6 @@ public class Compiler {
            semantic.startAnalysis();
 
        }
-
-       else if (args.length == 2 && args[0].equals("-semantic")) {
-           String sourceFilePath = args[1];
-           String targetFilePath;
-           Reader readerFile = FileToReader.getReaderFromFile(sourceFilePath);
-           Lexer lexer = new Lexer(readerFile);
-           Parser parser = new Parser(lexer);
-           Ast myAst = parser.getAST();
-           Semantic semantic = new Semantic(myAst);
-           semantic.startAnalysis();
-       }
-
        else {
            // soureFile -o targetfile
 
