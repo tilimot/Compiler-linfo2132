@@ -24,14 +24,17 @@ public class Condition {
 
         for (Expression expression : expressions) {
             String token = expression.value;
-            if (COMPARISON_OPERATORS.contains(token)) {
+            if (COMPARISON_OPERATORS.contains(token) && !maybeComplexComp) {
                 operator = token;
                 operatorFound = true;
                 maybeComplexComp = true;
+                System.out.println("operator found. Comparison operator: "+ operator);
             }
             else if(maybeComplexComp){
                 if(COMPARISON_OPERATORS.contains(token)){
-                    operator += token;
+                    String temp = operator + token;
+                    operator = temp;
+                    System.out.println("operator extended. Comparison operator: "+ operator +  "  temp: "+ temp);
                 }
                 maybeComplexComp=false;
             }

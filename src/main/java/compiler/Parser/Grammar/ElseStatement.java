@@ -18,6 +18,10 @@ public class ElseStatement extends Statement {
 
     }
 
+    public Block getBlock() {
+        return block;
+    }
+
     @Override
     public String toString() {
         return else_ + "\n" + block;

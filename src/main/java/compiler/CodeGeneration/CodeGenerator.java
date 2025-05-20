@@ -7,6 +7,8 @@ import org.junit.experimental.theories.internal.Assignments;
 import org.objectweb.asm.*;
 import java.io.IOException;
 import java.lang.invoke.TypeDescriptor;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -26,7 +28,7 @@ public class CodeGenerator{
 
 
     public CodeGenerator(String generatedClass,Ast ast){
-        this.cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        this.cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         this.generatedClass=generatedClass;
         this.ast=ast; //TODO: replace by AST at the end
         this.indexTable = new IndexTable(null);
@@ -36,7 +38,7 @@ public class CodeGenerator{
     public void generateFileClass() throws Exception{
 
         // CreateClass
-        this.cw.visit(Opcodes.V1_8, ACC_PUBLIC, this.generatedClass, null, "java/lang/Object", null);
+        this.cw.visit(V1_8, ACC_PUBLIC, this.generatedClass, null, "java/lang/Object", null);
 
 
         // Ast grammar: AST -> Constants Records GlobalVariables Functions
@@ -75,7 +77,7 @@ public class CodeGenerator{
         cw.visitEnd();
         // generateFile into Bytecode
         byte[] bytecode = cw.toByteArray();
-        java.nio.file.Files.write(java.nio.file.Paths.get(this.generatedClass+".class"), bytecode);
+        Files.write(Paths.get(this.generatedClass+".class"), bytecode);
     }
 
 
@@ -142,7 +144,7 @@ public class CodeGenerator{
         generateExpression(clinit, expressions, indexTable,"classVar", td);
 
         // Initialize the field
-        clinit.visitFieldInsn(Opcodes.PUTSTATIC, this.generatedClass, identifier, td);
+        clinit.visitFieldInsn(PUTSTATIC, this.generatedClass, identifier, td);
 
     }
 
@@ -171,7 +173,7 @@ public class CodeGenerator{
         generateExpression(clinit, expressions, indexTable,"classVar", td);
 
         // Initialize the field
-        clinit.visitFieldInsn(Opcodes.PUTSTATIC, this.generatedClass, identifier, td);
+        clinit.visitFieldInsn(PUTSTATIC, this.generatedClass, identifier, td);
 
     }
 
@@ -215,7 +217,7 @@ public class CodeGenerator{
 
 
         generateBlock(mv, block, indexTable, returnTypeDescriptor);
-        mv.visitVarInsn(ISTORE, 1);
+        //mv.visitVarInsn(ISTORE, 1);
 
         // Fin de la méthode
         mv.visitMaxs(0, 0);
@@ -225,6 +227,12 @@ public class CodeGenerator{
     public void generateBlock(MethodVisitor mv, Block block, IndexTable indexTable, String returnTypeDescriptor) throws Exception {
 
         ArrayList<Statement> statements = block.getStatements();
+
+        // label for If/Else bloc
+        Label elseLabel=null;
+        Label endIfElseLabel = null;
+
+        boolean ifElseBlock = false;
 
         for(Statement statement: statements) {
 
@@ -236,6 +244,20 @@ public class CodeGenerator{
             }
             else if (Statement.isWhileStatement(statement)) {
                 generateWhileStatement(mv, statement, indexTable, returnTypeDescriptor);
+            }
+            else if (Statement.isIfStatement(statement)){
+                 elseLabel = new Label();
+                 endIfElseLabel = new Label();
+                generateIfStatement( mv, statement, elseLabel, indexTable, returnTypeDescriptor);
+                ifElseBlock = true;
+            }
+            else if (Statement.isElseStatement(statement) && elseLabel!=null && endIfElseLabel!=null){
+                generateElseStatement(mv, statement, elseLabel, endIfElseLabel, indexTable, returnTypeDescriptor);
+                ifElseBlock = false;
+            }
+            else if (ifElseBlock){
+                mv.visitLabel(endIfElseLabel);
+                ifElseBlock = false;
             }
         }
     }
@@ -292,24 +314,38 @@ public class CodeGenerator{
 
 
 
-/*
-    public void generateIfStatement(MethodVisitor mv, Statement stmt, IndexTable indexTable) throws Exception {
+
+    public void generateIfStatement(MethodVisitor mv, Statement stmt, Label elseLabel,IndexTable indexTable, String returnTypeDescriptor) throws Exception {
         IfStatement ifStmt = (IfStatement) stmt;
+
+        Block block = ifStmt.getBlock();
 
         Condition cdt = new Condition(ifStmt.getExpressions());
         String compOperator = cdt.getOperator();
+        int opcode = getComparisonOpcode(compOperator);
         ArrayList<Expression> leftPart = cdt.getLeftPart();
         ArrayList<Expression> rightPart = cdt.getRightPart();
 
         generateExpression(mv, leftPart, indexTable, "funcVar", null);
         generateExpression(mv, rightPart, indexTable, "funcVar",null);
+        mv.visitJumpInsn(opcode, elseLabel);
 
-        //generateComparison();
+        generateBlock(mv, block, indexTable, returnTypeDescriptor);
 
-        //generateIfStatement();
     }
 
-*/
+
+    public void generateElseStatement(MethodVisitor mv, Statement stmt, Label elseLabel,Label endIfElseLabel, IndexTable indexTable, String returnTypeDescriptor) throws Exception{
+        ElseStatement elseStmt = (ElseStatement) stmt;
+        Block block  = elseStmt.getBlock();
+
+
+        mv.visitLabel(elseLabel);
+        generateBlock(mv, block, indexTable, returnTypeDescriptor);
+
+        mv.visitLabel(endIfElseLabel);
+
+    }
 
 
 

@@ -22,6 +22,8 @@ public abstract class Statement {
 
     public static boolean isIfStatement(Statement stmt){return stmt instanceof IfStatement; }
 
+    public static boolean isElseStatement(Statement stmt){return stmt instanceof ElseStatement; }
+
 
     public static boolean isReturnStatement(Statement stmt){ return  stmt instanceof ReturnStatement;}
 
