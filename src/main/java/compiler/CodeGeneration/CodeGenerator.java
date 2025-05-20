@@ -25,6 +25,7 @@ public class CodeGenerator{
     String generatedClass;
     Ast ast; //TODO: replace by AST at the end
     IndexTable indexTable;
+    FieldTable fieldTable;
 
 
     public CodeGenerator(String generatedClass,Ast ast){
@@ -32,6 +33,7 @@ public class CodeGenerator{
         this.generatedClass=generatedClass;
         this.ast=ast; //TODO: replace by AST at the end
         this.indexTable = new IndexTable(null);
+        this.fieldTable = new FieldTable();
     }
 
 
@@ -104,6 +106,23 @@ public class CodeGenerator{
         }
     }
 
+    public void storeResult(MethodVisitor mv, String identifier, IndexTable indexTable) throws Exception{
+        /**
+         * Store the stack result into correspondig identifier. If varIndex is the IndexTable associated to the stack,
+         *      search in field static table
+         * */
+
+        try {
+            int varIndex = indexTable.getIndexIdentifier(identifier);
+            mv.visitVarInsn(ISTORE, varIndex);
+        }
+        catch (Exception e){
+            String td = this.fieldTable.getTypeDescriptor(identifier);
+            mv.visitFieldInsn(PUTSTATIC, this.generatedClass, identifier, td );
+        }
+
+    }
+
 
     public void generateMoreGlobalVariable(ClassWriter cw, ArrayList<Statement> globalVariables, MethodVisitor clinit ) throws Exception {
         //TODO: Must call different generate Assignement depending if this is a simple variable assignment (i.e: a int= 1+2), array attribution (i.e: c int[]= array [5]), or else
@@ -146,6 +165,9 @@ public class CodeGenerator{
         // Initialize the field
         clinit.visitFieldInsn(PUTSTATIC, this.generatedClass, identifier, td);
 
+        // Store it in fieldTable
+        this.fieldTable.addIdentifier(identifier, td);
+
     }
 
     public void generateMoreConstant(ClassWriter cw, ArrayList<Constant> constants, MethodVisitor clinit ) throws Exception{
@@ -174,6 +196,9 @@ public class CodeGenerator{
 
         // Initialize the field
         clinit.visitFieldInsn(PUTSTATIC, this.generatedClass, identifier, td);
+
+        //save identifier
+        this.fieldTable.addIdentifier(identifier, td);
 
     }
 
@@ -379,8 +404,7 @@ public class CodeGenerator{
         generateExpression(mv, rs.expressions, indexTable,"funcVar", "");
 
         // Store the result
-        int varindex = indexTable.getIndexIdentifier(identifier);
-        mv.visitVarInsn(ISTORE , varindex);
+        this.storeResult(mv, identifier, indexTable);
 
     }
 
@@ -394,10 +418,10 @@ public class CodeGenerator{
         generateExpression(mv, rs.expressions, indexTable,"funcVar", "");
 
         // Store the result
-        int varindex = indexTable.getIndexIdentifier(identifier);
-        mv.visitVarInsn(ISTORE , varindex);
+        this.storeResult(mv, identifier, indexTable);
 
     }
+
 
 
     public void generateReturnStatement(MethodVisitor mv, Statement stmt, IndexTable indexTable, String returnTypeDescriptor) throws Exception {
