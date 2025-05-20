@@ -14,13 +14,10 @@ s string = "hello";
 
 
 fun square(v int) int {
-    t int = 1;
-    t = 2;
-    return t;
-
-    if ( t >=1){
-    t = t+1;
-    }
+    a = 3;
+    v = 9;
+    t int = 4;
+    t = 7;
 }
 
 fun circle(v2 int, z2 float, h2 string, k2 bool) string {
