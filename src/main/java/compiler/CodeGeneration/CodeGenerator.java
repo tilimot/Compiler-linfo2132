@@ -29,7 +29,7 @@ public class CodeGenerator{
 
 
     public CodeGenerator(String generatedClass,Ast ast){
-        this.cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        this.cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         this.generatedClass=generatedClass;
         this.ast=ast; //TODO: replace by AST at the end
         this.indexTable = new IndexTable(null);
@@ -67,7 +67,7 @@ public class CodeGenerator{
 
         // End static bloc
         clinit.visitInsn(RETURN);
-        clinit.visitMaxs(0, 0);
+        clinit.visitMaxs(-1, -1);
         clinit.visitEnd();
 
         // Functions
@@ -245,7 +245,7 @@ public class CodeGenerator{
         //mv.visitVarInsn(ISTORE, 1);
 
         // Fin de la méthode
-        mv.visitMaxs(0, 0);
+        mv.visitMaxs(-1, -1);
         mv.visitEnd();
     }
 
@@ -379,7 +379,7 @@ public class CodeGenerator{
          * Manage the following Assignement:
          *      VarAssignement :
          *          - a int = 2;
-         *          - a str = mtdcall();
+         *          - a = 3;
          * */
 
         AssignementStatement assignement = (AssignementStatement) stmt;
@@ -398,10 +398,11 @@ public class CodeGenerator{
         LeftSide ls = assignment.leftSide;
         String identifier = ls.getIdentifier();
         indexTable.addIdentifier(identifier);
+        String td = this.getTypeDescriptor(ls.getType().getType());
 
         // LeftSide - generate expression
         RightSideExpressions rs = (RightSideExpressions) assignment.rightSide;
-        generateExpression(mv, rs.expressions, indexTable,"funcVar", "");
+        generateExpression(mv, rs.expressions, indexTable,"funcVar", td);
 
         // Store the result
         this.storeResult(mv, identifier, indexTable);
@@ -527,24 +528,60 @@ public class CodeGenerator{
                 // try to know which operation
                 if (addition.equals(true)){
                     addition=false;
-                    mv.visitInsn(IADD); // Additionate stack elements
+                    int opcode = getOperationOpcode("add",typeDescriptor);
+                    mv.visitInsn(opcode); // Additionate stack elements
                 }
                 else if (substraction.equals(true)){
                     substraction=false;
-                    mv.visitInsn(ISUB); // Substract stack elements
+                    int opcode=getOperationOpcode("sub", typeDescriptor);
+                    mv.visitInsn(opcode); // Substract stack elements
                 }
                 else if (multiplication.equals(true)) {
                     multiplication=false;
-                    mv.visitInsn(IMUL); // Multiplication stack elements
+                    int opcode = getOperationOpcode("mul", typeDescriptor);
+                    mv.visitInsn(opcode); // Multiplication stack elements
                 }
                 else if (division.equals(true)) {
                     division=false;
-                    mv.visitInsn(IDIV); // Division stack elements
+                    int opcode = getOperationOpcode("div", typeDescriptor);
+                    mv.visitInsn(opcode); // Division stack elements
                 }
 
             }
         }
 
+    }
+
+
+    public int getOperationOpcode(String operation, String typeDescriptor) throws Exception {
+
+        // INT operations
+        if (typeDescriptor.equals("F")){
+            switch (operation) {
+                case "add":
+                    return FADD;
+                case "sub":
+                    return FSUB;
+                case "mul":
+                    return FMUL;
+                case "div":
+                    return FDIV;
+            }
+        }
+        else{
+            switch (operation) {
+                case "add":
+                    return IADD;
+                case "sub":
+                    return ISUB;
+                case "mul":
+                    return IMUL;
+                case "div":
+                    return IDIV;
+            }
+
+        }
+        throw new Exception("Issue with operations") ;
     }
 
 
