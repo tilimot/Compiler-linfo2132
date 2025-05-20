@@ -216,7 +216,7 @@ public class CodeGenerator{
 
 
         generateBlock(mv, block, indexTable, returnTypeDescriptor);
-        mv.visitVarInsn(ISTORE, 1);
+        //mv.visitVarInsn(ISTORE, 1);
 
         // Fin de la méthode
         mv.visitMaxs(0, 0);
