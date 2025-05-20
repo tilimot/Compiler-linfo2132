@@ -24,7 +24,7 @@ public class TokenClassifier {
 
     private static final Set<String> OPERATORS = Set.of(
             "=", "+", "-", "*", "/", "%", "==", "!=", "<", ">", "<=", ">=", "&&", "||",
-            "(", ")", "{", "}", "[", "]", ".", ","
+            "(", ")", "{", "}", "[", "]", ".", ",","!"
     );
     private static final Set<String> BASE_TYPE = Set.of(
             "int","float","bool","string"
