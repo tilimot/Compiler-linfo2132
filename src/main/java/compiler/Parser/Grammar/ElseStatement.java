@@ -18,15 +18,18 @@ public class ElseStatement extends Statement {
 
     }
 
+  
     public Block getBlock() {
         return block;
     }
+
 
     @Override
     public String toString() {
         return else_ + "\n" + block;
     }
 
+  
     @Override
     public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
         block.semanticAnalysis(symbolTable);

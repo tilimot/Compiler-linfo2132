@@ -9,7 +9,7 @@ e int = 2+9*9-18;
 a int = e+1;
 c int = a+e;
 b bool = true;
-f float = 3.19;
+f float = .19;
 s string = "hello";
 
 
