@@ -276,7 +276,19 @@ public class Parser {
     }
 
     public ArrayList<Expression> parseConditions() throws Exception {
-        String identifier = match(TokenType.IDENTIFIER).getAttribute();
+        String identifier;
+        if( currentSymbol.getTokenType()== TokenType.INTEGER)
+            identifier = match(TokenType.INTEGER).getAttribute();
+        else if (currentSymbol.getTokenType() == TokenType.FLOAT)
+            identifier = match(TokenType.FLOAT).getAttribute();
+        else if (currentSymbol.getTokenType() == TokenType.STRINGS)
+            identifier = match(TokenType.STRINGS).getAttribute();
+        else if (currentSymbol.getTokenType() == TokenType.BOOLEAN)
+            identifier = match(TokenType.BOOLEAN).getAttribute();
+        else
+            identifier = match(TokenType.IDENTIFIER).getAttribute();
+
+
         if (!currentSymbol.getAttribute().equals(")")) {
             if (currentSymbol.getAttribute().equals("=") ||
                     currentSymbol.getAttribute().equals("!") ||
@@ -433,20 +445,22 @@ public class Parser {
         return new WhileStatement(while_,opening_parenthesis,conditions,closing_parenthesis, block, tabIndex);
     }
 
+    public ElseStatement parseElseStatement() throws Exception {
+
+        String else_ = (String) match(TokenType.KEYWORD).getAttribute();
+        Block block = parseBlock();
+
+        return new ElseStatement(else_, block, tabIndex);
+    }
+
 
     public IfStatement parseIfStatement() throws Exception {
-        /*
-         * GrammarRule: IfStatement -> if ( Expressions) Block
-         */
-
-        //TODO Deeply need to implem BLOCK block; !!!!
-        //TODO develop more specific operator in Lexer !!
         String if_ = (String) match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         if (currentSymbol.getTokenType().equals(TokenType.OPERATOR)){
             throw new MissingConditionException();
         }
-        ArrayList<Expression> conditions =  parseConditions();   //Don't manage correctly expression condition as while(true) or while(a == 1)
+        ArrayList<Expression> conditions =  parseConditions();
         String closing_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         Block block = parseBlock();
 
@@ -642,31 +656,17 @@ public class Parser {
 
 
     public Statement parseStatement() throws Exception{
-        Statement statement;
 
-        if(currentSymbol.getAttribute().equals("if")){
-            statement = parseIfStatement();
-        }
-        else if (currentSymbol.getAttribute().equals("while")) {
-            statement = parseWhileStatement();
-        }
-        else if (currentSymbol.getAttribute().equals("for")) {
-            statement = parseForStatement();
-        }
-        else if (currentSymbol.getAttribute().equals("return")){
-            statement = parseReturnStatement();
-        }
-        else if (currentSymbol.getAttribute().equals("free")){
-            statement = parseDeallocationStatement();
-        }
-        else if (currentSymbol.getAttribute().equals("fun")) {
-            statement = parseFunctionStatement();
-        }
-
-        else{
-            statement = parseCallOrDeclarationOrAssignment();
-        }
-        return statement;
+        return switch (currentSymbol.getAttribute()) {
+            case "if" -> parseIfStatement();
+            case "else" -> parseElseStatement();
+            case "while" -> parseWhileStatement();
+            case "for" -> parseForStatement();
+            case "return" -> parseReturnStatement();
+            case "free" -> parseDeallocationStatement();
+            case "fun" -> parseFunctionStatement();
+            default -> parseCallOrDeclarationOrAssignment();
+        };
     }
 
     public ArrayList<Statement> parseStatements() throws Exception {

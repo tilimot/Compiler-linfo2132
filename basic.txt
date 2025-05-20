@@ -17,19 +17,28 @@ Person rec {
 
 }
 
-f int = 1;
+g string = "e";
+sd int;
 
 
 
 
 fun square(v Point, p int) string {
     ki int = p;
-    d Person= Person("me", "e",f);
+    d Person= Person("me", "e",g);
     return p;
 }
 
 fun main() {
+    k int;
+    g int;
+    sd string;
+    if ("1" >= sd) {
+            fd Point = Point(1,2);
 
+     }else {
+        g = 3;
+     }
     fd Point = Point(1,2);
 
 
