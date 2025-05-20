@@ -63,7 +63,7 @@ public class Compiler {
            Semantic semantic = new Semantic(myAst);
            semantic.startAnalysis();
            CodeGenerator cg = new CodeGenerator(targetFilePath,myAst);
-           cg.generateFileClass();
+           cg.generateFile();
        }
        System.exit(0);
     }

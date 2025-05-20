@@ -29,18 +29,43 @@ public class CodeGenerator{
 
 
     public CodeGenerator(String generatedClass,Ast ast){
-        this.cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        this.cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS );
         this.generatedClass=generatedClass;
         this.ast=ast; //TODO: replace by AST at the end
         this.indexTable = new IndexTable(null);
         this.fieldTable = new FieldTable();
     }
 
+    public ClassWriter getCw() {
+        return cw;
+    }
+
+
+    public void generateFile() throws  Exception {
+
+        generateFileClass();
+
+        // generateFile into Bytecode
+        byte[] bytecode = cw.toByteArray();
+        Files.write(Paths.get(this.generatedClass+".class"), bytecode);
+
+    }
 
     public void generateFileClass() throws Exception{
 
         // CreateClass
         this.cw.visit(V1_8, ACC_PUBLIC, this.generatedClass, null, "java/lang/Object", null);
+
+
+        // Default constructor
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+        mv.visitCode();
+        mv.visitVarInsn(ALOAD, 0); // Charge 'this' sur la pile
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false); // Appelle le constructeur de Object
+        mv.visitInsn(RETURN); // Retourne de la méthode
+        mv.visitMaxs(1, 1); // max stack = 1 (pour 'this'), max locals = 1 (pour 'this')
+        mv.visitEnd();
+
 
 
         // Ast grammar: AST -> Constants Records GlobalVariables Functions
@@ -67,7 +92,7 @@ public class CodeGenerator{
 
         // End static bloc
         clinit.visitInsn(RETURN);
-        clinit.visitMaxs(-1, -1);
+        clinit.visitMaxs(0, 0);
         clinit.visitEnd();
 
         // Functions
@@ -76,10 +101,8 @@ public class CodeGenerator{
             generateMoreFunction(this.cw,functions, this.indexTable);
         }
 
+        // End class
         cw.visitEnd();
-        // generateFile into Bytecode
-        byte[] bytecode = cw.toByteArray();
-        Files.write(Paths.get(this.generatedClass+".class"), bytecode);
     }
 
 
@@ -206,7 +229,13 @@ public class CodeGenerator{
 
         for (FunctionStatement function: functions){
             IndexTable funcIndexTable = new IndexTable(indexTable);
-            generateFunction(cw, function, funcIndexTable);
+            if(function.getIdentifier().equals("main")){
+                generateFunctionMain(cw, function, funcIndexTable);
+            }
+            else{
+                generateFunction(cw, function, funcIndexTable);
+            }
+
         }
     }
 
@@ -245,9 +274,32 @@ public class CodeGenerator{
         //mv.visitVarInsn(ISTORE, 1);
 
         // Fin de la méthode
-        mv.visitMaxs(-1, -1);
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
+
+
+    public void generateFunctionMain(ClassWriter cw, FunctionStatement function, IndexTable indexTable) throws Exception {
+
+        Block block = function.getBlock();
+
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+        mv.visitCode();
+
+        generateBlock(mv, block, indexTable, "V");
+
+        // Fin de la méthode
+        mv.visitInsn(RETURN);
+
+        //mv.visitMaxs(100, indexTable.getCurrent_index());
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+
+    }
+
+
+
+
 
     public void generateBlock(MethodVisitor mv, Block block, IndexTable indexTable, String returnTypeDescriptor) throws Exception {
 
@@ -583,31 +635,5 @@ public class CodeGenerator{
         }
         throw new Exception("Issue with operations") ;
     }
-
-
-    /*
-
-    public void generateMainMethod() throws Exception {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
-        mv.visitCode();
-
-        // Should be the inverse. GenerateAST should call generateMainMethod
-        generateAST(mv,this.ast, this.indexTable);
-
-
-        // Fin de la méthode
-        mv.visitInsn(RETURN);
-
-        //mv.visitMaxs(100, indexTable.getCurrent_index());
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
-
-        byte[] bytecode = cw.toByteArray();
-        java.nio.file.Files.write(java.nio.file.Paths.get(this.generatedClass+".class"), bytecode);
-    }
-
-
-    }*/
-
 
 }

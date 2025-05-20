@@ -14,10 +14,15 @@ s string = "hello";
 
 
 fun square(v int) int {
-    t float = 1.0+2.0;
+    t float = 1.0+17.0;
 }
 
 fun circle(v2 int, z2 float, h2 string, k2 bool) string {
     t string = "hey";
     return t;
 }
+
+fun test() int{
+    a int = 3;
+    return 5 + 3;
+    }
