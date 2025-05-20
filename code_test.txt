@@ -1,6 +1,5 @@
 
 final i int = 3;
-final j float = 3.2*5.0;
 final k int = i*3;
 final message string = "Hello";
 final isEmpty bool = true;
