@@ -21,6 +21,10 @@ fun square(v int) int {
         t = t+1;
     }
     return t;
+
+    if ( t >=1){
+    t = t+1;
+    }
 }
 
 fun circle(v2 int, z2 float, h2 string, k2 bool) string {
