@@ -17,6 +17,10 @@ s string = "hello";
 fun square(v int) int {
     t int = 1;
     t = 2;
+
+    while(t<1){
+        t = t+1;
+    }
     return t;
 }
 

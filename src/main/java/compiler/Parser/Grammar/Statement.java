@@ -18,6 +18,11 @@ public abstract class Statement {
 
     public static boolean isVarReassignStatement(AssignementStatement statement){ return (statement.leftSide instanceof LeftSideAssignement) && (statement.leftSide.getType() == null) ;}
 
+    public static boolean isWhileStatement(Statement stmt){ return stmt instanceof WhileStatement;}
+
+    public static boolean isIfStatement(Statement stmt){return stmt instanceof IfStatement; }
+
+
     public static boolean isReturnStatement(Statement stmt){ return  stmt instanceof ReturnStatement;}
 
     public abstract void semanticAnalysis(SymbolTable symbolTable) throws Exception;

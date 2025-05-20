@@ -24,6 +24,14 @@ public class WhileStatement extends Statement {
 
     }
 
+    public ArrayList<Expression> getExpressions() {
+        return expressions;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

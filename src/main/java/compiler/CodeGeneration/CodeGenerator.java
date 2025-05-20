@@ -107,7 +107,6 @@ public class CodeGenerator{
         //TODO: Must call different generate Assignement depending if this is a simple variable assignment (i.e: a int= 1+2), array attribution (i.e: c int[]= array [5]), or else
         //Currently consider only simple variable assignement (i.e: a int= 1+2). Miss array assignement, records attribute assignement, declaration
 
-
         clinit.visitCode();
 
         // Adding fields:  public static x=10
@@ -235,11 +234,84 @@ public class CodeGenerator{
             else if(Statement.isReturnStatement(statement)){
                 generateReturnStatement(mv, statement, indexTable, returnTypeDescriptor);
             }
+            else if (Statement.isWhileStatement(statement)) {
+                generateWhileStatement(mv, statement, indexTable, returnTypeDescriptor);
+            }
         }
-
-
-
     }
+
+
+    public int getComparisonOpcode(String condition) {
+        switch (condition) {
+            case "==":
+                return 159;
+            case "!=":
+                return 160;
+            case "<":
+                return 161;
+            case ">=":
+                return 162;
+            case ">":
+                return 163;
+            case "<=":
+                return 164;
+            default:
+                throw new IllegalArgumentException("Condition non reconnue : " + condition);
+        }
+    }
+
+    public void generateWhileStatement(MethodVisitor mv, Statement stmt, IndexTable indexTable, String returnTypeDescriptor) throws Exception {
+
+        WhileStatement whileStmt = (WhileStatement) stmt;
+        Block block = whileStmt.getBlock();
+
+        Condition cdt = new Condition(whileStmt.getExpressions());
+        ArrayList<Expression> leftPart = cdt.getLeftPart();
+        ArrayList<Expression> rightPart = cdt.getRightPart();
+        String compOperator = cdt.getOperator();
+        int opcode = getComparisonOpcode(compOperator);
+
+        // Loop beginning
+        Label loopStart = new Label();
+        Label loopEnd = new Label();
+        mv.visitLabel(loopStart);
+
+        // Load on stack and compare
+        generateExpression(mv, leftPart, indexTable, "funcVar", null);
+        generateExpression(mv, rightPart, indexTable, "funcVar", null);
+        mv.visitJumpInsn(opcode, loopEnd);
+
+        // execute block while condition is true
+        generateBlock(mv, block, indexTable, returnTypeDescriptor );
+        mv.visitJumpInsn(GOTO, loopStart);
+
+        // end of loop
+        mv.visitLabel(loopEnd);
+    }
+
+
+
+
+/*
+    public void generateIfStatement(MethodVisitor mv, Statement stmt, IndexTable indexTable) throws Exception {
+        IfStatement ifStmt = (IfStatement) stmt;
+
+        Condition cdt = new Condition(ifStmt.getExpressions());
+        String compOperator = cdt.getOperator();
+        ArrayList<Expression> leftPart = cdt.getLeftPart();
+        ArrayList<Expression> rightPart = cdt.getRightPart();
+
+        generateExpression(mv, leftPart, indexTable, "funcVar", null);
+        generateExpression(mv, rightPart, indexTable, "funcVar",null);
+
+        //generateComparison();
+
+        //generateIfStatement();
+    }
+
+*/
+
+
 
     public void generateAssignmentStatement(MethodVisitor mv, Statement stmt, IndexTable indexTable) throws Exception {
         /**
