@@ -39,7 +39,6 @@ public class IndexTable {
             return currentTable.table.get(identifier);
         }
         else  {
-            System.out.println("currentTable: " + currentTable.table + " identifier: " + identifier);
             throw new Exception("VariableError, " + identifier + " is not defined.");
         }
     }

@@ -2,12 +2,15 @@ package compiler.Semantic;
 
 import compiler.Compiler;
 import compiler.Exception.*;
+import compiler.Lexer.BuildIn;
 import compiler.Lexer.Symbol;
 import compiler.Lexer.TokenType;
 import compiler.Parser.Grammar.*;
 import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 
 public class Semantic {
@@ -19,6 +22,7 @@ public class Semantic {
         this.ast = ast;
         symbolTable = new SymbolTable(null,"root");
 
+
     }
 
     public void startAnalysis () throws Exception {
@@ -29,6 +33,12 @@ public class Semantic {
 
         if (expression_value.contains("\""))
             return TokenType.STRINGS;
+        if (List.of(
+                "readInt", "readFloat", "readString",
+                "writeInt", "writeFloat", "write", "writeln").contains(expression_value)) {
+            return TokenType.BUILDIN;
+        }
+
         if (expression_value.contains("true") || expression_value.contains("false"))
             return TokenType.BOOLEAN;
         if (expression_value.equals("Array"))
@@ -57,7 +67,7 @@ public class Semantic {
 
         for (TokenType t : resolvedTypes) {
             if ((baseType == TokenType.FLOAT && t == TokenType.INTEGER) ||
-                    (baseType == TokenType.INTEGER && t == TokenType.FLOAT)) {
+                    (baseType == TokenType.INTEGER && t == TokenType.FLOAT|| t== TokenType.ARRAY ||t ==  TokenType.BUILDIN)) {
                 continue;
             }
             if (t != baseType) {
@@ -74,7 +84,7 @@ public class Semantic {
         if (fdType.getValue().equals("void")){
             throw new Exception("TypeError: Type of final var should not be void");
         }
-        if (!fdType.getValue().equals("int") && !fdType.getValue().equals("float") && !fdType.getValue().equals("string") && !fdType.getValue().equals("bool")){
+        if (!fdType.getValue().equals("int") && !fdType.getValue().equals("float") && !fdType.getValue().equals("string") && !fdType.getValue().equals("bool") && Character.isLowerCase(fdType.getValue().charAt(0))) {
             throw new Exception("TypeError: Type of final var should be a base type.");
         }
         ArrayList<TokenType> expressionType = new ArrayList<>();
@@ -170,7 +180,6 @@ public class Semantic {
         for (Expression expression : expressions) {
             if(checkType(expression.getValue()) == TokenType.IDENTIFIER) {
                 if (!symbolTable.containsSymbol(expression.getValue())) {
-                    System.out.println(symbolTable.getTable()+"   "+expression.getValue());
                     throw new ScopeException(expression.getValue());
                 }
                 Type identifierSymbol = symbolTable.getSymbol(identifier, symbolTable);

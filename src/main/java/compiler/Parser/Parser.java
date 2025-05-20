@@ -100,6 +100,11 @@ public class Parser {
     public ArrayList<Type> parseType() throws Exception {
         ArrayList<Type> types = new ArrayList<>();
         types.add(parseSimpleType());
+        if (currentSymbol.getAttribute().equals("[")) {
+            String left = match(TokenType.OPERATOR).getAttribute();
+            String right = match(TokenType.OPERATOR).getAttribute();
+            types.add(new ArrayDeclarationBracket(left,right,tabIndex));
+        }
 
 
         return types;
@@ -528,7 +533,6 @@ public class Parser {
 */
 
     public Statement parseCallOrDeclarationOrAssignment() throws Exception{
-        //TODO implem le cas ou c'est la définition d'un fonction
         Statement statement;
 
         String identifier;

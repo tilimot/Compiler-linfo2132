@@ -37,7 +37,6 @@ public class FuncParam {
                 ((ArrayDeclarationBracket) type).tabIndex = tabIndex;
             }
             typeStr.append(type);
-            System.out.println("la classe = "+ type.getClass()+ " la valeur = "+ type);
         }
         return t + identifier+ "\n" + typeStr;
     }

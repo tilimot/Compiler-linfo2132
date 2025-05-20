@@ -50,7 +50,6 @@ public class Brouillon {
 
         byte[] bytecode = cw.toByteArray();
         java.nio.file.Files.write(java.nio.file.Paths.get(this.generatedClass+".class"), bytecode);
-        System.out.println("Classe générée : "+this.generatedClass+".class");
     }
 
 /*

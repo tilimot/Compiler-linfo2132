@@ -1,51 +1,80 @@
+final i int = 3;
 
-Point rec {
+final j float = 3.2*5.0; 
 
-    x int;
+final k int = i*3; 
+
+final message string = "Hello"; 
+
+final isEmpty bool = true; 
+
+  
+
+
+Point rec { 
+
+    x int; 
 
     y int;
+} 
+
+Person rec{ 
+
+    name string; 
+
+    location Point; 
+
+    history int[];
+
+} 
+
+a int = 3; 
+
+
+c int[] = array [5] of int;  $ new array of length 5
+
+d Person= Person("me", Point(3,7), array [i*2] of int);
+
+  
+
+
+                                          
+
+fun square(v int) int {
+    return v*v;
 
 }
 
-Person rec {
 
-    x string;
 
-    y string;
+fun copyPoints(p Point[]) Point {
 
-    z string;
+    return Point(p.x+p.x, p.y+p.y);
 
 }
 
-g string = "e";
-sd int;
 
-
-
-
-fun square(v Point, p int) string {
-    ki int = p;
-    d Person= Person("me", "e",g);
-    return p;
-}
 
 fun main() {
-    k int;
-    g int;
-    sd string;
+
+    value int = readInt();
+
+    writeln(square(value));
+
+   i int;
+
     for (i, 1, 100, 1) {
-    if ("1" != sd) {
-            fd Point = Point(1,2);
 
-     }else {
-        g = 3;
-     }}
-     while ("1" != sd) {
-
-         fd Point = Point(1,2);
-
-                 }
+        while (value!=3) {
 
 
+            }
+
+        }
+
+
+
+
+   i = (i+2)*2;
 
 }

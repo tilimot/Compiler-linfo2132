@@ -255,7 +255,6 @@ public class CodeGenerator{
         }
 
         String descriptor = "("+paramsTypeDescriptor+")"+returnTypeDescriptor;
-        System.out.println(descriptor);
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC , methodName, descriptor, null, null);
         mv.visitCode();
 

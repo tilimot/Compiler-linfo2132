@@ -67,7 +67,6 @@ public class IfStatement extends Statement {
 
             }
         }
-        System.out.println("IF STATEMENT  " + types);
         if (Semantic.checkExpressionsType(types)) {
             throw new TypeException();
         }

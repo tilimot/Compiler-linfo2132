@@ -35,7 +35,6 @@ public class Compiler {
 
        }
        else if (args.length == 2 && args[0].equals("-semantic")) {
-           System.out.println("SEMANTIC ANALYSIS");
            String filepath = args[1];
            Reader readerFile = FileToReader.getReaderFromFile(filepath);
            Lexer lexer = new Lexer(readerFile);
