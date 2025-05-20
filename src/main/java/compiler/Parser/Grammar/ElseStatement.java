@@ -25,6 +25,7 @@ public class ElseStatement extends Statement {
 
     @Override
     public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
+        block.semanticAnalysis(symbolTable);
 
     }
 }

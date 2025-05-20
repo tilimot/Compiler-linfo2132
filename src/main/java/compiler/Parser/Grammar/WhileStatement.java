@@ -1,5 +1,8 @@
 package compiler.Parser.Grammar;
 
+import compiler.Exception.TypeException;
+import compiler.Lexer.TokenType;
+import compiler.Semantic.Semantic;
 import compiler.Semantic.SymbolTable;
 
 import java.util.ArrayList;
@@ -48,6 +51,24 @@ public class WhileStatement extends Statement {
 
     @Override
     public void semanticAnalysis(SymbolTable symbolTable) throws Exception {
+        block.semanticAnalysis(symbolTable);
+        ArrayList<TokenType> types = new ArrayList<>();
+        for (Expression expression : expressions) {
+            if (expression.getType() == TokenType.IDENTIFIER){
+                Type symbol = symbolTable.getSymbol(expression.getValue(),symbolTable);
+                if (symbol == null) {
+                    symbol = symbolTable.getParentTable().getSymbol(expression.getValue(),symbolTable.getParentTable());
+                }
+                types.add(symbol.getType());
+            }
+            else if (expression.getType() != TokenType.OPERATOR) {
+                types.add(expression.getType());
+
+            }
+        }
+        if (Semantic.checkExpressionsType(types)) {
+            throw new TypeException();
+        }
 
     }
 }

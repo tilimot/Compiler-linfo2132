@@ -427,13 +427,8 @@ public class Parser {
 
 
     public WhileStatement parseWhileStatement() throws Exception {
-        /*
-         * GrammarRule: WhileStatement -> while ( Expressions) Block
-         */
 
-        //TODO Deeply need to implem BLOCK block; !!!!
-        //TODO develop more specific operator in Lexer !!
-        String while_ = (String) match(TokenType.KEYWORD).getAttribute();
+        String while_ = match(TokenType.KEYWORD).getAttribute();
         String opening_parenthesis = (String) match(TokenType.OPERATOR).getAttribute();
         if (currentSymbol.getTokenType().equals(TokenType.OPERATOR)){
             throw new MissingConditionException();

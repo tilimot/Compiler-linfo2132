@@ -33,13 +33,18 @@ fun main() {
     k int;
     g int;
     sd string;
-    if ("1" >= sd) {
+    for (i, 1, 100, 1) {
+    if ("1" != sd) {
             fd Point = Point(1,2);
 
      }else {
         g = 3;
-     }
-    fd Point = Point(1,2);
+     }}
+     while ("1" != sd) {
+
+         fd Point = Point(1,2);
+
+                 }
 
 
 
